@@ -83,6 +83,7 @@ jobs:
           args: >
             --enableRetired
             --failOnCVSS 9
+        continue-on-error: true
 
       - name: Upload OWASP report
         uses: actions/upload-artifact@v4

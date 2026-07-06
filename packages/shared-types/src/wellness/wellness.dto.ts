@@ -3,48 +3,50 @@
 // Robust Zod Schemas for Health, Assessments, Goals, and AI Personalization
 // ==============================================================================
 
-import { z } from 'zod';
-import { WELLNESS_CONSTANTS } from './wellness.constants';
+import { z } from "zod";
+import { WELLNESS_CONSTANTS } from "./wellness.constants";
 
 export const MedicalConditionItemSchema = z.object({
-  condition: z.string().min(1, 'Condition name required'),
+  condition: z.string().min(1, "Condition name required"),
   diagnosedYear: z.number().int().min(1900).max(2100).optional(),
-  status: z.enum(['ACTIVE', 'RESOLVED', 'MANAGED']),
+  status: z.enum(["ACTIVE", "RESOLVED", "MANAGED"]),
   notes: z.string().optional(),
 });
 
 export const SurgeryItemSchema = z.object({
-  procedure: z.string().min(1, 'Procedure name required'),
+  procedure: z.string().min(1, "Procedure name required"),
   year: z.number().int().min(1900).max(2100),
   surgeonOrHospital: z.string().optional(),
   recoveryNotes: z.string().optional(),
 });
 
 export const MedicationItemSchema = z.object({
-  name: z.string().min(1, 'Medication name required'),
-  dosage: z.string().min(1, 'Dosage required'),
-  frequency: z.string().min(1, 'Frequency required'),
+  name: z.string().min(1, "Medication name required"),
+  dosage: z.string().min(1, "Dosage required"),
+  frequency: z.string().min(1, "Frequency required"),
   reason: z.string().optional(),
 });
 
 export const AllergyItemSchema = z.object({
-  allergen: z.string().min(1, 'Allergen required'),
-  type: z.enum(['FOOD', 'MEDICINE', 'ENVIRONMENTAL']),
-  severity: z.enum(['MILD', 'MODERATE', 'SEVERE']),
+  allergen: z.string().min(1, "Allergen required"),
+  type: z.enum(["FOOD", "MEDICINE", "ENVIRONMENTAL"]),
+  severity: z.enum(["MILD", "MODERATE", "SEVERE"]),
   reaction: z.string().optional(),
 });
 
 export const PhysicalLimitationItemSchema = z.object({
-  bodyPart: z.string().min(1, 'Body part required'),
-  issue: z.string().min(1, 'Issue required'),
-  severity: z.enum(['LOW', 'MEDIUM', 'HIGH']),
+  bodyPart: z.string().min(1, "Body part required"),
+  issue: z.string().min(1, "Issue required"),
+  severity: z.enum(["LOW", "MEDIUM", "HIGH"]),
   restrictedMovements: z.array(z.string()).optional(),
 });
 
 export const LifestyleProfileSchema = z.object({
   isSmoker: z.boolean().optional(),
-  alcoholConsumption: z.enum(['NONE', 'OCCASIONAL', 'MODERATE', 'HEAVY']).optional(),
-  workNature: z.enum(['SEDENTARY', 'STANDING', 'PHYSICAL', 'MIXED']).optional(),
+  alcoholConsumption: z
+    .enum(["NONE", "OCCASIONAL", "MODERATE", "HEAVY"])
+    .optional(),
+  workNature: z.enum(["SEDENTARY", "STANDING", "PHYSICAL", "MIXED"]).optional(),
   averageScreenTimeHours: z.number().min(0).max(24).optional(),
   dietPreference: z.string().optional(),
 });
@@ -80,21 +82,27 @@ export const SubmitWellnessAssessmentSchema = z.object({
   breathingPattern: z.enum(WELLNESS_CONSTANTS.BREATHING_PATTERNS).optional(),
   dailyActivityLevel: z.enum(WELLNESS_CONSTANTS.ACTIVITY_LEVELS),
 });
-export type SubmitWellnessAssessmentDto = z.infer<typeof SubmitWellnessAssessmentSchema>;
+export type SubmitWellnessAssessmentDto = z.infer<
+  typeof SubmitWellnessAssessmentSchema
+>;
 
 export const UpdateYogaAssessmentSchema = z.object({
   experienceLevel: z.enum(WELLNESS_CONSTANTS.YOGA_EXPERIENCE_LEVELS).optional(),
   yogaGoals: z.array(z.string()).optional(),
   preferredYogaStyle: z.enum(WELLNESS_CONSTANTS.YOGA_STYLES).optional(),
   preferredSessionLengthMin: z.number().int().min(5).max(180).optional(),
-  preferredInstructorGender: z.enum(WELLNESS_CONSTANTS.INSTRUCTOR_GENDER_PREFS).optional(),
+  preferredInstructorGender: z
+    .enum(WELLNESS_CONSTANTS.INSTRUCTOR_GENDER_PREFS)
+    .optional(),
   practiceFrequencyPerWeek: z.number().int().min(1).max(14).optional(),
   favoriteTeachers: z.array(z.string()).optional(),
   favoriteCourses: z.array(z.string()).optional(),
   favoriteMusic: z.array(z.string()).optional(),
   preferredPracticeTime: z.enum(WELLNESS_CONSTANTS.PRACTICE_TIMES).optional(),
 });
-export type UpdateYogaAssessmentDto = z.infer<typeof UpdateYogaAssessmentSchema>;
+export type UpdateYogaAssessmentDto = z.infer<
+  typeof UpdateYogaAssessmentSchema
+>;
 
 export const UpdateNutritionProfileSchema = z.object({
   dietType: z.enum(WELLNESS_CONSTANTS.DIET_TYPES).optional(),
@@ -113,34 +121,48 @@ export const UpdateNutritionProfileSchema = z.object({
     .optional(),
   supplements: z.array(z.string()).optional(),
 });
-export type UpdateNutritionProfileDto = z.infer<typeof UpdateNutritionProfileSchema>;
+export type UpdateNutritionProfileDto = z.infer<
+  typeof UpdateNutritionProfileSchema
+>;
 
 export const UpdateMeditationProfileSchema = z.object({
-  meditationExperience: z.enum(WELLNESS_CONSTANTS.MEDITATION_EXPERIENCE).optional(),
+  meditationExperience: z
+    .enum(WELLNESS_CONSTANTS.MEDITATION_EXPERIENCE)
+    .optional(),
   preferredDurationMin: z.number().int().min(5).max(180).optional(),
   preferredVoice: z.string().optional(),
   preferredMusic: z.enum(WELLNESS_CONSTANTS.MEDITATION_MUSIC).optional(),
   focusArea: z.enum(WELLNESS_CONSTANTS.MEDITATION_FOCUS).optional(),
   mindfulnessGoals: z.array(z.string()).optional(),
 });
-export type UpdateMeditationProfileDto = z.infer<typeof UpdateMeditationProfileSchema>;
+export type UpdateMeditationProfileDto = z.infer<
+  typeof UpdateMeditationProfileSchema
+>;
 
 export const UpdateAiPersonalizationSchema = z.object({
   coachingStyle: z.enum(WELLNESS_CONSTANTS.AI_COACHING_STYLES).optional(),
   motivationStyle: z.enum(WELLNESS_CONSTANTS.AI_MOTIVATION_STYLES).optional(),
   reminderStyle: z.enum(WELLNESS_CONSTANTS.AI_REMINDER_STYLES).optional(),
-  communicationTone: z.enum(WELLNESS_CONSTANTS.AI_COMMUNICATION_TONES).optional(),
+  communicationTone: z
+    .enum(WELLNESS_CONSTANTS.AI_COMMUNICATION_TONES)
+    .optional(),
   preferredLanguage: z.string().max(10).optional(),
-  difficultyProgression: z.enum(WELLNESS_CONSTANTS.AI_DIFFICULTY_PROGRESSIONS).optional(),
+  difficultyProgression: z
+    .enum(WELLNESS_CONSTANTS.AI_DIFFICULTY_PROGRESSIONS)
+    .optional(),
   learningStyle: z.enum(WELLNESS_CONSTANTS.AI_LEARNING_STYLES).optional(),
   voicePreference: z.string().max(50).optional(),
-  notificationBehaviour: z.enum(WELLNESS_CONSTANTS.AI_NOTIFICATION_BEHAVIOURS).optional(),
+  notificationBehaviour: z
+    .enum(WELLNESS_CONSTANTS.AI_NOTIFICATION_BEHAVIOURS)
+    .optional(),
   recommendationPreferences: z.record(z.any()).optional(),
 });
-export type UpdateAiPersonalizationDto = z.infer<typeof UpdateAiPersonalizationSchema>;
+export type UpdateAiPersonalizationDto = z.infer<
+  typeof UpdateAiPersonalizationSchema
+>;
 
 export const LogTimelineSchema = z.object({
-  logDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Must be YYYY-MM-DD'),
+  logDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Must be YYYY-MM-DD"),
   dailyMood: z.enum(WELLNESS_CONSTANTS.TIMELINE_MOODS).optional(),
   painLevel: z.number().int().min(0).max(10).optional(),
   stressScore: z.number().int().min(1).max(10).optional(),
@@ -196,10 +218,14 @@ export const CreateMedicalSafetyFlagSchema = z.object({
   recommendedBy: z.string().max(100).optional(),
   isActive: z.boolean().default(true),
 });
-export type CreateMedicalSafetyFlagDto = z.infer<typeof CreateMedicalSafetyFlagSchema>;
+export type CreateMedicalSafetyFlagDto = z.infer<
+  typeof CreateMedicalSafetyFlagSchema
+>;
 
 export const DoctorVerifyHealthProfileSchema = z.object({
   userId: z.string().uuid(),
   verificationNotes: z.string().min(5),
 });
-export type DoctorVerifyHealthProfileDto = z.infer<typeof DoctorVerifyHealthProfileSchema>;
+export type DoctorVerifyHealthProfileDto = z.infer<
+  typeof DoctorVerifyHealthProfileSchema
+>;

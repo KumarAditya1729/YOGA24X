@@ -6,7 +6,7 @@
 export interface MedicalConditionItem {
   condition: string;
   diagnosedYear?: number;
-  status: 'ACTIVE' | 'RESOLVED' | 'MANAGED';
+  status: "ACTIVE" | "RESOLVED" | "MANAGED";
   notes?: string;
 }
 
@@ -26,22 +26,22 @@ export interface MedicationItem {
 
 export interface AllergyItem {
   allergen: string;
-  type: 'FOOD' | 'MEDICINE' | 'ENVIRONMENTAL';
-  severity: 'MILD' | 'MODERATE' | 'SEVERE';
+  type: "FOOD" | "MEDICINE" | "ENVIRONMENTAL";
+  severity: "MILD" | "MODERATE" | "SEVERE";
   reaction?: string;
 }
 
 export interface PhysicalLimitationItem {
   bodyPart: string;
   issue: string; // e.g. "HERNIATED_DISC", "ACL_TEAR", "STIFFNESS"
-  severity: 'LOW' | 'MEDIUM' | 'HIGH';
+  severity: "LOW" | "MEDIUM" | "HIGH";
   restrictedMovements?: string[];
 }
 
 export interface LifestyleProfile {
   isSmoker?: boolean;
-  alcoholConsumption?: 'NONE' | 'OCCASIONAL' | 'MODERATE' | 'HEAVY';
-  workNature?: 'SEDENTARY' | 'STANDING' | 'PHYSICAL' | 'MIXED';
+  alcoholConsumption?: "NONE" | "OCCASIONAL" | "MODERATE" | "HEAVY";
+  workNature?: "SEDENTARY" | "STANDING" | "PHYSICAL" | "MIXED";
   averageScreenTimeHours?: number;
   dietPreference?: string;
 }

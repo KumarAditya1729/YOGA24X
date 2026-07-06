@@ -2,18 +2,18 @@
 // Yoga24X AI Engineering OS — Auth TypeScript Interfaces & Contracts
 // ==============================================================================
 
-export type UserRoleName = 
-  | 'STUDENT'
-  | 'TEACHER'
-  | 'DOCTOR'
-  | 'NUTRITIONIST'
-  | 'MEDITATION_COACH'
-  | 'STUDIO_OWNER'
-  | 'CORPORATE_HR'
-  | 'ADMIN'
-  | 'SUPER_ADMIN';
+export type UserRoleName =
+  | "STUDENT"
+  | "TEACHER"
+  | "DOCTOR"
+  | "NUTRITIONIST"
+  | "MEDITATION_COACH"
+  | "STUDIO_OWNER"
+  | "CORPORATE_HR"
+  | "ADMIN"
+  | "SUPER_ADMIN";
 
-export type IdentityProviderType = 'EMAIL' | 'PHONE' | 'GOOGLE' | 'APPLE';
+export type IdentityProviderType = "EMAIL" | "PHONE" | "GOOGLE" | "APPLE";
 
 export interface JwtAccessPayload {
   sub: string; // User UUID
@@ -55,7 +55,8 @@ export interface DeviceInfo {
   deviceId?: string;
   deviceFingerprint: string;
   deviceName: string;
-  deviceType: 'MOBILE_IOS' | 'MOBILE_ANDROID' | 'WEB_BROWSER' | 'DESKTOP' | 'TABLET';
+  deviceType:
+    "MOBILE_IOS" | "MOBILE_ANDROID" | "WEB_BROWSER" | "DESKTOP" | "TABLET";
   osVersion?: string;
   appVersion?: string;
   fcmToken?: string;
@@ -63,7 +64,7 @@ export interface DeviceInfo {
 
 export interface RiskEvaluationResult {
   riskScore: number; // 0 to 100
-  riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  riskLevel: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
   factors: string[];
   requireMfa: boolean;
   blockLogin: boolean;
@@ -88,7 +89,7 @@ export interface AuthResponse {
     accessToken: string;
     refreshToken: string;
     expiresIn: number;
-    tokenType: 'Bearer';
+    tokenType: "Bearer";
   };
   session: {
     sessionId: string;
@@ -103,7 +104,7 @@ export interface AuthResponse {
 export interface OtpDeliveryResult {
   identifier: string;
   purpose: string;
-  channel: 'SMS' | 'WHATSAPP' | 'EMAIL';
+  channel: "SMS" | "WHATSAPP" | "EMAIL";
   expiresInSeconds: number;
-  deliveryStatus: 'SENT' | 'FAILED' | 'QUEUED';
+  deliveryStatus: "SENT" | "FAILED" | "QUEUED";
 }

@@ -162,9 +162,7 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
     await this.redisClient.expire(key, ttlSeconds);
   }
 
-  async getRefreshFamily(
-    familyId: string,
-  ): Promise<{
+  async getRefreshFamily(familyId: string): Promise<{
     userId: string;
     currentTokenHash: string;
     status: string;

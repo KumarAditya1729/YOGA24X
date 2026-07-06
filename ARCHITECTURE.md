@@ -82,19 +82,22 @@ yoga24x/
 We implement a **Hybrid Monorepo Strategy** leveraging **pnpm Workspaces** + **Turborepo** for the TypeScript/Node.js ecosystem (`backend`, `admin`, `packages/*`) and **Melos + FVM (Flutter Version Management)** for the Flutter mobile ecosystem (`apps/mobile`).
 
 ### Why this Architecture?
+
 1. **Zero-Copy Type Safety**: TypeScript interfaces defined in `packages/shared-types` are directly imported by both `apps/backend` (NestJS) and `apps/admin` (Next.js 15), eliminating API contract drift.
 2. **Intelligent Build Caching**: Turborepo caches build, lint, and test artifacts across workspaces. If `packages/shared-utils` doesn't change, dependent apps skip recompilation during CI/CD.
 3. **Isolated Mobile Toolchain**: Flutter requires a specialized Dart SDK toolchain. By isolating mobile within `apps/mobile` while maintaining it in the same Git repository, mobile engineers gain visibility into backend schema changes without Node.js dependency entanglement.
 
 ### Monorepo Configuration (`pnpm-workspace.yaml`)
+
 ```yaml
 packages:
-  - 'apps/admin'
-  - 'apps/backend'
-  - 'packages/*'
+  - "apps/admin"
+  - "apps/backend"
+  - "packages/*"
 ```
 
 ### Task Orchestration (`turbo.json`)
+
 ```json
 {
   "$schema": "https://turbo.build/schema.json",
@@ -155,6 +158,7 @@ All applications across **Yoga24X** strictly adhere to **Clean Architecture (Rob
 ```
 
 ### Layer Breakdown & Responsibilities
+
 1. **Domain Layer (Core - Zero Dependencies)**:
    - Contains pure business logic, enterprise rules, **Entities**, **Value Objects**, and **Repository Interfaces**.
    - Absolutely no framework dependencies (no NestJS decorators, no Flutter UI imports, no Prisma types).
@@ -174,6 +178,7 @@ All applications across **Yoga24X** strictly adhere to **Clean Architecture (Rob
 To prevent architectural degradation into a "Big Ball of Mud", **Yoga24X** organizes code by **Vertical Feature Slices** rather than horizontal technical layers. Each feature module is a self-contained domain unit with its own presentation, application, domain, and infrastructure components.
 
 ### Core Features of Yoga24X
+
 1. **`identity`**: User Authentication, JWT/Refresh Token rotation, Google OAuth, OTP verification, Role-Based Access Control (RBAC).
 2. **`wellness-catalog`**: Yoga courses, daily routines, meditation audio, difficulty grading, instructor profiles.
 3. **`ai-pose-tracker`**: Real-time video stream ingestion, MLKit / TensorFlow Lite skeleton joint extraction, angle calculation, posture correction feedback.
@@ -478,46 +483,50 @@ packages/
 We implement a strict 4-tier environment hierarchy: **Local**, **Development**, **Staging**, and **Production**.
 
 ### Secret & Variable Management
+
 - **Zero Secrets in Git**: `.env` files are strictly ignored in `.gitignore`. Only `.env.example` templates with blank values are committed.
 - **Runtime Validation**: On application startup, environment variables must pass schema validation using **Zod** (`@nestjs/config` validation schema in backend; `@t3-oss/env-nextjs` in Admin). If a required variable is missing or misformatted, the application halts execution immediately with a clear terminal error.
 - **Secret Providers**: Production secrets are dynamically injected at runtime via **AWS Secrets Manager** / **GCP Secret Manager** or **GitHub Actions Secrets** during CI/CD deployment.
 
 ### Environment Variable Matrix
 
-| Variable Name | Description | Local / Dev | Staging | Production |
-| :--- | :--- | :--- | :--- | :--- |
-| `NODE_ENV` | Runtime execution environment | `development` | `staging` | `production` |
-| `PORT` | API Gateway listening port | `3000` | `3000` | `3000` |
-| `DATABASE_URL` | PostgreSQL connection string | `postgresql://postgres:root@localhost:5432/yoga24x_dev` | `postgresql://user:pass@db-staging.aws:5432/yoga24x_stg` | `postgresql://user:pass@db-prod.aws:5432/yoga24x_prod?sslmode=require` |
-| `REDIS_URL` | Redis caching & pub/sub URI | `redis://localhost:6379/0` | `redis://redis-staging.aws:6379/0` | `redis://redis-cluster-prod.aws:6379/0` |
-| `JWT_ACCESS_SECRET` | RSA/HMAC Access Token secret | `dev_access_secret_32chars_min` | `stg_vault_injected_secret_key` | `prod_vault_injected_secret_key` |
-| `JWT_REFRESH_SECRET`| Refresh Token secret | `dev_refresh_secret_32chars_min`| `stg_vault_injected_refresh_key`| `prod_vault_injected_refresh_key`|
-| `JWT_ACCESS_EXPIRY` | Access token lifespan | `15m` | `15m` | `15m` |
-| `JWT_REFRESH_EXPIRY`| Refresh token lifespan | `7d` | `7d` | `7d` |
-| `GOOGLE_CLIENT_ID` | OAuth 2.0 Client ID | `mock_or_dev_gcp_id` | `staging_gcp_client_id` | `prod_gcp_client_id` |
-| `RAZORPAY_KEY_ID` | Razorpay API Key | `rzp_test_xxxxxxxxx` | `rzp_test_xxxxxxxxx` | `rzp_live_xxxxxxxxx` |
-| `RAZORPAY_KEY_SECRET`| Razorpay HMAC Webhook Secret| `dev_razorpay_secret` | `stg_razorpay_secret` | `prod_razorpay_secret` |
-| `S3_BUCKET_NAME` | Media storage bucket | `yoga24x-dev-media` | `yoga24x-staging-media` | `yoga24x-prod-media` |
-| `FCM_SERVER_KEY` | Firebase Cloud Messaging key | `fcm_dev_mock_key` | `fcm_staging_key` | `fcm_prod_live_key` |
+| Variable Name         | Description                   | Local / Dev                                             | Staging                                                  | Production                                                             |
+| :-------------------- | :---------------------------- | :------------------------------------------------------ | :------------------------------------------------------- | :--------------------------------------------------------------------- |
+| `NODE_ENV`            | Runtime execution environment | `development`                                           | `staging`                                                | `production`                                                           |
+| `PORT`                | API Gateway listening port    | `3000`                                                  | `3000`                                                   | `3000`                                                                 |
+| `DATABASE_URL`        | PostgreSQL connection string  | `postgresql://postgres:root@localhost:5432/yoga24x_dev` | `postgresql://user:pass@db-staging.aws:5432/yoga24x_stg` | `postgresql://user:pass@db-prod.aws:5432/yoga24x_prod?sslmode=require` |
+| `REDIS_URL`           | Redis caching & pub/sub URI   | `redis://localhost:6379/0`                              | `redis://redis-staging.aws:6379/0`                       | `redis://redis-cluster-prod.aws:6379/0`                                |
+| `JWT_ACCESS_SECRET`   | RSA/HMAC Access Token secret  | `dev_access_secret_32chars_min`                         | `stg_vault_injected_secret_key`                          | `prod_vault_injected_secret_key`                                       |
+| `JWT_REFRESH_SECRET`  | Refresh Token secret          | `dev_refresh_secret_32chars_min`                        | `stg_vault_injected_refresh_key`                         | `prod_vault_injected_refresh_key`                                      |
+| `JWT_ACCESS_EXPIRY`   | Access token lifespan         | `15m`                                                   | `15m`                                                    | `15m`                                                                  |
+| `JWT_REFRESH_EXPIRY`  | Refresh token lifespan        | `7d`                                                    | `7d`                                                     | `7d`                                                                   |
+| `GOOGLE_CLIENT_ID`    | OAuth 2.0 Client ID           | `mock_or_dev_gcp_id`                                    | `staging_gcp_client_id`                                  | `prod_gcp_client_id`                                                   |
+| `RAZORPAY_KEY_ID`     | Razorpay API Key              | `rzp_test_xxxxxxxxx`                                    | `rzp_test_xxxxxxxxx`                                     | `rzp_live_xxxxxxxxx`                                                   |
+| `RAZORPAY_KEY_SECRET` | Razorpay HMAC Webhook Secret  | `dev_razorpay_secret`                                   | `stg_razorpay_secret`                                    | `prod_razorpay_secret`                                                 |
+| `S3_BUCKET_NAME`      | Media storage bucket          | `yoga24x-dev-media`                                     | `yoga24x-staging-media`                                  | `yoga24x-prod-media`                                                   |
+| `FCM_SERVER_KEY`      | Firebase Cloud Messaging key  | `fcm_dev_mock_key`                                      | `fcm_staging_key`                                        | `fcm_prod_live_key`                                                    |
 
 ---
 
 ## 11. Configuration Strategy
 
 ### 1. Backend Centralized Config (`apps/backend/src/config/`)
+
 Configuration is encapsulated into type-safe, namespace-isolated TypeScript objects loaded asynchronously:
+
 ```typescript
 // database.config.ts
-import { registerAs } from '@nestjs/config';
+import { registerAs } from "@nestjs/config";
 
-export default registerAs('database', () => ({
+export default registerAs("database", () => ({
   url: process.env.DATABASE_URL,
-  maxConnections: parseInt(process.env.DB_MAX_CONNECTIONS || '20', 10),
-  sslEnabled: process.env.NODE_ENV === 'production',
+  maxConnections: parseInt(process.env.DB_MAX_CONNECTIONS || "20", 10),
+  sslEnabled: process.env.NODE_ENV === "production",
 }));
 ```
 
 ### 2. Feature Flags & Dynamic Configuration
+
 - **Dynamic Feature Toggling**: To support A/B testing and canary rollouts of experimental AI pose tracking models without redeploying code, we integrate a Redis-backed Dynamic Config pattern (compatible with PostHog or LaunchDarkly).
 - **Flag Evaluation**:
   - `ENABLE_AI_V2_POSE_MODEL`: Toggles between lightweight TFLite model and advanced high-precision joint tracking.
@@ -547,6 +556,7 @@ We enforce **Trunk-Based Development adapted with GitHub Flow / GitFlow governan
 ```
 
 ### Branch Roles & Protection Rules
+
 1. `main`: Highly protected production branch. Direct pushes are **strictly disabled**. Requires at least **2 Senior Engineer approvals**, passing CI/CD pipelines, zero SonarQube vulnerabilities, and up-to-date branch status before merging.
 2. `staging`: Mirror of the upcoming production release. Deploys automatically to staging Kubernetes cluster for QA regression testing and Product Manager sign-off.
 3. `develop`: Main integration branch for active sprints. Developers branch off `develop` and merge back via PRs.
@@ -555,7 +565,9 @@ We enforce **Trunk-Based Development adapted with GitHub Flow / GitFlow governan
 6. `hotfix/<ticket-id>-<short-description>`: Critical production emergency patches branched directly from `main` and merged back into both `main` and `develop`.
 
 ### Commit Convention
+
 Strict adherence to **Conventional Commits** enforced via Husky and `commitlint`:
+
 - `feat(auth): add google oauth2 verification endpoint`
 - `fix(ai-tracker): resolve elbow joint angle calculation drift`
 - `docs(api): update swagger schema for razorpay webhooks`
@@ -567,18 +579,21 @@ Strict adherence to **Conventional Commits** enforced via Husky and `commitlint`
 ## 13. Coding Standards
 
 ### TypeScript Standards (Backend & Admin)
+
 - **Strict Typing**: `strict: true`, `noImplicitAny: true`, `strictNullChecks: true` enforced in `tsconfig.json`. The use of `any` is strictly prohibited; use `unknown` or generics if dynamic types are required.
 - **Immutability & Pure Functions**: Prefer `const`, `readonly` properties, and immutable array operations (`map`, `filter`, `reduce`).
 - **Explicit API Contracts**: All public controller methods and service functions must explicitly declare return types (e.g., `async getUser(id: string): Promise<UserResponseDto>`).
 - **Asynchronous Safety**: Always use `async/await` over raw Promises. Avoid floating promises by enforcing `@typescript-eslint/no-floating-promises`.
 
 ### Dart & Flutter Standards (Mobile)
+
 - **Lint Rules**: Enforce `very_good_analysis` or Flutter's official `flutter_lints` with maximum strictness.
 - **Const Correctness**: Enforce `prefer_const_constructors` and `prefer_const_literals_to_create_immutables` to maximize widget rebuild performance and minimize GC memory pressure.
 - **Widget Modularization**: Never build monolithic widgets exceeding 150 lines. Break complex UI down into private functional widgets or separate stateless component classes.
 - **Zero Business Logic in UI**: Presentation widgets must only emit events and listen to state changes. Zero network calls, zero data transformations, and zero database queries inside widget `build()` methods.
 
 ### Automated Code Quality Tooling
+
 - **Prettier**: Unified opinionated formatting across TS/JS/JSON/CSS/MD (`printWidth: 100`, `singleQuote: true`, `trailingComma: 'all'`).
 - **ESLint**: Custom rule rulesets preventing unused variables, console logs in production, and circular dependencies.
 - **Husky & Lint-Staged**: Pre-commit hooks automatically execute Prettier formatting, ESLint verification, and Dart static analysis on staged files prior to commit creation.
@@ -589,25 +604,27 @@ Strict adherence to **Conventional Commits** enforced via Husky and `commitlint`
 
 To maintain uniformity across a polyglot codebase, exact naming conventions are mandated:
 
-| Element Type | Naming Convention | Example (TypeScript / Nest / Next) | Example (Dart / Flutter) | Example (Database / SQL) |
-| :--- | :--- | :--- | :--- | :--- |
-| **Files & Directories** | `kebab-case` (TS/JS) / `snake_case` (Dart) | `auth-controller.ts`, `user-card.tsx` | `auth_controller.dart`, `user_card.dart` | `create_users_table.sql` |
-| **Classes & Interfaces**| `PascalCase` | `UserService`, `JwtPayloadInterface`| `AuthRepository`, `PoseJointModel`| `UserTable`, `CourseEntity` |
-| **Variables & Functions**| `camelCase` | `calculateMET()`, `currentUser` | `calculateMet()`, `currentUser` | `current_user_id` |
-| **Constants & Enums** | `UPPER_SNAKE_CASE` (Values) / `PascalCase` (Type)| `MAX_VIDEO_SIZE_MB = 500`, `Role.ADMIN`| `maxVideoSizeMb = 500`, `Role.admin`| `STATUS_ACTIVE = 'ACTIVE'` |
-| **Database Tables** | Plural `snake_case` | `users`, `wellness_courses` | N/A | `users`, `wellness_courses` |
-| **Database Columns** | Singular `snake_case` | `created_at`, `instructor_id` | N/A | `created_at`, `instructor_id`|
-| **API Endpoints** | Plural `kebab-case` (RESTful)| `POST /api/v1/wellness-courses` | N/A | N/A |
+| Element Type              | Naming Convention                                 | Example (TypeScript / Nest / Next)      | Example (Dart / Flutter)                 | Example (Database / SQL)      |
+| :------------------------ | :------------------------------------------------ | :-------------------------------------- | :--------------------------------------- | :---------------------------- |
+| **Files & Directories**   | `kebab-case` (TS/JS) / `snake_case` (Dart)        | `auth-controller.ts`, `user-card.tsx`   | `auth_controller.dart`, `user_card.dart` | `create_users_table.sql`      |
+| **Classes & Interfaces**  | `PascalCase`                                      | `UserService`, `JwtPayloadInterface`    | `AuthRepository`, `PoseJointModel`       | `UserTable`, `CourseEntity`   |
+| **Variables & Functions** | `camelCase`                                       | `calculateMET()`, `currentUser`         | `calculateMet()`, `currentUser`          | `current_user_id`             |
+| **Constants & Enums**     | `UPPER_SNAKE_CASE` (Values) / `PascalCase` (Type) | `MAX_VIDEO_SIZE_MB = 500`, `Role.ADMIN` | `maxVideoSizeMb = 500`, `Role.admin`     | `STATUS_ACTIVE = 'ACTIVE'`    |
+| **Database Tables**       | Plural `snake_case`                               | `users`, `wellness_courses`             | N/A                                      | `users`, `wellness_courses`   |
+| **Database Columns**      | Singular `snake_case`                             | `created_at`, `instructor_id`           | N/A                                      | `created_at`, `instructor_id` |
+| **API Endpoints**         | Plural `kebab-case` (RESTful)                     | `POST /api/v1/wellness-courses`         | N/A                                      | N/A                           |
 
 ---
 
 ## 15. Dependency Management Strategy
 
 ### Package Management & Hoisting
+
 - **Web & Backend Ecosystem**: Managed exclusively via **pnpm** (v9+). We utilize pnpm's content-addressable storage and strict node_modules structure to eliminate phantom dependencies and reduce disk footprint.
 - **Mobile Ecosystem**: Managed via **Dart Pub** and **FVM (Flutter Version Management)**. FVM guarantees that every engineer and CI/CD runner compiles the app using the exact same Flutter SDK version (e.g., Flutter 3.22.0 Stable).
 
 ### Automated Dependency Maintenance & Security
+
 - **RenovateBot Integration**: Automated pull requests are generated weekly for minor and patch updates, and immediately for security vulnerabilities.
 - **Lockfile Integrity**: `pnpm-lock.yaml` and `pubspec.lock` must be committed to version control. CI pipelines execute `pnpm install --frozen-lockfile` and `flutter pub get` to prevent silent transitive dependency drift.
 - **Vulnerability Auditing**: CI/CD pipelines run `pnpm audit --audit-level=high` and `snyk test` on every PR. Any high or critical CVE immediately blocks PR merge.
@@ -619,6 +636,7 @@ To maintain uniformity across a polyglot codebase, exact naming conventions are 
 We implement a **Structured JSON Logging Strategy** with end-to-end distributed tracing across all touchpoints.
 
 ### Backend Logging (NestJS - Pino)
+
 - **Library**: `nestjs-pino` wrapped around **Pino** (high-performance JSON logger).
 - **Correlation & Trace IDs**: Every incoming HTTP request is assigned a unique `x-correlation-id` (UUIDv4) via an HTTP Middleware/Interceptor. This ID is propagated across all asynchronous operations using Node.js `AsyncLocalStorage` (ClsModule) and included in every log entry and outgoing database/microservice call.
 - **Log Levels**:
@@ -628,10 +646,12 @@ We implement a **Structured JSON Logging Strategy** with end-to-end distributed 
   - `debug`: Detailed SQL query execution, AI pose calculation telemetry (disabled in production).
 
 ### Frontend & Mobile Logging
+
 - **Production Crash Reporting**: **Sentry** and **Firebase Crashlytics** integrated into Flutter and Next.js.
 - **Sanitized Logging**: Strict sanitization wrappers guarantee that **Personally Identifiable Information (PII)** (passwords, OTPs, credit card numbers, JWT tokens, user biometrics) is redacted before logs are emitted or transmitted to telemetry collectors.
 
 ### Log Aggregation & Observability Stack
+
 - Logs are shipped asynchronously from Docker containers via FluentBit/Logstash to an **ELK Stack (Elasticsearch, Logstash, Kibana)** or **Datadog / AWS CloudWatch Logs** for real-time alerting, anomaly detection, and dashboard visualization.
 
 ---
@@ -641,7 +661,9 @@ We implement a **Structured JSON Logging Strategy** with end-to-end distributed 
 A unified, predictable error boundary architecture guarantees graceful failure recovery and clear debugging diagnostics.
 
 ### Backend Error Architecture (RFC 7807 Problem Details)
+
 All HTTP API responses return errors formatted according to the **RFC 7807 Problem Details for HTTP APIs** specification:
+
 ```json
 {
   "type": "https://api.yoga24x.com/errors/POSE_DETECTION_FAILED",
@@ -656,7 +678,9 @@ All HTTP API responses return errors formatted according to the **RFC 7807 Probl
 ```
 
 ### Domain Exception Hierarchy
+
 In NestJS, domain logic throws custom domain errors rather than HTTP exceptions:
+
 ```typescript
 export abstract class BaseDomainError extends Error {
   abstract readonly code: string;
@@ -665,9 +689,11 @@ export abstract class BaseDomainError extends Error {
 export class PoseDetectionError extends BaseDomainError { ... }
 export class InsufficientFundsError extends BaseDomainError { ... }
 ```
+
 A **Global Exception Filter** catches `BaseDomainError` instances and automatically translates them into RFC 7807 JSON HTTP responses.
 
 ### Mobile & Frontend Error Handling
+
 - **Flutter Functional Error Handling**: We utilize the `fpdart` or `dartz` package to enforce functional error handling across repositories and use cases:
   ```dart
   Future<Either<Failure, PoseAccuracyResult>> analyzeFrame(VideoFrame frame);
@@ -694,26 +720,31 @@ Ph 5:                                              [=== QA, Security & Launch ==
 ```
 
 ### Phase 1: Foundation, Infrastructure & Core Identity (Weeks 1-3)
+
 - **Deliverables**: Monorepo repository scaffolding, Docker local development stack, PostgreSQL schema initialization, CI/CD pipeline automation.
 - **Core Features**: NestJS Auth module (JWT + Refresh token rotation in Redis), Google OAuth 2.0 integration, OTP SMS verification, Flutter authentication screens, Next.js Admin login screen.
 - **Milestone 1**: Secure end-to-end authentication and token refresh working across Mobile, API, and Admin.
 
 ### Phase 2: Core Wellness Engine, Video Streaming & CMS (Weeks 4-7)
+
 - **Deliverables**: S3 pre-signed URL upload pipeline, CloudFront CDN integration, HLS video streaming setup.
 - **Core Features**: Course & routine catalog database models, NestJS wellness CRUD APIs, Next.js Admin course builder & video chapter uploader, Flutter course catalog UI, video player widget with adaptive bitrate streaming.
 - **Milestone 2**: Users can browse wellness courses and stream HD yoga instructional videos seamlessly on mobile; Admins can manage content via Next.js portal.
 
 ### Phase 3: AI Pose Tracking Engine & Real-Time Feedback (Weeks 8-11)
+
 - **Deliverables**: MLKit / TensorFlow Lite model integration in Flutter, WebRTC live video streaming infrastructure.
 - **Core Features**: Real-time on-device skeleton joint extraction (33 landmarks), mathematical angle calculation (elbow, knee, hip alignment), audio/visual posture correction feedback loops, NestJS WebSocket telemetry gateway, session accuracy scoring database sync.
 - **Milestone 3**: AI Pose Tracker successfully evaluates user yoga postures in real-time with <50ms latency and records accuracy telemetry to backend.
 
 ### Phase 4: Social, Gamification, Subscriptions & Notifications (Weeks 12-14)
+
 - **Deliverables**: Razorpay payment gateway integration, Firebase Cloud Messaging push notification engine, Redis leaderboard caching.
 - **Core Features**: Subscription tiers (Free, Pro, VIP), Razorpay webhook processing & invoice generation, streak tracking, achievement badges, community discussion forums, scheduled workout reminders.
 - **Milestone 4**: Complete monetization loop operational; users can purchase subscriptions via Razorpay, earn badges, and receive automated push notifications.
 
 ### Phase 5: QA, Security Audit, Performance Tuning & App Store Launch (Weeks 15-16)
+
 - **Deliverables**: Penetration testing, OWASP Top 10 security remediation, load testing (10,000 concurrent WebSocket connections), iOS App Store & Google Play Store submission.
 - **Core Features**: Sentry & Crashlytics production monitoring, database query indexing & optimization, final UI/UX polish, micro-animations, App Store compliance verification.
 - **Milestone 5**: Yoga24X Super App live on iOS App Store, Google Play Store, and Production Cloud Infrastructure.
@@ -798,60 +829,71 @@ graph TD
 To guarantee seamless integration, zero blocking dependencies, and continuous testability, engineering teams must execute development in the following strict sequential order:
 
 ### Step 1: Monorepo & Infrastructure Scaffolding
+
 1. Initialize Git repository, `.gitignore`, `.editorconfig`, and Prettier/ESLint root configs.
 2. Configure pnpm workspace (`pnpm-workspace.yaml`) and Turborepo pipeline (`turbo.json`).
 3. Create local Docker Compose infrastructure (`infra/docker/docker-compose.yml`) running PostgreSQL 16, Redis 7, and LocalStack (local S3).
 4. Establish GitHub Actions CI workflows for linting, typechecking, and automated PR checks.
 
 ### Step 2: Shared Contracts & Database Foundation
+
 1. Initialize `packages/shared-types`, `packages/shared-constants`, and `packages/shared-utils`.
 2. Initialize Prisma ORM in `apps/backend/prisma/` with modular schema definitions (`base.prisma`, `identity.prisma`, `wellness.prisma`, `billing.prisma`).
 3. Execute initial PostgreSQL database migration (`prisma migrate dev`) and build automated seeding scripts (`prisma db seed`).
 4. Export generated Prisma types and DTO interfaces to `packages/shared-types` for universal consumption.
 
 ### Step 3: Backend Core & Identity Module (NestJS)
+
 1. Bootstrap NestJS application structure with global validation pipes (Zod/class-validator), exception filters (RFC 7807), and Pino structured JSON logging.
 2. Build `config/` module with strict environment variable schema validation.
 3. Implement `auth/` and `users/` modules: JWT generation, Redis refresh token rotation, Google OAuth 2.0 verification, and OTP SMS delivery.
 4. Write comprehensive e2e automated API tests for authentication flows using Jest and Supertest.
 
 ### Step 4: Admin Portal Core & Content Pipeline (Next.js 15)
+
 1. Bootstrap Next.js 15 App Router project with TypeScript, Tailwind CSS, and Shadcn UI.
 2. Implement NextAuth / Auth.js integrating with NestJS JWT backend.
 3. Build authenticated Admin Dashboard layout, navigation sidebar, and RBAC route protection.
 4. Develop Course & Video Management CMS: S3 pre-signed URL file uploader, video chapter editor, and instructor management pages.
 
 ### Step 5: Mobile App Core & Identity Integration (Flutter)
+
 1. Bootstrap Flutter application with Melos workspace, Riverpod state management, and GoRouter declarative routing.
 2. Establish core design system: HSL color tokens, typography, glassmorphism UI components, and responsive layout helpers.
 3. Implement `core/network` Dio client with automated JWT access token attachment and 401 Unauthorized refresh token interception.
 4. Build `features/identity` clean architecture layers: Login, Google OAuth, OTP verification screens, and secure token storage.
 
 ### Step 6: Wellness Catalog & Video Streaming Integration
+
 1. **Backend**: Build `wellness/` module endpoints (courses, routines, filtering, pagination, instructor profiles).
 2. **Admin**: Build course publication workflows and video transcoding monitoring.
 3. **Mobile**: Build `features/wellness_catalog` pages: Course browsing, routine detail view, and custom video player widget with HLS streaming and offline caching.
 
 ### Step 7: AI Pose Tracking Engine & Real-Time Telemetry
+
 1. **Mobile**: Integrate MLKit / TensorFlow Lite vision plugins. Build CustomCanvas skeleton joint overlay painter.
 2. **Mobile**: Implement mathematical angle calculation algorithms (evaluating warrior pose, downward dog, tree pose alignment).
 3. **Backend**: Implement NestJS WebSocket Gateway (`ai-tracking.gateway.ts`) to receive real-time session telemetry, calculate running accuracy scores, and broadcast live community metrics.
 4. **Mobile**: Implement audio/visual posture correction feedback loops (e.g., "Straighten your left knee", visual green/red skeleton indicators).
 
 ### Step 8: Monetization, Gamification & Social Features
+
 1. **Backend & Admin**: Integrate Razorpay SDK. Implement checkout order creation, webhook verification signature checking, subscription tier upgrades, and automated invoice PDF generation.
 2. **Backend**: Build gamification engine: Streak calculation cron jobs, achievement badge evaluation triggers, and Redis-backed real-time leaderboards.
 3. **Mobile**: Build Razorpay checkout modal, subscription management screens, badge showcase profile, and interactive leaderboard UI.
 
 ### Step 9: Notifications, Observability & Hardening
+
 1. **Backend**: Integrate Firebase Cloud Messaging (FCM) push notification scheduling (workout reminders, live class alerts).
 2. **Full-Stack**: Integrate Sentry crash reporting across Flutter and Next.js; verify Pino structured log ingestion into CloudWatch/Datadog.
 3. **DevOps**: Execute load testing (K6 / Locust against NestJS API & WebSocket gateway), database query optimization (EXPLAIN ANALYZE), and OWASP penetration testing.
 
 ### Step 10: Production Deployment & App Store Submission
+
 1. Deploy production infrastructure via Terraform & Kubernetes Helm charts to AWS/GCP (ECS/EKS, RDS PostgreSQL, ElastiCache Redis, S3, CloudFront).
 2. Configure automated GitHub Actions CI/CD production pipelines with staging sign-off gates.
 3. Prepare iOS App Store and Google Play Store metadata, privacy nutrition labels, screenshots, and submit Yoga24X mobile app for review.
 
 ---
-*Engineering Foundation Architecture & Roadmap v1.0.0 — Yoga24X AI Engineering OS*
+
+_Engineering Foundation Architecture & Roadmap v1.0.0 — Yoga24X AI Engineering OS_

@@ -1,6 +1,7 @@
 # Yoga24X Production Launch Checklist
 
 ## How to Use
+
 Work through each section in order before launch. Check off every item. Any unchecked item is a launch blocker.
 
 ---
@@ -93,12 +94,12 @@ Work through each section in order before launch. Check off every item. Any unch
 
 ## Go/No-Go Decision
 
-| Owner | Sign-Off | Date |
-|---|---|---|
-| CTO | | |
-| Principal SRE | | |
-| Principal Security | | |
-| QA Lead | | |
-| Product Lead | | |
+| Owner              | Sign-Off | Date |
+| ------------------ | -------- | ---- |
+| CTO                |          |      |
+| Principal SRE      |          |      |
+| Principal Security |          |      |
+| QA Lead            |          |      |
+| Product Lead       |          |      |
 
 > All five sign-offs required before production traffic is switched.

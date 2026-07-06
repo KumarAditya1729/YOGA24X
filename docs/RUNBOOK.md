@@ -1,17 +1,18 @@
 # Yoga24X Operations Runbook
 
 ## Purpose
+
 Quick-reference guide for on-call engineers. Use this document to diagnose and resolve common production issues.
 
 ---
 
 ## Health Check URLs
 
-| Endpoint | Purpose | Expected |
-|---|---|---|
-| `GET /health` | Liveness probe | 200 `{ status: "ok" }` |
-| `GET /ready` | Readiness probe | 200 all dependencies healthy |
-| `GET /api/docs` | Swagger (dev only) | 200 HTML |
+| Endpoint        | Purpose            | Expected                     |
+| --------------- | ------------------ | ---------------------------- |
+| `GET /health`   | Liveness probe     | 200 `{ status: "ok" }`       |
+| `GET /ready`    | Readiness probe    | 200 all dependencies healthy |
+| `GET /api/docs` | Swagger (dev only) | 200 HTML                     |
 
 ---
 
@@ -20,6 +21,7 @@ Quick-reference guide for on-call engineers. Use this document to diagnose and r
 **Symptoms:** `kubectl get pods` shows `CrashLoopBackOff` or `Error`
 
 **Steps:**
+
 ```bash
 # 1. Check logs
 kubectl logs deploy/yoga24x-backend -n yoga24x --previous
@@ -44,6 +46,7 @@ kubectl exec -it deploy/yoga24x-backend -n yoga24x -- \
 **Symptoms:** Grafana alerts, user complaints
 
 **Steps:**
+
 ```bash
 # 1. Check database slow queries
 SELECT query, mean_exec_time, calls
@@ -68,10 +71,12 @@ kubectl scale deployment yoga24x-backend --replicas=6 -n yoga24x
 **Symptoms:** Users getting 429 Too Many Requests
 
 **Diagnosis:**
+
 - Check if a specific IP is hammering the API
 - Check if a mobile client has a retry loop bug
 
 **Resolution:**
+
 ```bash
 # Temporarily increase throttle limit via feature flag
 curl -X POST https://api.yoga24x.com/api/v1/admin/super/settings \
@@ -141,23 +146,23 @@ curl https://api.yoga24x.com/health | jq .version
 
 ## Escalation Matrix
 
-| Severity | Response Time | Contact |
-|---|---|---|
-| P0 – Platform Down | Immediate | CTO + SRE Lead + On-Call |
-| P1 – Major Feature Down | 15 min | SRE Lead + On-Call |
-| P2 – Degraded Performance | 30 min | On-Call Engineer |
-| P3 – Minor Issues | 4 hours | Engineering Team |
+| Severity                  | Response Time | Contact                  |
+| ------------------------- | ------------- | ------------------------ |
+| P0 – Platform Down        | Immediate     | CTO + SRE Lead + On-Call |
+| P1 – Major Feature Down   | 15 min        | SRE Lead + On-Call       |
+| P2 – Degraded Performance | 30 min        | On-Call Engineer         |
+| P3 – Minor Issues         | 4 hours       | Engineering Team         |
 
 ---
 
 ## Key Metrics to Monitor
 
-| Metric | Healthy Threshold | Alert Threshold |
-|---|---|---|
-| HTTP P95 Response Time | < 200ms | > 500ms |
-| Error Rate (5xx) | < 0.1% | > 1% |
-| CPU Utilization | < 60% | > 80% |
-| Memory Usage | < 70% | > 85% |
-| DB Connections | < 40/50 | > 45/50 |
-| Redis Memory | < 400MB | > 480MB |
-| Pod Restarts | 0 in 1h | > 2 in 1h |
+| Metric                 | Healthy Threshold | Alert Threshold |
+| ---------------------- | ----------------- | --------------- |
+| HTTP P95 Response Time | < 200ms           | > 500ms         |
+| Error Rate (5xx)       | < 0.1%            | > 1%            |
+| CPU Utilization        | < 60%             | > 80%           |
+| Memory Usage           | < 70%             | > 85%           |
+| DB Connections         | < 40/50           | > 45/50         |
+| Redis Memory           | < 400MB           | > 480MB         |
+| Pod Restarts           | 0 in 1h           | > 2 in 1h       |

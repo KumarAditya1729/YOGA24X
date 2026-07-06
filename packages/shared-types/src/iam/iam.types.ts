@@ -2,10 +2,17 @@
 // Yoga24X AI Engineering OS — IAM & User Management Types & Interfaces
 // ==============================================================================
 
-export type VerificationStatusType = 'PENDING' | 'IN_REVIEW' | 'APPROVED' | 'REJECTED' | 'RESUBMISSION_REQUIRED';
-export type OrganizationRoleType = 'OWNER' | 'ADMIN' | 'MEMBER';
-export type OrganizationType = 'STUDIO' | 'CORPORATE';
-export type ConsentType = 'TERMS_OF_SERVICE' | 'PRIVACY_POLICY' | 'COOKIE_PREFERENCES' | 'MARKETING_COMMUNICATIONS' | 'AI_COACHING' | 'HEALTH_DATA_PROCESSING';
+export type VerificationStatusType =
+  "PENDING" | "IN_REVIEW" | "APPROVED" | "REJECTED" | "RESUBMISSION_REQUIRED";
+export type OrganizationRoleType = "OWNER" | "ADMIN" | "MEMBER";
+export type OrganizationType = "STUDIO" | "CORPORATE";
+export type ConsentType =
+  | "TERMS_OF_SERVICE"
+  | "PRIVACY_POLICY"
+  | "COOKIE_PREFERENCES"
+  | "MARKETING_COMMUNICATIONS"
+  | "AI_COACHING"
+  | "HEALTH_DATA_PROCESSING";
 
 export interface ProfileCompletionResult {
   percentage: number;

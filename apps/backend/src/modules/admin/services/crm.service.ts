@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.module';
-import { LeadStatus } from '@prisma/client';
+import { Injectable } from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.module";
+import { LeadStatus } from "@prisma/client";
 
 @Injectable()
 export class CrmService {
@@ -20,6 +20,6 @@ export class CrmService {
   }
 
   async getLeads() {
-    return this.prisma.crmLead.findMany({ orderBy: { createdAt: 'desc' } });
+    return this.prisma.crmLead.findMany({ orderBy: { createdAt: "desc" } });
   }
 }

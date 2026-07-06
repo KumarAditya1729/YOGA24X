@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.module';
+import { Injectable } from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.module";
 
 @Injectable()
 export class FeedRepository {
@@ -9,14 +9,14 @@ export class FeedRepository {
     return this.prisma.communityPost.findMany({
       where: {
         isPublished: true,
-        groupId: null // Only global posts
+        groupId: null, // Only global posts
       },
       include: {
         author: { select: { id: true, email: true } },
-        _count: { select: { likes: true, comments: true } }
+        _count: { select: { likes: true, comments: true } },
       },
-      orderBy: { createdAt: 'desc' },
-      take: limit
+      orderBy: { createdAt: "desc" },
+      take: limit,
     });
   }
 
@@ -24,14 +24,14 @@ export class FeedRepository {
     return this.prisma.communityPost.findMany({
       where: {
         isPublished: true,
-        groupId
+        groupId,
       },
       include: {
         author: { select: { id: true, email: true } },
-        _count: { select: { likes: true, comments: true } }
+        _count: { select: { likes: true, comments: true } },
       },
-      orderBy: { createdAt: 'desc' },
-      take: limit
+      orderBy: { createdAt: "desc" },
+      take: limit,
     });
   }
 }

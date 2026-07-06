@@ -2,15 +2,24 @@
 // Yoga24X AI Engineering OS — Prisma Module & Service
 // ==============================================================================
 
-import { Injectable, OnModuleInit, OnModuleDestroy, Module, Global } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import {
+  Injectable,
+  OnModuleInit,
+  OnModuleDestroy,
+  Module,
+  Global,
+} from "@nestjs/common";
+import { PrismaClient } from "@prisma/client";
 
 @Injectable()
-export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
+export class PrismaService
+  extends PrismaClient
+  implements OnModuleInit, OnModuleDestroy
+{
   constructor() {
     super({
-      log: ['warn', 'error'],
-      errorFormat: 'minimal',
+      log: ["warn", "error"],
+      errorFormat: "minimal",
     });
   }
 

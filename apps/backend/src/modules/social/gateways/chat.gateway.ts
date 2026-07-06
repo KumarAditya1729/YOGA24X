@@ -6,15 +6,15 @@ import {
   ConnectedSocket,
   OnGatewayConnection,
   OnGatewayDisconnect,
-} from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
-import { ChatService } from '../services/chat.service';
+} from "@nestjs/websockets";
+import { Server, Socket } from "socket.io";
+import { ChatService } from "../services/chat.service";
 
 @WebSocketGateway({
   cors: {
-    origin: '*',
+    origin: "*",
   },
-  namespace: '/chat'
+  namespace: "/chat",
 })
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
@@ -30,21 +30,22 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     console.log(`Client disconnected from Chat: ${client.id}`);
   }
 
-  @SubscribeMessage('joinConversation')
+  @SubscribeMessage("joinConversation")
   handleJoinConversation(
     @MessageBody() data: { conversationId: string },
     @ConnectedSocket() client: Socket,
   ) {
     client.join(data.conversationId);
-    return { event: 'joined', data: { conversationId: data.conversationId } };
+    return { event: "joined", data: { conversationId: data.conversationId } };
   }
 
-  @SubscribeMessage('typing')
+  @SubscribeMessage("typing")
   handleTyping(
-    @MessageBody() data: { conversationId: string; userId: string; isTyping: boolean },
+    @MessageBody()
+    data: { conversationId: string; userId: string; isTyping: boolean },
     @ConnectedSocket() client: Socket,
   ) {
-    client.to(data.conversationId).emit('typingIndicator', {
+    client.to(data.conversationId).emit("typingIndicator", {
       userId: data.userId,
       isTyping: data.isTyping,
     });

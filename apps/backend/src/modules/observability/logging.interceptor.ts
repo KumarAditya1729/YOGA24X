@@ -9,35 +9,36 @@ import {
   ExecutionContext,
   CallHandler,
   Logger,
-} from '@nestjs/common';
-import { Observable } from 'rxjs';
-import { tap, catchError } from 'rxjs/operators';
-import { throwError } from 'rxjs';
-import { randomUUID } from 'crypto';
+} from "@nestjs/common";
+import { Observable } from "rxjs";
+import { tap, catchError } from "rxjs/operators";
+import { throwError } from "rxjs";
+import { randomUUID } from "crypto";
 
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
-  private readonly logger = new Logger('HTTP');
+  private readonly logger = new Logger("HTTP");
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     const req = context.switchToHttp().getRequest();
     const res = context.switchToHttp().getResponse();
 
     // Generate trace / correlation IDs
-    const traceId = (req.headers['x-trace-id'] as string) || randomUUID();
-    const correlationId = (req.headers['x-correlation-id'] as string) || randomUUID();
+    const traceId = (req.headers["x-trace-id"] as string) || randomUUID();
+    const correlationId =
+      (req.headers["x-correlation-id"] as string) || randomUUID();
 
     // Attach to request for downstream use
     req.traceId = traceId;
     req.correlationId = correlationId;
 
     // Propagate to response headers
-    res.setHeader('X-Trace-ID', traceId);
-    res.setHeader('X-Correlation-ID', correlationId);
+    res.setHeader("X-Trace-ID", traceId);
+    res.setHeader("X-Correlation-ID", correlationId);
 
     const { method, url, ip } = req;
-    const userAgent = req.headers['user-agent'] || '';
-    const userId = (req.user as { id?: string } | undefined)?.id ?? 'anonymous';
+    const userAgent = req.headers["user-agent"] || "";
+    const userId = (req.user as { id?: string } | undefined)?.id ?? "anonymous";
     const startTime = Date.now();
 
     return next.handle().pipe(
@@ -47,8 +48,8 @@ export class LoggingInterceptor implements NestInterceptor {
 
         this.logger.log(
           JSON.stringify({
-            level: 'info',
-            event: 'http_request',
+            level: "info",
+            event: "http_request",
             traceId,
             correlationId,
             method,
@@ -68,8 +69,8 @@ export class LoggingInterceptor implements NestInterceptor {
 
         this.logger.error(
           JSON.stringify({
-            level: 'error',
-            event: 'http_error',
+            level: "error",
+            event: "http_error",
             traceId,
             correlationId,
             method,

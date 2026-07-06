@@ -1,6 +1,6 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.module';
-import { CreatePayoutRequestDto } from '../dto/teacher-operations.dto';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.module";
+import { CreatePayoutRequestDto } from "../dto/teacher-operations.dto";
 
 @Injectable()
 export class TeacherEarningsRepository {
@@ -9,7 +9,7 @@ export class TeacherEarningsRepository {
   async getPayouts(userId: string) {
     return this.prisma.teacherPayoutRequest.findMany({
       where: { userId },
-      orderBy: { requestedAt: 'desc' },
+      orderBy: { requestedAt: "desc" },
     });
   }
 
@@ -18,7 +18,7 @@ export class TeacherEarningsRepository {
       data: {
         userId,
         amountCents: data.amountCents,
-        currency: data.currency ?? 'USD',
+        currency: data.currency ?? "USD",
         bankAccountId: data.bankAccountId,
       },
     });
@@ -29,7 +29,7 @@ export class TeacherEarningsRepository {
     let wallet = await this.prisma.wallet.findUnique({ where: { userId } });
     if (!wallet) {
       wallet = await this.prisma.wallet.create({
-        data: { userId, balanceCents: 0, currency: 'USD' },
+        data: { userId, balanceCents: 0, currency: "USD" },
       });
     }
     return wallet;

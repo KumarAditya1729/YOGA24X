@@ -1,12 +1,12 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { StudentRepository } from '../repositories/student.repository';
-import { 
-  UpdateStudentProfileDto, 
-  CreateGuardianDto, 
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { StudentRepository } from "../repositories/student.repository";
+import {
+  UpdateStudentProfileDto,
+  CreateGuardianDto,
   CreateEmergencyContactDto,
   UpdateStudentPreferenceDto,
-  CreateStudentAchievementDto
-} from '../dto/student.dto';
+  CreateStudentAchievementDto,
+} from "../dto/student.dto";
 
 @Injectable()
 export class StudentService {
@@ -14,7 +14,7 @@ export class StudentService {
 
   async getProfile(userId: string) {
     const profile = await this.studentRepository.getProfile(userId);
-    if (!profile) throw new NotFoundException('Student profile not found');
+    if (!profile) throw new NotFoundException("Student profile not found");
     return profile;
   }
 

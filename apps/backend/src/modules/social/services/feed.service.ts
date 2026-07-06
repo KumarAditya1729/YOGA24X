@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { FeedRepository } from '../repositories/feed.repository';
+import { Injectable } from "@nestjs/common";
+import { FeedRepository } from "../repositories/feed.repository";
 
 @Injectable()
 export class FeedService {

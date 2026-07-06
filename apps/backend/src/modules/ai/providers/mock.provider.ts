@@ -1,6 +1,10 @@
-import { Injectable } from '@nestjs/common';
-import { AiProvider, AiChatRequest, AiChatResponse } from '../interfaces/ai-provider.interface';
-import { AiProviderType, AiModelRole } from '@prisma/client';
+import { Injectable } from "@nestjs/common";
+import {
+  AiProvider,
+  AiChatRequest,
+  AiChatResponse,
+} from "../interfaces/ai-provider.interface";
+import { AiProviderType, AiModelRole } from "@prisma/client";
 
 @Injectable()
 export class MockProvider implements AiProvider {
@@ -22,10 +26,10 @@ export class MockProvider implements AiProvider {
 
   async chat(request: AiChatRequest): Promise<AiChatResponse> {
     const lastMessage = request.messages[request.messages.length - 1];
-    
+
     // Simulate slight delay
-    await new Promise(resolve => setTimeout(resolve, 300));
-    
+    await new Promise((resolve) => setTimeout(resolve, 300));
+
     return {
       content: `[MOCK] I received your message: "${lastMessage.content}". This is a fallback deterministic response since no real AI provider is configured or available.`,
       provider: AiProviderType.MOCK,

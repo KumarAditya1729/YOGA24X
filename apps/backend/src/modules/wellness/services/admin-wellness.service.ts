@@ -3,10 +3,10 @@
 // Business Logic for Admin Health Profile Viewer, Verification Queue, and Risk Dashboard
 // ==============================================================================
 
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.module';
-import { HealthProfileRepository } from '../repositories/health-profile.repository';
-import { MedicalSafetyRepository } from '../repositories/medical-safety.repository';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.module";
+import { HealthProfileRepository } from "../repositories/health-profile.repository";
+import { MedicalSafetyRepository } from "../repositories/medical-safety.repository";
 
 @Injectable()
 export class AdminWellnessService {
@@ -20,20 +20,20 @@ export class AdminWellnessService {
     const totalHealthProfiles = await this.prisma.healthProfile.count();
     const verifiedProfiles = await this.healthRepo.getVerifiedProfilesCount();
     const criticalSafetyFlags = await this.prisma.medicalSafetyFlag.count({
-      where: { isActive: true, severity: 'CRITICAL' },
+      where: { isActive: true, severity: "CRITICAL" },
     });
     const highSafetyFlags = await this.prisma.medicalSafetyFlag.count({
-      where: { isActive: true, severity: 'HIGH' },
+      where: { isActive: true, severity: "HIGH" },
     });
 
     const recentCriticalAlerts = await this.prisma.medicalSafetyFlag.findMany({
-      where: { isActive: true, severity: 'CRITICAL' },
+      where: { isActive: true, severity: "CRITICAL" },
       include: {
         user: {
           select: { id: true, email: true, firstName: true, lastName: true },
         },
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
       take: 20,
     });
 
@@ -60,12 +60,12 @@ export class AdminWellnessService {
         phoneNumber: true,
         status: true,
         healthProfile: true,
-        wellnessAssessments: { orderBy: { assessedAt: 'desc' }, take: 5 },
+        wellnessAssessments: { orderBy: { assessedAt: "desc" }, take: 5 },
         medicalSafetyFlags: { where: { isActive: true } },
       },
     });
 
-    if (!user) throw new NotFoundException('User not found');
+    if (!user) throw new NotFoundException("User not found");
     return user;
   }
 

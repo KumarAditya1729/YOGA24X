@@ -1,16 +1,18 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.module';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.module";
 import {
   UpdateTeacherBookingRuleDto,
   CreateTeacherHolidayDto,
-} from '../dto/teacher-operations.dto';
+} from "../dto/teacher-operations.dto";
 
 @Injectable()
 export class TeacherAvailabilityRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async getBookingRule(userId: string) {
-    let rule = await this.prisma.teacherBookingRule.findUnique({ where: { userId } });
+    let rule = await this.prisma.teacherBookingRule.findUnique({
+      where: { userId },
+    });
     if (!rule) {
       // create default
       rule = await this.prisma.teacherBookingRule.create({ data: { userId } });
@@ -29,7 +31,7 @@ export class TeacherAvailabilityRepository {
   async getHolidays(userId: string) {
     return this.prisma.teacherHoliday.findMany({
       where: { userId },
-      orderBy: { startDate: 'asc' },
+      orderBy: { startDate: "asc" },
     });
   }
 
@@ -46,9 +48,11 @@ export class TeacherAvailabilityRepository {
   }
 
   async deleteHoliday(userId: string, id: string) {
-    const holiday = await this.prisma.teacherHoliday.findUnique({ where: { id } });
+    const holiday = await this.prisma.teacherHoliday.findUnique({
+      where: { id },
+    });
     if (!holiday || holiday.userId !== userId) {
-      throw new NotFoundException('Holiday not found');
+      throw new NotFoundException("Holiday not found");
     }
     return this.prisma.teacherHoliday.delete({ where: { id } });
   }

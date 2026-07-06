@@ -1,9 +1,13 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.module';
-import { EventEmitter2 } from '@nestjs/event-emitter';
-import * as crypto from 'crypto';
-import { CreateOrderDto, VerifyPaymentDto, CreateOfflinePaymentDto } from '../dto/commerce.dto';
-import { PaymentStatus } from '@prisma/client';
+import { Injectable, BadRequestException } from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.module";
+import { EventEmitter2 } from "@nestjs/event-emitter";
+import * as crypto from "crypto";
+import {
+  CreateOrderDto,
+  VerifyPaymentDto,
+  CreateOfflinePaymentDto,
+} from "../dto/commerce.dto";
+import { PaymentStatus } from "@prisma/client";
 
 @Injectable()
 export class PaymentRepository {
@@ -27,9 +31,9 @@ export class PaymentRepository {
     const transaction = await this.prisma.paymentTransaction.create({
       data: {
         userId,
-        razorpayOrderId: `order_${crypto.randomBytes(8).toString('hex')}`,
+        razorpayOrderId: `order_${crypto.randomBytes(8).toString("hex")}`,
         amountCents: dto.amountCents,
-        currency: dto.currency || 'INR',
+        currency: dto.currency || "INR",
         status: PaymentStatus.PENDING,
       },
     });
@@ -52,14 +56,14 @@ export class PaymentRepository {
 
   async verifyAndCapturePayment(dto: VerifyPaymentDto) {
     const body = `${dto.razorpayOrderId}|${dto.razorpayPaymentId}`;
-    const razorpayKeySecret = process.env.RAZORPAY_KEY_SECRET || '';
+    const razorpayKeySecret = process.env.RAZORPAY_KEY_SECRET || "";
     const expectedSignature = crypto
-      .createHmac('sha256', razorpayKeySecret)
+      .createHmac("sha256", razorpayKeySecret)
       .update(body)
-      .digest('hex');
+      .digest("hex");
 
     if (expectedSignature !== dto.razorpaySignature) {
-      throw new BadRequestException('Invalid payment signature');
+      throw new BadRequestException("Invalid payment signature");
     }
 
     const transaction = await this.prisma.paymentTransaction.update({
@@ -71,7 +75,10 @@ export class PaymentRepository {
       },
     });
 
-    this.eventEmitter.emit('payment.completed', { transactionId: transaction.id, userId: transaction.userId });
+    this.eventEmitter.emit("payment.completed", {
+      transactionId: transaction.id,
+      userId: transaction.userId,
+    });
     return transaction;
   }
 
@@ -79,17 +86,25 @@ export class PaymentRepository {
     return this.prisma.paymentTransaction.create({
       data: {
         userId: dto.userId,
-        razorpayOrderId: `offline_${crypto.randomBytes(8).toString('hex')}`,
+        razorpayOrderId: `offline_${crypto.randomBytes(8).toString("hex")}`,
         amountCents: dto.amountCents,
-        currency: 'INR',
+        currency: "INR",
         status: PaymentStatus.SUCCESS,
         paymentMethod: dto.paymentMethod,
       },
     });
   }
 
-  async handleWebhook(gateway: string, eventId: string, eventType: string, payload: any, signature?: string) {
-    const existing = await this.prisma.paymentWebhookEvent.findUnique({ where: { eventId } });
+  async handleWebhook(
+    gateway: string,
+    eventId: string,
+    eventType: string,
+    payload: any,
+    signature?: string,
+  ) {
+    const existing = await this.prisma.paymentWebhookEvent.findUnique({
+      where: { eventId },
+    });
     if (existing?.processed) return { alreadyProcessed: true };
 
     const event = await this.prisma.paymentWebhookEvent.upsert({
@@ -111,7 +126,7 @@ export class PaymentRepository {
   async getPaymentHistory(userId: string) {
     return this.prisma.paymentTransaction.findMany({
       where: { userId },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
       take: 50,
     });
   }

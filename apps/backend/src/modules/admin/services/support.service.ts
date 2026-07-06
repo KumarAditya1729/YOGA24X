@@ -1,14 +1,25 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.module';
-import { TicketStatus, TicketPriority } from '@prisma/client';
+import { Injectable } from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.module";
+import { TicketStatus, TicketPriority } from "@prisma/client";
 
 @Injectable()
 export class SupportService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async createTicket(userId: string, subject: string, description: string, priority: TicketPriority) {
+  async createTicket(
+    userId: string,
+    subject: string,
+    description: string,
+    priority: TicketPriority,
+  ) {
     return this.prisma.supportTicket.create({
-      data: { userId, subject, description, priority, status: TicketStatus.OPEN },
+      data: {
+        userId,
+        subject,
+        description,
+        priority,
+        status: TicketStatus.OPEN,
+      },
     });
   }
 
@@ -19,7 +30,12 @@ export class SupportService {
     });
   }
 
-  async addComment(ticketId: string, userId: string, content: string, isInternal = false) {
+  async addComment(
+    ticketId: string,
+    userId: string,
+    content: string,
+    isInternal = false,
+  ) {
     return this.prisma.ticketComment.create({
       data: { ticketId, userId, content, isInternal },
     });

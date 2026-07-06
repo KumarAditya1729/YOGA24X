@@ -1,7 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { StudentHealthRepository } from '../repositories/student-health.repository';
-import { UpdateMedicalVisibilityDto } from '../dto/student.dto';
-import { Prisma } from '@prisma/client';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { StudentHealthRepository } from "../repositories/student-health.repository";
+import { UpdateMedicalVisibilityDto } from "../dto/student.dto";
+import { Prisma } from "@prisma/client";
 
 @Injectable()
 export class StudentHealthService {
@@ -9,7 +9,7 @@ export class StudentHealthService {
 
   async getHealthProfile(userId: string) {
     const profile = await this.healthRepository.getHealthProfile(userId);
-    if (!profile) throw new NotFoundException('Health profile not found');
+    if (!profile) throw new NotFoundException("Health profile not found");
     return profile;
   }
 
@@ -33,10 +33,15 @@ export class StudentHealthService {
     return this.healthRepository.getMedicalVisibility(userId);
   }
 
-  async updateMedicalVisibility(userId: string, dto: UpdateMedicalVisibilityDto) {
+  async updateMedicalVisibility(
+    userId: string,
+    dto: UpdateMedicalVisibilityDto,
+  ) {
     return this.healthRepository.updateMedicalVisibility(userId, {
       ...dto,
-      restrictedFieldsJson: dto.restrictedFields ? JSON.stringify(dto.restrictedFields) : undefined,
+      restrictedFieldsJson: dto.restrictedFields
+        ? JSON.stringify(dto.restrictedFields)
+        : undefined,
     });
   }
 }

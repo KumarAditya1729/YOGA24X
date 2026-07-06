@@ -1,7 +1,7 @@
-import { AiProviderType, AiModelRole } from '@prisma/client';
+import { AiProviderType, AiModelRole } from "@prisma/client";
 
 export interface AiMessageParams {
-  role: 'user' | 'assistant' | 'system';
+  role: "user" | "assistant" | "system";
   content: string;
 }
 

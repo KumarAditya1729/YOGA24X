@@ -2,8 +2,8 @@
 // Yoga24X — Teacher Stats Repository
 // Denormalized stat computation and persistence
 // ==============================================================================
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.module';
+import { Injectable } from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.module";
 
 @Injectable()
 export class TeacherStatsRepository {
@@ -27,7 +27,12 @@ export class TeacherStatsRepository {
     // Aggregate reviews
     const reviewAgg = await this.prisma.teacherReview.aggregate({
       where: { teacherUserId: userId, isHidden: false },
-      _avg: { rating: true, communicationRating: true, knowledgeRating: true, punctualityRating: true },
+      _avg: {
+        rating: true,
+        communicationRating: true,
+        knowledgeRating: true,
+        punctualityRating: true,
+      },
       _count: { id: true },
     });
 
@@ -58,7 +63,7 @@ export class TeacherStatsRepository {
   async updateFromBooking(userId: string, studentId: string) {
     // Increment class/student counters
     const uniqueStudents = await this.prisma.teacherReview.groupBy({
-      by: ['studentUserId'],
+      by: ["studentUserId"],
       where: { teacherUserId: userId },
       _count: { studentUserId: true },
     });

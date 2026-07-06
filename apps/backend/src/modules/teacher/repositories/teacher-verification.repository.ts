@@ -2,23 +2,28 @@
 // Yoga24X — Teacher Verification Repository
 // KYC workflow state machine: submit → review → approve/reject → resubmit
 // ==============================================================================
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.module';
-import { SubmitVerificationDto, ReviewVerificationDto } from '../dto/teacher.dto';
+import { Injectable } from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.module";
+import {
+  SubmitVerificationDto,
+  ReviewVerificationDto,
+} from "../dto/teacher.dto";
 
 @Injectable()
 export class TeacherVerificationRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async submitVerification(userId: string, dto: SubmitVerificationDto) {
-    const existing = await this.prisma.teacherVerification.findUnique({ where: { userId } });
+    const existing = await this.prisma.teacherVerification.findUnique({
+      where: { userId },
+    });
 
     if (existing) {
       // Resubmission flow
       const updated = await this.prisma.teacherVerification.update({
         where: { userId },
         data: {
-          status: 'RESUBMITTED',
+          status: "RESUBMITTED",
           submissionCount: { increment: 1 },
           lastSubmittedAt: new Date(),
           reviewedBy: null,
@@ -36,12 +41,12 @@ export class TeacherVerificationRepository {
         data: [
           {
             verificationId: updated.id,
-            documentType: 'GOVERNMENT_ID',
+            documentType: "GOVERNMENT_ID",
             documentUrl: dto.identityDocumentUrl,
           },
           {
             verificationId: updated.id,
-            documentType: 'GOVERNMENT_ID_SECONDARY',
+            documentType: "GOVERNMENT_ID_SECONDARY",
             documentUrl: dto.identityDocumentSecondaryUrl,
           },
         ],
@@ -57,11 +62,17 @@ export class TeacherVerificationRepository {
     return this.prisma.teacherVerification.create({
       data: {
         userId,
-        status: 'PENDING',
+        status: "PENDING",
         documents: {
           create: [
-            { documentType: 'GOVERNMENT_ID', documentUrl: dto.identityDocumentUrl },
-            { documentType: 'GOVERNMENT_ID_SECONDARY', documentUrl: dto.identityDocumentSecondaryUrl },
+            {
+              documentType: "GOVERNMENT_ID",
+              documentUrl: dto.identityDocumentUrl,
+            },
+            {
+              documentType: "GOVERNMENT_ID_SECONDARY",
+              documentUrl: dto.identityDocumentSecondaryUrl,
+            },
           ],
         },
       },
@@ -73,7 +84,7 @@ export class TeacherVerificationRepository {
     return this.prisma.teacherVerification.findUnique({
       where: { userId },
       include: {
-        documents: { orderBy: { uploadedAt: 'desc' } },
+        documents: { orderBy: { uploadedAt: "desc" } },
       },
     });
   }
@@ -82,7 +93,7 @@ export class TeacherVerificationRepository {
     return this.prisma.teacherVerification.update({
       where: { userId },
       data: {
-        status: 'UNDER_REVIEW',
+        status: "UNDER_REVIEW",
         reviewedBy: reviewerId,
         manualReviewRequired: true,
       },
@@ -90,7 +101,7 @@ export class TeacherVerificationRepository {
   }
 
   async review(userId: string, dto: ReviewVerificationDto, reviewerId: string) {
-    const status = dto.decision === 'APPROVED' ? 'APPROVED' : 'REJECTED';
+    const status = dto.decision === "APPROVED" ? "APPROVED" : "REJECTED";
     return this.prisma.teacherVerification.update({
       where: { userId },
       data: {
@@ -101,8 +112,8 @@ export class TeacherVerificationRepository {
         rejectionReason: dto.rejectionReason,
         identityVerified: dto.identityVerified ?? false,
         certificateVerified: dto.certificateVerified ?? false,
-        approvedAt: status === 'APPROVED' ? new Date() : null,
-        rejectedAt: status === 'REJECTED' ? new Date() : null,
+        approvedAt: status === "APPROVED" ? new Date() : null,
+        rejectedAt: status === "REJECTED" ? new Date() : null,
       },
     });
   }
@@ -121,17 +132,28 @@ export class TeacherVerificationRepository {
 
   async listPendingReviews(page: number, limit: number) {
     const skip = (page - 1) * limit;
-    const where = { status: { in: ['PENDING', 'RESUBMITTED', 'UNDER_REVIEW'] as any } };
+    const where = {
+      status: { in: ["PENDING", "RESUBMITTED", "UNDER_REVIEW"] as any },
+    };
     const [data, total] = await Promise.all([
       this.prisma.teacherVerification.findMany({
         where,
         skip,
         take: limit,
-        orderBy: [{ aiFraudFlagged: 'desc' }, { lastSubmittedAt: 'asc' }],
+        orderBy: [{ aiFraudFlagged: "desc" }, { lastSubmittedAt: "asc" }],
         include: {
           documents: true,
           teacher: {
-            include: { user: { select: { firstName: true, lastName: true, email: true, avatarUrl: true } } },
+            include: {
+              user: {
+                select: {
+                  firstName: true,
+                  lastName: true,
+                  email: true,
+                  avatarUrl: true,
+                },
+              },
+            },
           },
         },
       }),

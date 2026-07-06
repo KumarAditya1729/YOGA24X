@@ -1,6 +1,9 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.module';
-import { CreateChatConversationDto, SendChatMessageDto } from '../dto/social.dto';
+import { Injectable } from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.module";
+import {
+  CreateChatConversationDto,
+  SendChatMessageDto,
+} from "../dto/social.dto";
 
 @Injectable()
 export class ChatRepository {
@@ -12,9 +15,9 @@ export class ChatRepository {
         chatType: data.chatType,
         name: data.name,
         participants: {
-          create: data.participantIds.map(id => ({ userId: id }))
-        }
-      }
+          create: data.participantIds.map((id) => ({ userId: id })),
+        },
+      },
     });
   }
 
@@ -22,17 +25,17 @@ export class ChatRepository {
     return this.prisma.chatConversation.findMany({
       where: {
         participants: {
-          some: { userId }
-        }
+          some: { userId },
+        },
       },
       include: {
         participants: true,
         messages: {
-          orderBy: { createdAt: 'desc' },
-          take: 1
-        }
+          orderBy: { createdAt: "desc" },
+          take: 1,
+        },
       },
-      orderBy: { updatedAt: 'desc' }
+      orderBy: { updatedAt: "desc" },
     });
   }
 
@@ -42,14 +45,14 @@ export class ChatRepository {
         conversationId: data.conversationId,
         senderId,
         contentText: data.contentText,
-        attachmentUrl: data.attachmentUrl
-      }
+        attachmentUrl: data.attachmentUrl,
+      },
     });
 
     // Update conversation timestamp
     await this.prisma.chatConversation.update({
       where: { id: data.conversationId },
-      data: { updatedAt: new Date() }
+      data: { updatedAt: new Date() },
     });
 
     return message;

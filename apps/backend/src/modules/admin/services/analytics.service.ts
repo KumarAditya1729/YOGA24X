@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.module';
-import { SettlementStatus, MembershipStatus } from '@prisma/client';
+import { Injectable } from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.module";
+import { SettlementStatus, MembershipStatus } from "@prisma/client";
 
 @Injectable()
 export class AnalyticsService {
@@ -49,7 +49,9 @@ export class AnalyticsService {
 
   async getRetentionMetrics() {
     const total = await this.prisma.membership.count();
-    const active = await this.prisma.membership.count({ where: { status: MembershipStatus.ACTIVE } });
+    const active = await this.prisma.membership.count({
+      where: { status: MembershipStatus.ACTIVE },
+    });
     const churnRate = await this.getChurnRate();
     return {
       total,

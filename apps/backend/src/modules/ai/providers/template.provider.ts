@@ -1,7 +1,11 @@
-import { Injectable } from '@nestjs/common';
-import { AiProvider, AiChatRequest, AiChatResponse } from '../interfaces/ai-provider.interface';
-import { AiProviderType, AiModelRole } from '@prisma/client';
-import { PrismaService } from '../../prisma/prisma.module';
+import { Injectable } from "@nestjs/common";
+import {
+  AiProvider,
+  AiChatRequest,
+  AiChatResponse,
+} from "../interfaces/ai-provider.interface";
+import { AiProviderType, AiModelRole } from "@prisma/client";
+import { PrismaService } from "../../prisma/prisma.module";
 
 @Injectable()
 export class TemplateProvider implements AiProvider {
@@ -20,24 +24,25 @@ export class TemplateProvider implements AiProvider {
   }
 
   async isAvailable(): Promise<boolean> {
-    return true; 
+    return true;
   }
 
   async chat(request: AiChatRequest): Promise<AiChatResponse> {
-    const lastMessage = request.messages[request.messages.length - 1].content.toLowerCase();
-    
+    const lastMessage =
+      request.messages[request.messages.length - 1].content.toLowerCase();
+
     // We will look for a template match in the DB based on keywords in the prompt content.
     // Since we don't have a semantic engine running, we do a basic LIKE search for deterministic results.
     const templates = await this.prisma.promptTemplate.findMany({
       where: { isActive: true },
     });
 
-    let bestMatch = templates.find((t: any) => 
-      t.variables.some((v: any) => lastMessage.includes(v.toLowerCase()))
+    let bestMatch = templates.find((t: any) =>
+      t.variables.some((v: any) => lastMessage.includes(v.toLowerCase())),
     );
 
-    let responseContent = bestMatch 
-      ? `[Template matched: ${bestMatch.name}] \n${bestMatch.content}` 
+    let responseContent = bestMatch
+      ? `[Template matched: ${bestMatch.name}] \n${bestMatch.content}`
       : "I cannot find a matching template for your request. Please try rephrasing.";
 
     return {

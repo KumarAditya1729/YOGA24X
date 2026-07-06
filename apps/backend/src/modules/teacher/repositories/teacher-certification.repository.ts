@@ -2,9 +2,12 @@
 // Yoga24X — Teacher Certification Repository
 // All DB operations for TeacherCertification
 // ==============================================================================
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.module';
-import { AddCertificationDto, UpdateCertificationDto } from '../dto/teacher.dto';
+import { Injectable } from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.module";
+import {
+  AddCertificationDto,
+  UpdateCertificationDto,
+} from "../dto/teacher.dto";
 
 @Injectable()
 export class TeacherCertificationRepository {
@@ -26,7 +29,11 @@ export class TeacherCertificationRepository {
     });
   }
 
-  async updateCertification(id: string, userId: string, dto: UpdateCertificationDto) {
+  async updateCertification(
+    id: string,
+    userId: string,
+    dto: UpdateCertificationDto,
+  ) {
     return this.prisma.teacherCertification.update({
       where: { id },
       data: {
@@ -47,7 +54,7 @@ export class TeacherCertificationRepository {
   async listByUser(userId: string) {
     return this.prisma.teacherCertification.findMany({
       where: { userId, isActive: true },
-      orderBy: { displayOrder: 'asc' },
+      orderBy: { displayOrder: "asc" },
     });
   }
 

@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.module';
+import { Injectable } from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.module";
 
 @Injectable()
 export class InvoiceRepository {
@@ -24,7 +24,7 @@ export class InvoiceRepository {
       include: {
         transaction: true,
       },
-      orderBy: { issuedAt: 'desc' },
+      orderBy: { issuedAt: "desc" },
     });
   }
 

@@ -1,13 +1,21 @@
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Param,
+  Body,
+  UseGuards,
+} from "@nestjs/common";
+import { PublishingService } from "../services/publishing.service";
+import { JwtAuthGuard } from "../../auth/guards/jwt-auth.guard";
+import { RequirePermissions } from "../../security/decorators/authorization.decorators";
+import { LEARNING_PERMISSIONS } from "../constants/learning-permissions";
+import { CurrentUser } from "../../auth/decorators/auth.decorators";
+import { JwtAccessPayload as JwtPayload } from "@yoga24x/shared-types";
 
-import { Controller, Get, Post, Put, Delete, Param, Body, UseGuards } from '@nestjs/common';
-import { PublishingService } from '../services/publishing.service';
-import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
-import { RequirePermissions } from '../../security/decorators/authorization.decorators';
-import { LEARNING_PERMISSIONS } from '../constants/learning-permissions';
-import { CurrentUser } from '../../auth/decorators/auth.decorators';
-import { JwtAccessPayload as JwtPayload } from '@yoga24x/shared-types';
-
-@Controller('learning/publishings')
+@Controller("learning/publishings")
 @UseGuards(JwtAuthGuard)
 export class PublishingController {
   constructor(private readonly service: PublishingService) {}

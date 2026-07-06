@@ -3,9 +3,12 @@
 // Handles Terms, Cookie, AI, Health consents, GDPR Data Export & Account Deletion
 // ==============================================================================
 
-import { Injectable, BadRequestException } from '@nestjs/common';
-import { PrivacyRepository } from '../repositories/privacy.repository';
-import { UpdateConsentDto, AccountDeletionRequestDto } from '@yoga24x/shared-types';
+import { Injectable, BadRequestException } from "@nestjs/common";
+import { PrivacyRepository } from "../repositories/privacy.repository";
+import {
+  UpdateConsentDto,
+  AccountDeletionRequestDto,
+} from "@yoga24x/shared-types";
 
 @Injectable()
 export class PrivacyService {
@@ -15,7 +18,12 @@ export class PrivacyService {
     return this.privacyRepo.getUserConsents(userId);
   }
 
-  async updateConsent(userId: string, dto: UpdateConsentDto, ipAddress?: string, userAgent?: string): Promise<any> {
+  async updateConsent(
+    userId: string,
+    dto: UpdateConsentDto,
+    ipAddress?: string,
+    userAgent?: string,
+  ): Promise<any> {
     return this.privacyRepo.updateConsent(userId, dto, ipAddress, userAgent);
   }
 
@@ -27,9 +35,14 @@ export class PrivacyService {
     return this.privacyRepo.getDataExportRequests(userId);
   }
 
-  async scheduleAccountDeletion(userId: string, dto: AccountDeletionRequestDto): Promise<any> {
+  async scheduleAccountDeletion(
+    userId: string,
+    dto: AccountDeletionRequestDto,
+  ): Promise<any> {
     if (!dto.passwordConfirmation) {
-      throw new BadRequestException('Password confirmation is required to schedule account deletion');
+      throw new BadRequestException(
+        "Password confirmation is required to schedule account deletion",
+      );
     }
     return this.privacyRepo.scheduleAccountDeletion(userId, dto.reason);
   }

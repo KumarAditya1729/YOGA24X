@@ -2,9 +2,13 @@
 // Yoga24X — Teacher Portfolio Service
 // Gallery, videos, awards, publications, achievements management
 // ==============================================================================
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.module';
-import { AddPortfolioItemDto } from '../dto/teacher.dto';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+} from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.module";
+import { AddPortfolioItemDto } from "../dto/teacher.dto";
 
 @Injectable()
 export class TeacherPortfolioService {
@@ -26,7 +30,11 @@ export class TeacherPortfolioService {
     });
   }
 
-  async updateItem(id: string, userId: string, dto: Partial<AddPortfolioItemDto>) {
+  async updateItem(
+    id: string,
+    userId: string,
+    dto: Partial<AddPortfolioItemDto>,
+  ) {
     await this.assertOwnership(id, userId);
     return this.prisma.teacherPortfolioItem.update({
       where: { id },
@@ -47,7 +55,7 @@ export class TeacherPortfolioService {
   async listItems(userId: string, itemType?: string) {
     return this.prisma.teacherPortfolioItem.findMany({
       where: { userId, ...(itemType ? { itemType: itemType as any } : {}) },
-      orderBy: [{ isFeatured: 'desc' }, { displayOrder: 'asc' }],
+      orderBy: [{ isFeatured: "desc" }, { displayOrder: "asc" }],
     });
   }
 
@@ -64,8 +72,10 @@ export class TeacherPortfolioService {
 
   async toggleFeatured(id: string, userId: string) {
     await this.assertOwnership(id, userId);
-    const item = await this.prisma.teacherPortfolioItem.findUnique({ where: { id } });
-    if (!item) throw new NotFoundException('Portfolio item not found');
+    const item = await this.prisma.teacherPortfolioItem.findUnique({
+      where: { id },
+    });
+    if (!item) throw new NotFoundException("Portfolio item not found");
     return this.prisma.teacherPortfolioItem.update({
       where: { id },
       data: { isFeatured: !item.isFeatured },
@@ -73,8 +83,11 @@ export class TeacherPortfolioService {
   }
 
   private async assertOwnership(id: string, userId: string) {
-    const item = await this.prisma.teacherPortfolioItem.findUnique({ where: { id } });
-    if (!item) throw new NotFoundException('Portfolio item not found');
-    if (item.userId !== userId) throw new ForbiddenException('You do not own this portfolio item');
+    const item = await this.prisma.teacherPortfolioItem.findUnique({
+      where: { id },
+    });
+    if (!item) throw new NotFoundException("Portfolio item not found");
+    if (item.userId !== userId)
+      throw new ForbiddenException("You do not own this portfolio item");
   }
 }

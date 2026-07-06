@@ -1,6 +1,5 @@
-
-import { Injectable } from '@nestjs/common';
-import { EventRepository } from '../repositories/event.repository';
+import { Injectable } from "@nestjs/common";
+import { EventRepository } from "../repositories/event.repository";
 
 @Injectable()
 export class EventService {

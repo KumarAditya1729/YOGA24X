@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
-import { ChallengeRepository } from '../repositories/challenge.repository';
-import { CreateChallengeDto } from '../dto/social.dto';
+import { Injectable } from "@nestjs/common";
+import { ChallengeRepository } from "../repositories/challenge.repository";
+import { CreateChallengeDto } from "../dto/social.dto";
 
 @Injectable()
 export class ChallengeService {

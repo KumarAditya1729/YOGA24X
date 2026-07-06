@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
-import { GroupRepository } from '../repositories/group.repository';
-import { CreateGroupDto } from '../dto/social.dto';
+import { Injectable } from "@nestjs/common";
+import { GroupRepository } from "../repositories/group.repository";
+import { CreateGroupDto } from "../dto/social.dto";
 
 @Injectable()
 export class GroupService {

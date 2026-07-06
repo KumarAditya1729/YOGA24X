@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.module';
-import { PaymentStatus } from '@prisma/client';
+import { Injectable } from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.module";
+import { PaymentStatus } from "@prisma/client";
 
 @Injectable()
 export class AnalyticsRepository {
@@ -14,7 +14,10 @@ export class AnalyticsRepository {
       },
     });
 
-    const totalRevenueCents = transactions.reduce((sum, t) => sum + t.amountCents, 0);
+    const totalRevenueCents = transactions.reduce(
+      (sum, t) => sum + t.amountCents,
+      0,
+    );
     const transactionCount = transactions.length;
 
     return { totalRevenueCents, transactionCount, startDate, endDate };
@@ -25,7 +28,10 @@ export class AnalyticsRepository {
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
     const monthly = await this.prisma.paymentTransaction.aggregate({
-      where: { status: PaymentStatus.SUCCESS, createdAt: { gte: startOfMonth } },
+      where: {
+        status: PaymentStatus.SUCCESS,
+        createdAt: { gte: startOfMonth },
+      },
       _sum: { amountCents: true },
     });
 
@@ -38,11 +44,11 @@ export class AnalyticsRepository {
   }
 
   async getActiveSubscriptions() {
-    return this.prisma.userSubscription.count({ where: { status: 'ACTIVE' } });
+    return this.prisma.userSubscription.count({ where: { status: "ACTIVE" } });
   }
 
   async getActiveMemberships() {
-    return this.prisma.membership.count({ where: { status: 'ACTIVE' } });
+    return this.prisma.membership.count({ where: { status: "ACTIVE" } });
   }
 
   async getARPU() {
@@ -51,12 +57,18 @@ export class AnalyticsRepository {
 
     const [revenue, users] = await Promise.all([
       this.prisma.paymentTransaction.aggregate({
-        where: { status: PaymentStatus.SUCCESS, createdAt: { gte: startOfMonth } },
+        where: {
+          status: PaymentStatus.SUCCESS,
+          createdAt: { gte: startOfMonth },
+        },
         _sum: { amountCents: true },
       }),
       this.prisma.paymentTransaction.findMany({
-        where: { status: PaymentStatus.SUCCESS, createdAt: { gte: startOfMonth } },
-        distinct: ['userId'],
+        where: {
+          status: PaymentStatus.SUCCESS,
+          createdAt: { gte: startOfMonth },
+        },
+        distinct: ["userId"],
         select: { userId: true },
       }),
     ]);
@@ -64,31 +76,40 @@ export class AnalyticsRepository {
     const totalRevenue = revenue._sum?.amountCents ?? 0;
     const activeUsers = users.length;
 
-    return { arpuCents: activeUsers > 0 ? Math.floor(totalRevenue / activeUsers) : 0, activeUsers };
+    return {
+      arpuCents: activeUsers > 0 ? Math.floor(totalRevenue / activeUsers) : 0,
+      activeUsers,
+    };
   }
 
   async getTeacherEarnings(teacherId: string, startDate: Date, endDate: Date) {
     return this.prisma.revenueShare.findMany({
       where: {
         recipientId: teacherId,
-        shareType: 'TEACHER',
+        shareType: "TEACHER",
         createdAt: { gte: startDate, lte: endDate },
       },
     });
   }
 
   async getConversionFunnel() {
-    const [ordersCreated, ordersCompleted, subscriptions, memberships] = await Promise.all([
-      this.prisma.paymentTransaction.count(),
-      this.prisma.paymentTransaction.count({ where: { status: PaymentStatus.SUCCESS } }),
-      this.prisma.userSubscription.count({ where: { status: 'ACTIVE' } }),
-      this.prisma.membership.count({ where: { status: 'ACTIVE' } }),
-    ]);
+    const [ordersCreated, ordersCompleted, subscriptions, memberships] =
+      await Promise.all([
+        this.prisma.paymentTransaction.count(),
+        this.prisma.paymentTransaction.count({
+          where: { status: PaymentStatus.SUCCESS },
+        }),
+        this.prisma.userSubscription.count({ where: { status: "ACTIVE" } }),
+        this.prisma.membership.count({ where: { status: "ACTIVE" } }),
+      ]);
 
     return {
       ordersCreated,
       ordersCompleted,
-      conversionRate: ordersCreated > 0 ? ((ordersCompleted / ordersCreated) * 100).toFixed(2) : '0',
+      conversionRate:
+        ordersCreated > 0
+          ? ((ordersCompleted / ordersCreated) * 100).toFixed(2)
+          : "0",
       activeSubscriptions: subscriptions,
       activeMemberships: memberships,
     };

@@ -1,6 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.module';
-import { CourseLevel, CourseVisibility } from '@prisma/client';
+import { Injectable, Logger } from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.module";
+import { CourseLevel, CourseVisibility } from "@prisma/client";
 
 @Injectable()
 export class RecommendationEngineService {
@@ -22,24 +22,26 @@ export class RecommendationEngineService {
       // Fallback to top-rated generic courses
       return this.prisma.course.findMany({
         where: { visibility: CourseVisibility.PUBLISHED },
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: "desc" },
         take: limit,
       });
     }
 
     // 2. Score courses based on rules
     // Rule: Match User Skill Level
-    const targetLevel = profile.experienceLevel === 'BEGINNER' ? CourseLevel.BEGINNER : 
-                        profile.experienceLevel === 'INTERMEDIATE' ? CourseLevel.INTERMEDIATE : CourseLevel.ADVANCED;
+    const targetLevel =
+      profile.experienceLevel === "BEGINNER"
+        ? CourseLevel.BEGINNER
+        : profile.experienceLevel === "INTERMEDIATE"
+          ? CourseLevel.INTERMEDIATE
+          : CourseLevel.ADVANCED;
 
     const recommended = await this.prisma.course.findMany({
       where: {
         visibility: CourseVisibility.PUBLISHED,
-        level: { in: [targetLevel, CourseLevel.ALL_LEVELS] }
+        level: { in: [targetLevel, CourseLevel.ALL_LEVELS] },
       },
-      orderBy: [
-        { createdAt: 'desc' }
-      ],
+      orderBy: [{ createdAt: "desc" }],
       take: limit,
     });
 
@@ -52,11 +54,11 @@ export class RecommendationEngineService {
   async recommendTeachers(userId: string, limit: number = 3) {
     // Rule based: find teachers with the highest rating
     return this.prisma.teacherProfile.findMany({
-      orderBy: { yearsExperience: 'desc' },
+      orderBy: { yearsExperience: "desc" },
       take: limit,
       include: {
-        user: { select: { firstName: true, lastName: true, avatarUrl: true } }
-      }
+        user: { select: { firstName: true, lastName: true, avatarUrl: true } },
+      },
     });
   }
 }

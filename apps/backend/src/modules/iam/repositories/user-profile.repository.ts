@@ -3,8 +3,8 @@
 // Handles basic profile, all 9 specialized profiles, settings, media, and completion %
 // ==============================================================================
 
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.module';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.module";
 import {
   UpdateBasicProfileDto,
   UpdateStudentProfileDto,
@@ -13,7 +13,7 @@ import {
   UpdateSettingsDto,
   UpdateNotificationPrefDto,
   IAM_CONSTANTS,
-} from '@yoga24x/shared-types';
+} from "@yoga24x/shared-types";
 
 @Injectable()
 export class UserProfileRepository {
@@ -35,7 +35,7 @@ export class UserProfileRepository {
         notificationPref: true,
         profileMedia: {
           where: { isValidated: true },
-          orderBy: { version: 'desc' },
+          orderBy: { version: "desc" },
         },
         identities: true,
         userRoles: { include: { role: true } },
@@ -55,7 +55,10 @@ export class UserProfileRepository {
     };
   }
 
-  async updateBasicProfile(userId: string, dto: UpdateBasicProfileDto): Promise<any> {
+  async updateBasicProfile(
+    userId: string,
+    dto: UpdateBasicProfileDto,
+  ): Promise<any> {
     const updated = await this.prisma.user.update({
       where: { id: userId },
       data: {
@@ -67,7 +70,10 @@ export class UserProfileRepository {
     return updated;
   }
 
-  async updateStudentProfile(userId: string, dto: UpdateStudentProfileDto): Promise<any> {
+  async updateStudentProfile(
+    userId: string,
+    dto: UpdateStudentProfileDto,
+  ): Promise<any> {
     const data: any = {};
     if (dto.dateOfBirth) data.dateOfBirth = new Date(dto.dateOfBirth);
     if (dto.gender) data.gender = dto.gender as any;
@@ -76,21 +82,25 @@ export class UserProfileRepository {
     if (dto.experienceLevel) data.experienceLevel = dto.experienceLevel as any;
     if (dto.ayurvedicDosha) data.ayurvedicDosha = dto.ayurvedicDosha as any;
     if (dto.medicalConditions) data.medicalConditions = dto.medicalConditions;
-    if (dto.emergencyContactPhone) data.emergencyContactPhone = dto.emergencyContactPhone;
+    if (dto.emergencyContactPhone)
+      data.emergencyContactPhone = dto.emergencyContactPhone;
 
     return this.prisma.studentProfile.upsert({
       where: { userId },
       update: data,
       create: {
         userId,
-        gender: (dto.gender as any) || 'PREFER_NOT_TO_SAY',
-        experienceLevel: (dto.experienceLevel as any) || 'BEGINNER',
+        gender: (dto.gender as any) || "PREFER_NOT_TO_SAY",
+        experienceLevel: (dto.experienceLevel as any) || "BEGINNER",
         ...data,
       },
     });
   }
 
-  async updateTeacherProfile(userId: string, dto: UpdateTeacherProfileDto): Promise<any> {
+  async updateTeacherProfile(
+    userId: string,
+    dto: UpdateTeacherProfileDto,
+  ): Promise<any> {
     return this.prisma.instructorProfile.upsert({
       where: { userId },
       update: {
@@ -101,7 +111,7 @@ export class UserProfileRepository {
       },
       create: {
         userId,
-        bio: dto.bio || '',
+        bio: dto.bio || "",
         yearsExperience: dto.yearsExperience || 0,
         specializations: dto.specializations || [],
         hourlyRateCents: dto.hourlyRateCents || 0,
@@ -109,7 +119,10 @@ export class UserProfileRepository {
     });
   }
 
-  async updateDoctorProfile(userId: string, dto: UpdateDoctorProfileDto): Promise<any> {
+  async updateDoctorProfile(
+    userId: string,
+    dto: UpdateDoctorProfileDto,
+  ): Promise<any> {
     return this.prisma.doctorProfile.upsert({
       where: { userId },
       update: {
@@ -119,14 +132,18 @@ export class UserProfileRepository {
       },
       create: {
         userId,
-        medicalRegistrationNumber: dto.medicalRegistrationNumber || `REG_${Date.now()}`,
-        qualification: dto.qualification || 'Medical Practitioner',
+        medicalRegistrationNumber:
+          dto.medicalRegistrationNumber || `REG_${Date.now()}`,
+        qualification: dto.qualification || "Medical Practitioner",
         consultationFeeCents: dto.consultationFeeCents || 0,
       },
     });
   }
 
-  async updateUserSettings(userId: string, dto: UpdateSettingsDto): Promise<any> {
+  async updateUserSettings(
+    userId: string,
+    dto: UpdateSettingsDto,
+  ): Promise<any> {
     return this.prisma.userSettings.upsert({
       where: { userId },
       update: {
@@ -140,18 +157,21 @@ export class UserProfileRepository {
       },
       create: {
         userId,
-        theme: dto.theme || 'DARK',
-        language: dto.language || 'en',
-        timezone: dto.timezone || 'UTC',
-        currency: dto.currency || 'USD',
-        measurementUnit: dto.measurementUnit || 'METRIC',
+        theme: dto.theme || "DARK",
+        language: dto.language || "en",
+        timezone: dto.timezone || "UTC",
+        currency: dto.currency || "USD",
+        measurementUnit: dto.measurementUnit || "METRIC",
         accessibilityPrefJson: dto.accessibilityPrefJson || {},
         privacyPrefJson: dto.privacyPrefJson || {},
       },
     });
   }
 
-  async updateNotificationPref(userId: string, dto: UpdateNotificationPrefDto): Promise<any> {
+  async updateNotificationPref(
+    userId: string,
+    dto: UpdateNotificationPrefDto,
+  ): Promise<any> {
     return this.prisma.userNotificationPreference.upsert({
       where: { userId },
       update: {
@@ -172,7 +192,7 @@ export class UserProfileRepository {
 
   async addProfileMedia(
     userId: string,
-    mediaType: 'AVATAR' | 'COVER_IMAGE',
+    mediaType: "AVATAR" | "COVER_IMAGE",
     originalUrl: string,
     fileSizeBytes: number,
     mimeType: string,
@@ -181,7 +201,7 @@ export class UserProfileRepository {
   ): Promise<any> {
     const latest = await this.prisma.profileMedia.findFirst({
       where: { userId, mediaType },
-      orderBy: { version: 'desc' },
+      orderBy: { version: "desc" },
     });
     const nextVersion = (latest?.version || 0) + 1;
 
@@ -199,7 +219,7 @@ export class UserProfileRepository {
       },
     });
 
-    if (mediaType === 'AVATAR') {
+    if (mediaType === "AVATAR") {
       await this.prisma.user.update({
         where: { id: userId },
         data: { avatarUrl: compressedUrl || originalUrl },
@@ -209,7 +229,10 @@ export class UserProfileRepository {
     return media;
   }
 
-  async setProfileCompletionPercentage(userId: string, percentage: number): Promise<void> {
+  async setProfileCompletionPercentage(
+    userId: string,
+    percentage: number,
+  ): Promise<void> {
     await this.prisma.user.update({
       where: { id: userId },
       data: { profileCompletionPercentage: percentage },

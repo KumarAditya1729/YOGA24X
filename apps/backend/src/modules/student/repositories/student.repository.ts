@@ -1,6 +1,6 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.module';
-import { Prisma } from '@prisma/client';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.module";
+import { Prisma } from "@prisma/client";
 
 @Injectable()
 export class StudentRepository {
@@ -18,9 +18,9 @@ export class StudentRepository {
             email: true,
             phoneNumber: true,
             avatarUrl: true,
-          }
+          },
         },
-      }
+      },
     });
   }
 
@@ -30,38 +30,41 @@ export class StudentRepository {
       update: data,
       create: {
         userId,
-        ...data as any,
-      }
+        ...(data as any),
+      },
     });
   }
 
   async getPreferences(userId: string) {
     return this.prisma.studentPreference.findUnique({
-      where: { userId }
+      where: { userId },
     });
   }
 
-  async updatePreferences(userId: string, data: Prisma.StudentPreferenceUpdateInput) {
+  async updatePreferences(
+    userId: string,
+    data: Prisma.StudentPreferenceUpdateInput,
+  ) {
     return this.prisma.studentPreference.upsert({
       where: { userId },
       update: data,
       create: {
         userId,
-        ...data as any,
-      }
+        ...(data as any),
+      },
     });
   }
 
   async getAchievements(userId: string) {
     return this.prisma.studentAchievement.findMany({
       where: { userId },
-      orderBy: { awardedAt: 'desc' }
+      orderBy: { awardedAt: "desc" },
     });
   }
 
   async createAchievement(data: Prisma.StudentAchievementUncheckedCreateInput) {
     return this.prisma.studentAchievement.create({
-      data
+      data,
     });
   }
 
@@ -76,9 +79,9 @@ export class StudentRepository {
             lastName: true,
             email: true,
             phoneNumber: true,
-          }
-        }
-      }
+          },
+        },
+      },
     });
   }
 
@@ -93,13 +96,13 @@ export class StudentRepository {
   async getEmergencyContacts(userId: string) {
     return this.prisma.emergencyContact.findMany({
       where: { userId },
-      orderBy: { isPrimary: 'desc' }
+      orderBy: { isPrimary: "desc" },
     });
   }
 
   async addEmergencyContact(data: Prisma.EmergencyContactUncheckedCreateInput) {
     return this.prisma.emergencyContact.create({
-      data
+      data,
     });
   }
 }

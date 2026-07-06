@@ -1,21 +1,23 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.module';
+import { Injectable } from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.module";
 
 @Injectable()
 export class SuperAdminService {
   constructor(private readonly prisma: PrismaService) {}
 
   async getPlatformHealth() {
-    const userCount = await this.prisma.user.count({ where: { isDeleted: false } });
+    const userCount = await this.prisma.user.count({
+      where: { isDeleted: false },
+    });
     return {
-      status: 'ok',
+      status: "ok",
       timestamp: new Date().toISOString(),
       stats: { totalUsers: userCount },
     };
   }
 
   async getAllSettings() {
-    return this.prisma.systemSetting.findMany({ orderBy: { key: 'asc' } });
+    return this.prisma.systemSetting.findMany({ orderBy: { key: "asc" } });
   }
 
   async upsertSetting(key: string, value: unknown) {
@@ -27,7 +29,9 @@ export class SuperAdminService {
   }
 
   async getAllFeatureToggles() {
-    return this.prisma.featureToggle.findMany({ orderBy: { featureName: 'asc' } });
+    return this.prisma.featureToggle.findMany({
+      orderBy: { featureName: "asc" },
+    });
   }
 
   async toggleFeature(featureName: string, isEnabled: boolean) {

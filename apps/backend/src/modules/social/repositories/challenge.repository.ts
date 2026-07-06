@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.module';
-import { CreateChallengeDto } from '../dto/social.dto';
+import { Injectable } from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.module";
+import { CreateChallengeDto } from "../dto/social.dto";
 
 @Injectable()
 export class ChallengeRepository {
@@ -15,15 +15,15 @@ export class ChallengeRepository {
         startDate: new Date(data.startDate),
         endDate: new Date(data.endDate),
         rewardsXp: data.rewardsXp || 0,
-      }
+      },
     });
   }
 
   async getActiveChallenges() {
     return this.prisma.challenge.findMany({
       where: {
-        endDate: { gte: new Date() }
-      }
+        endDate: { gte: new Date() },
+      },
     });
   }
 
@@ -31,8 +31,8 @@ export class ChallengeRepository {
     return this.prisma.challengeParticipant.create({
       data: {
         challengeId,
-        userId
-      }
+        userId,
+      },
     });
   }
 }

@@ -1,13 +1,21 @@
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Param,
+  Body,
+  UseGuards,
+} from "@nestjs/common";
+import { EventService } from "../services/event.service";
+import { JwtAuthGuard } from "../../auth/guards/jwt-auth.guard";
+import { RequirePermissions } from "../../security/decorators/authorization.decorators";
+import { LEARNING_PERMISSIONS } from "../constants/learning-permissions";
+import { CurrentUser } from "../../auth/decorators/auth.decorators";
+import { JwtAccessPayload as JwtPayload } from "@yoga24x/shared-types";
 
-import { Controller, Get, Post, Put, Delete, Param, Body, UseGuards } from '@nestjs/common';
-import { EventService } from '../services/event.service';
-import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
-import { RequirePermissions } from '../../security/decorators/authorization.decorators';
-import { LEARNING_PERMISSIONS } from '../constants/learning-permissions';
-import { CurrentUser } from '../../auth/decorators/auth.decorators';
-import { JwtAccessPayload as JwtPayload } from '@yoga24x/shared-types';
-
-@Controller('learning/events')
+@Controller("learning/events")
 @UseGuards(JwtAuthGuard)
 export class EventController {
   constructor(private readonly service: EventService) {}

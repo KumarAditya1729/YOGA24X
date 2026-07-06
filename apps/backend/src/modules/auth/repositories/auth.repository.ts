@@ -2,10 +2,23 @@
 // Yoga24X AI Engineering OS — Auth Repository (Prisma Data Access)
 // ==============================================================================
 
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.module';
-import { User, UserIdentity, RefreshToken, UserSession, UserDevice, TrustedDevice, LoginHistory, OtpVerification, SecurityBlockedIp, AuditLog, Prisma, UserStatus } from '@prisma/client';
-import { IdentityProviderType, UserRoleName } from '@yoga24x/shared-types';
+import { Injectable } from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.module";
+import {
+  User,
+  UserIdentity,
+  RefreshToken,
+  UserSession,
+  UserDevice,
+  TrustedDevice,
+  LoginHistory,
+  OtpVerification,
+  SecurityBlockedIp,
+  AuditLog,
+  Prisma,
+  UserStatus,
+} from "@prisma/client";
+import { IdentityProviderType, UserRoleName } from "@yoga24x/shared-types";
 
 @Injectable()
 export class AuthRepository {
@@ -45,7 +58,10 @@ export class AuthRepository {
     });
   }
 
-  async findUserByIdentity(provider: string, providerId: string): Promise<any | null> {
+  async findUserByIdentity(
+    provider: string,
+    providerId: string,
+  ): Promise<any | null> {
     const identity = await this.prisma.userIdentity.findUnique({
       where: {
         uq_identities_provider_id: {
@@ -119,7 +135,7 @@ export class AuthRepository {
         await tx.userIdentity.create({
           data: {
             userId: user.id,
-            provider: 'EMAIL',
+            provider: "EMAIL",
             providerId: data.email.toLowerCase(),
           },
         });
@@ -127,7 +143,7 @@ export class AuthRepository {
           await tx.userIdentity.create({
             data: {
               userId: user.id,
-              provider: 'PHONE',
+              provider: "PHONE",
               providerId: data.phoneNumber,
             },
           });
@@ -135,7 +151,7 @@ export class AuthRepository {
       }
 
       // 4. Create StudentProfile & Wallet if STUDENT
-      if (data.roleName === 'STUDENT') {
+      if (data.roleName === "STUDENT") {
         await tx.studentProfile.create({
           data: {
             userId: user.id,
@@ -145,19 +161,19 @@ export class AuthRepository {
           data: {
             userId: user.id,
             balanceCents: 0,
-            currency: 'INR',
+            currency: "INR",
           },
         });
       }
 
       // 5. Create InstructorProfile if TEACHER
-      if (data.roleName === 'TEACHER') {
+      if (data.roleName === "TEACHER") {
         await tx.instructorProfile.create({
           data: {
             userId: user.id,
-            bio: 'Certified Instructor at Yoga24X.',
+            bio: "Certified Instructor at Yoga24X.",
             yearsExperience: 1,
-            specializations: ['Hatha'],
+            specializations: ["Hatha"],
           },
         });
       }
@@ -173,7 +189,10 @@ export class AuthRepository {
     });
   }
 
-  async updatePasswordHash(userId: string, passwordHash: string): Promise<User> {
+  async updatePasswordHash(
+    userId: string,
+    passwordHash: string,
+  ): Promise<User> {
     return this.prisma.user.update({
       where: { id: userId },
       data: { passwordHash },
@@ -215,20 +234,26 @@ export class AuthRepository {
     });
   }
 
-  async findRefreshTokenByHash(tokenHash: string): Promise<RefreshToken | null> {
+  async findRefreshTokenByHash(
+    tokenHash: string,
+  ): Promise<RefreshToken | null> {
     return this.prisma.refreshToken.findUnique({
       where: { tokenHash },
     });
   }
 
-  async revokeRefreshTokenFamily(familyId: string): Promise<Prisma.BatchPayload> {
+  async revokeRefreshTokenFamily(
+    familyId: string,
+  ): Promise<Prisma.BatchPayload> {
     return this.prisma.refreshToken.updateMany({
       where: { familyId },
       data: { isRevoked: true },
     });
   }
 
-  async revokeAllUserRefreshTokens(userId: string): Promise<Prisma.BatchPayload> {
+  async revokeAllUserRefreshTokens(
+    userId: string,
+  ): Promise<Prisma.BatchPayload> {
     return this.prisma.refreshToken.updateMany({
       where: { userId, isRevoked: false },
       data: { isRevoked: true },
@@ -334,7 +359,7 @@ export class AuthRepository {
   async listActiveSessions(userId: string): Promise<any[]> {
     return this.prisma.userSession.findMany({
       where: { userId, isActive: true },
-      orderBy: { lastActiveAt: 'desc' },
+      orderBy: { lastActiveAt: "desc" },
       include: { device: true },
     });
   }
@@ -343,7 +368,9 @@ export class AuthRepository {
   // Trusted Devices & Biometric Queries
   // ============================================================================
 
-  async findTrustedDeviceByFingerprint(fingerprint: string): Promise<TrustedDevice | null> {
+  async findTrustedDeviceByFingerprint(
+    fingerprint: string,
+  ): Promise<TrustedDevice | null> {
     return this.prisma.trustedDevice.findUnique({
       where: { deviceFingerprint: fingerprint },
     });
@@ -384,7 +411,7 @@ export class AuthRepository {
   async listTrustedDevices(userId: string): Promise<TrustedDevice[]> {
     return this.prisma.trustedDevice.findMany({
       where: { userId, isRevoked: false },
-      orderBy: { lastUsedAt: 'desc' },
+      orderBy: { lastUsedAt: "desc" },
     });
   }
 
@@ -410,7 +437,10 @@ export class AuthRepository {
     });
   }
 
-  async findLatestValidOtp(identifier: string, purpose: string): Promise<OtpVerification | null> {
+  async findLatestValidOtp(
+    identifier: string,
+    purpose: string,
+  ): Promise<OtpVerification | null> {
     return this.prisma.otpVerification.findFirst({
       where: {
         identifier,
@@ -418,7 +448,7 @@ export class AuthRepository {
         isUsed: false,
         expiresAt: { gt: new Date() },
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
     });
   }
 
@@ -456,18 +486,21 @@ export class AuthRepository {
         loginStatus: data.loginStatus as any,
         ipAddress: data.ipAddress || null,
         userAgent: data.userAgent || null,
-        location: data.location || 'Unknown',
-        deviceType: data.deviceType || 'WEB_BROWSER',
+        location: data.location || "Unknown",
+        deviceType: data.deviceType || "WEB_BROWSER",
         riskScore: data.riskScore,
         failureReason: data.failureReason || null,
       },
     });
   }
 
-  async listRecentLoginHistory(userId: string, limit = 20): Promise<LoginHistory[]> {
+  async listRecentLoginHistory(
+    userId: string,
+    limit = 20,
+  ): Promise<LoginHistory[]> {
     return this.prisma.loginHistory.findMany({
       where: { userId },
-      orderBy: { loginAt: 'desc' },
+      orderBy: { loginAt: "desc" },
       take: limit,
     });
   }

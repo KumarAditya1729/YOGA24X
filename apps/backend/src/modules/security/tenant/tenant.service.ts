@@ -2,13 +2,13 @@
 // Yoga24X — Tenant Service
 // Repository-level tenant data access — business services NEVER filter manually
 // ==============================================================================
-import { Injectable, NotFoundException, Logger } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.module';
-import { TenantContext } from './tenant.context';
-import { RedisService } from '../../redis/redis.module';
+import { Injectable, NotFoundException, Logger } from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.module";
+import { TenantContext } from "./tenant.context";
+import { RedisService } from "../../redis/redis.module";
 
 const TENANT_CACHE_TTL = 300; // 5 minutes
-const TENANT_CACHE_PREFIX = 'tenant:ctx:';
+const TENANT_CACHE_PREFIX = "tenant:ctx:";
 
 @Injectable()
 export class TenantService {
@@ -31,7 +31,7 @@ export class TenantService {
     return this.resolveWithCache(cacheKey, () =>
       this.prisma.tenant.findFirst({
         where: {
-          OR: [{ customDomain: domain }, { slug: domain.split('.')[0] }],
+          OR: [{ customDomain: domain }, { slug: domain.split(".")[0] }],
         },
       }),
     );
@@ -45,7 +45,9 @@ export class TenantService {
   }
 
   async findById(tenantId: string) {
-    const tenant = await this.prisma.tenant.findUnique({ where: { id: tenantId } });
+    const tenant = await this.prisma.tenant.findUnique({
+      where: { id: tenantId },
+    });
     if (!tenant) throw new NotFoundException(`Tenant ${tenantId} not found`);
     return tenant;
   }
@@ -61,15 +63,18 @@ export class TenantService {
       data: {
         name: data.name,
         slug: data.slug,
-        plan: data.plan ?? 'FREE',
+        plan: data.plan ?? "FREE",
         brandingJson: (data.brandingJson ?? {}) as any,
         configJson: (data.configJson ?? {}) as any,
-        status: 'PROVISIONING',
+        status: "PROVISIONING",
       },
     });
   }
 
-  async updateBranding(tenantId: string, brandingJson: Record<string, unknown>) {
+  async updateBranding(
+    tenantId: string,
+    brandingJson: Record<string, unknown>,
+  ) {
     await this.invalidateCache(tenantId);
     return this.prisma.tenant.update({
       where: { id: tenantId },
@@ -89,7 +94,7 @@ export class TenantService {
     await this.invalidateCache(tenantId);
     return this.prisma.tenant.update({
       where: { id: tenantId },
-      data: { status: 'SUSPENDED' },
+      data: { status: "SUSPENDED" },
     });
   }
 
@@ -97,14 +102,18 @@ export class TenantService {
     await this.invalidateCache(tenantId);
     return this.prisma.tenant.update({
       where: { id: tenantId },
-      data: { status: 'ACTIVE' },
+      data: { status: "ACTIVE" },
     });
   }
 
   async listAll(page = 1, limit = 20) {
     const skip = (page - 1) * limit;
     const [items, total] = await Promise.all([
-      this.prisma.tenant.findMany({ skip, take: limit, orderBy: { createdAt: 'desc' } }),
+      this.prisma.tenant.findMany({
+        skip,
+        take: limit,
+        orderBy: { createdAt: "desc" },
+      }),
       this.prisma.tenant.count(),
     ]);
     return { items, total, page, limit };
@@ -127,19 +136,22 @@ export class TenantService {
     if (!tenant) return null;
 
     const ctx: TenantContext = {
-      tenantId: tenant['id'] as string,
-      tenantSlug: tenant['slug'] as string,
-      status: tenant['status'] as string,
-      plan: tenant['plan'] as string,
-      configJson: (tenant['configJson'] ?? {}) as Record<string, unknown>,
-      brandingJson: (tenant['brandingJson'] ?? {}) as Record<string, unknown>,
-      securityConfigJson: (tenant['securityConfigJson'] ?? {}) as Record<string, unknown>,
+      tenantId: tenant["id"] as string,
+      tenantSlug: tenant["slug"] as string,
+      status: tenant["status"] as string,
+      plan: tenant["plan"] as string,
+      configJson: (tenant["configJson"] ?? {}) as Record<string, unknown>,
+      brandingJson: (tenant["brandingJson"] ?? {}) as Record<string, unknown>,
+      securityConfigJson: (tenant["securityConfigJson"] ?? {}) as Record<
+        string,
+        unknown
+      >,
     };
 
     try {
       await this.redis.setex(cacheKey, TENANT_CACHE_TTL, JSON.stringify(ctx));
     } catch {
-      this.logger.warn('Failed to cache tenant context in Redis');
+      this.logger.warn("Failed to cache tenant context in Redis");
     }
 
     return ctx;

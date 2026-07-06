@@ -2,7 +2,7 @@
 // Yoga24X — Tenant Context (AsyncLocalStorage)
 // Enforces tenant isolation automatically — business services never filter manually
 // ==============================================================================
-import { AsyncLocalStorage } from 'async_hooks';
+import { AsyncLocalStorage } from "async_hooks";
 
 export interface TenantContext {
   tenantId: string;
@@ -20,7 +20,9 @@ export const tenantContextStorage = new AsyncLocalStorage<TenantContext>();
 export function getTenantContext(): TenantContext {
   const ctx = tenantContextStorage.getStore();
   if (!ctx) {
-    throw new Error('TenantContext is not initialized. Ensure TenantMiddleware is applied.');
+    throw new Error(
+      "TenantContext is not initialized. Ensure TenantMiddleware is applied.",
+    );
   }
   return ctx;
 }

@@ -2,10 +2,17 @@
 // Yoga24X — RBAC Service
 // Manages roles and permission overrides for users
 // ==============================================================================
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.module';
-import { AuthorizationEngineService } from '../authorization/authorization-engine.service';
-import { PERMISSIONS, ROLE_PERMISSION_MATRIX } from '../constants/permissions.registry';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.module";
+import { AuthorizationEngineService } from "../authorization/authorization-engine.service";
+import {
+  PERMISSIONS,
+  ROLE_PERMISSION_MATRIX,
+} from "../constants/permissions.registry";
 
 @Injectable()
 export class RbacService {
@@ -34,11 +41,15 @@ export class RbacService {
   }
 
   async assignRole(userId: string, roleName: string, assignedBy: string) {
-    const role = await this.prisma.role.findUnique({ where: { name: roleName } });
+    const role = await this.prisma.role.findUnique({
+      where: { name: roleName },
+    });
     if (!role) throw new NotFoundException(`Role '${roleName}' not found`);
 
-    const existing = await this.prisma.userRole.findFirst({ where: { userId, roleId: role.id } });
-    if (existing) throw new ConflictException('User already has this role');
+    const existing = await this.prisma.userRole.findFirst({
+      where: { userId, roleId: role.id },
+    });
+    if (existing) throw new ConflictException("User already has this role");
 
     const ur = await this.prisma.userRole.create({
       data: { userId, roleId: role.id, assignedBy },
@@ -49,10 +60,14 @@ export class RbacService {
   }
 
   async revokeRole(userId: string, roleName: string) {
-    const role = await this.prisma.role.findUnique({ where: { name: roleName } });
+    const role = await this.prisma.role.findUnique({
+      where: { name: roleName },
+    });
     if (!role) throw new NotFoundException(`Role '${roleName}' not found`);
 
-    await this.prisma.userRole.deleteMany({ where: { userId, roleId: role.id } });
+    await this.prisma.userRole.deleteMany({
+      where: { userId, roleId: role.id },
+    });
     await this.authzEngine.invalidateUserPermissionCache(userId);
   }
 
@@ -61,8 +76,8 @@ export class RbacService {
   async grantOverride(data: {
     userId: string;
     permissionKey: string;
-    effect: 'ALLOW' | 'DENY';
-    state: 'OVERRIDDEN' | 'TEMPORARY';
+    effect: "ALLOW" | "DENY";
+    state: "OVERRIDDEN" | "TEMPORARY";
     reason: string;
     grantedBy: string;
     tenantId?: string;
@@ -70,16 +85,21 @@ export class RbacService {
     expiresAt?: Date;
     conditionJson?: Record<string, unknown>;
   }) {
-    const [module, action] = data.permissionKey.split(':');
-    const permission = await this.prisma.permission.findFirst({ where: { module, action } });
-    if (!permission) throw new NotFoundException(`Permission '${data.permissionKey}' not found`);
+    const [module, action] = data.permissionKey.split(":");
+    const permission = await this.prisma.permission.findFirst({
+      where: { module, action },
+    });
+    if (!permission)
+      throw new NotFoundException(
+        `Permission '${data.permissionKey}' not found`,
+      );
 
     const override = await this.prisma.userPermissionOverride.upsert({
       where: {
         uq_user_perm_override: {
           userId: data.userId,
           permissionId: permission.id,
-          tenantId: data.tenantId ?? null as any,
+          tenantId: data.tenantId ?? (null as any),
         },
       },
       update: {
@@ -104,19 +124,24 @@ export class RbacService {
       },
     });
 
-    await this.authzEngine.invalidateUserPermissionCache(data.userId, data.tenantId);
+    await this.authzEngine.invalidateUserPermissionCache(
+      data.userId,
+      data.tenantId,
+    );
     return override;
   }
 
   async revokeOverride(overrideId: string, userId: string) {
-    await this.prisma.userPermissionOverride.delete({ where: { id: overrideId } });
+    await this.prisma.userPermissionOverride.delete({
+      where: { id: overrideId },
+    });
     await this.authzEngine.invalidateUserPermissionCache(userId);
   }
 
   async getUserOverrides(userId: string, tenantId?: string) {
     return this.prisma.userPermissionOverride.findMany({
       where: { userId, ...(tenantId ? { tenantId } : {}) },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
     });
   }
 

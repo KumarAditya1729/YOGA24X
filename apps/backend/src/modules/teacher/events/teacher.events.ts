@@ -4,19 +4,19 @@
 // ==============================================================================
 
 export enum TeacherEventType {
-  PROFILE_CREATED          = 'teacher.profile.created',
-  PROFILE_UPDATED          = 'teacher.profile.updated',
-  PROFILE_PUBLISHED        = 'teacher.profile.published',
-  CERT_ADDED               = 'teacher.cert.added',
-  CERT_REMOVED             = 'teacher.cert.removed',
-  CERT_VERIFIED            = 'teacher.cert.verified',
-  VERIFICATION_SUBMITTED   = 'teacher.verification.submitted',
-  VERIFICATION_APPROVED    = 'teacher.verification.approved',
-  VERIFICATION_REJECTED    = 'teacher.verification.rejected',
-  VERIFICATION_RESUBMITTED = 'teacher.verification.resubmitted',
-  STATS_RECALCULATED       = 'teacher.stats.recalculated',
-  REVIEW_POSTED            = 'teacher.review.posted',
-  REVIEW_REPLIED           = 'teacher.review.replied',
+  PROFILE_CREATED = "teacher.profile.created",
+  PROFILE_UPDATED = "teacher.profile.updated",
+  PROFILE_PUBLISHED = "teacher.profile.published",
+  CERT_ADDED = "teacher.cert.added",
+  CERT_REMOVED = "teacher.cert.removed",
+  CERT_VERIFIED = "teacher.cert.verified",
+  VERIFICATION_SUBMITTED = "teacher.verification.submitted",
+  VERIFICATION_APPROVED = "teacher.verification.approved",
+  VERIFICATION_REJECTED = "teacher.verification.rejected",
+  VERIFICATION_RESUBMITTED = "teacher.verification.resubmitted",
+  STATS_RECALCULATED = "teacher.stats.recalculated",
+  REVIEW_POSTED = "teacher.review.posted",
+  REVIEW_REPLIED = "teacher.review.replied",
 }
 
 export interface TeacherProfileCreatedEvent {

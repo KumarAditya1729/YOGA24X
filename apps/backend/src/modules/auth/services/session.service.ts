@@ -2,10 +2,10 @@
 // Yoga24X AI Engineering OS — Session Service (Redis + DB Multi-Device Tracking)
 // ==============================================================================
 
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { RedisService } from '../../redis/redis.module';
-import { AuthRepository } from '../repositories/auth.repository';
-import { AUTH_CONSTANTS, DeviceInfo, SessionData } from '@yoga24x/shared-types';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { RedisService } from "../../redis/redis.module";
+import { AuthRepository } from "../repositories/auth.repository";
+import { AUTH_CONSTANTS, DeviceInfo, SessionData } from "@yoga24x/shared-types";
 
 @Injectable()
 export class SessionService {
@@ -23,7 +23,7 @@ export class SessionService {
     deviceInfo: DeviceInfo,
     ipAddress: string,
     userAgent: string,
-    location = 'Unknown',
+    location = "Unknown",
   ): Promise<{ sessionId: string; deviceId: string | null }> {
     // 1. Register or Update Device in PostgreSQL
     const device = await this.authRepository.upsertDevice({
@@ -81,18 +81,19 @@ export class SessionService {
     }
 
     // Fallback to PostgreSQL
-    const dbSession = await this.authRepository.findActiveSessionById(sessionId);
+    const dbSession =
+      await this.authRepository.findActiveSessionById(sessionId);
     if (!dbSession || !dbSession.isActive) return null;
 
     const sessionData: SessionData = {
       sessionId: dbSession.id,
       userId: dbSession.userId,
       deviceId: dbSession.deviceId,
-      deviceFingerprint: 'unknown',
-      ipAddress: dbSession.ipAddress || 'unknown',
-      userAgent: dbSession.userAgent || 'unknown',
-      location: 'Unknown',
-      deviceType: 'WEB_BROWSER',
+      deviceFingerprint: "unknown",
+      ipAddress: dbSession.ipAddress || "unknown",
+      userAgent: dbSession.userAgent || "unknown",
+      location: "Unknown",
+      deviceType: "WEB_BROWSER",
       isActive: true,
       createdAt: dbSession.createdAt.toISOString(),
       lastActiveAt: dbSession.lastActiveAt.toISOString(),
@@ -114,7 +115,11 @@ export class SessionService {
     if (dataStr) {
       const data = JSON.parse(dataStr) as SessionData;
       data.lastActiveAt = new Date().toISOString();
-      await this.redisService.set(redisKey, JSON.stringify(data), AUTH_CONSTANTS.REFRESH_TOKEN_TTL_SECONDS);
+      await this.redisService.set(
+        redisKey,
+        JSON.stringify(data),
+        AUTH_CONSTANTS.REFRESH_TOKEN_TTL_SECONDS,
+      );
     }
   }
 
@@ -131,7 +136,7 @@ export class SessionService {
   async revokeAllUserSessions(userId: string): Promise<number> {
     // 1. Get all active sessions from DB
     const sessions = await this.authRepository.listActiveSessions(userId);
-    
+
     // 2. Delete all session keys from Redis
     for (const s of sessions) {
       const redisKey = `${AUTH_CONSTANTS.REDIS_KEY_SESSION_PREFIX}${s.id}`;
@@ -170,15 +175,19 @@ export class SessionService {
   }
 
   async revokeTrustedDevice(fingerprint: string): Promise<any> {
-    const device = await this.authRepository.findTrustedDeviceByFingerprint(fingerprint);
+    const device =
+      await this.authRepository.findTrustedDeviceByFingerprint(fingerprint);
     if (!device) {
-      throw new NotFoundException('Trusted device not found');
+      throw new NotFoundException("Trusted device not found");
     }
     return this.authRepository.revokeTrustedDevice(fingerprint);
   }
 
   async isDeviceTrusted(deviceFingerprint: string): Promise<boolean> {
-    const device = await this.authRepository.findTrustedDeviceByFingerprint(deviceFingerprint);
+    const device =
+      await this.authRepository.findTrustedDeviceByFingerprint(
+        deviceFingerprint,
+      );
     return !!(device && !device.isRevoked);
   }
 }

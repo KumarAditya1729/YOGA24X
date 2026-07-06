@@ -2,24 +2,39 @@
 // Yoga24X — Teacher Profile Repository
 // All DB operations for TeacherProfile, specializations, preferences, social links
 // ==============================================================================
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.module';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.module";
 import {
-  CreateTeacherProfileDto, UpdateTeacherProfileDto,
-  UpdateTeachingPreferenceDto, UpsertSpecializationDto,
-  UpsertSocialLinkDto, TeacherListQueryDto,
-} from '../dto/teacher.dto';
+  CreateTeacherProfileDto,
+  UpdateTeacherProfileDto,
+  UpdateTeachingPreferenceDto,
+  UpsertSpecializationDto,
+  UpsertSocialLinkDto,
+  TeacherListQueryDto,
+} from "../dto/teacher.dto";
 
 const FULL_PROFILE_INCLUDE = {
-  certifications: { where: { isActive: true }, orderBy: { displayOrder: 'asc' as const } },
-  specializations: { orderBy: { displayOrder: 'asc' as const } },
+  certifications: {
+    where: { isActive: true },
+    orderBy: { displayOrder: "asc" as const },
+  },
+  specializations: { orderBy: { displayOrder: "asc" as const } },
   teachingPreference: true,
-  portfolioItems: { orderBy: { displayOrder: 'asc' as const } },
+  portfolioItems: { orderBy: { displayOrder: "asc" as const } },
   socialLinks: { where: { isPublic: true } },
   stats: true,
-  verification: { select: { status: true, identityVerified: true, certificateVerified: true, lastSubmittedAt: true } },
-  featuredContent: { orderBy: { displayOrder: 'asc' as const } },
-  user: { select: { firstName: true, lastName: true, avatarUrl: true, email: true } },
+  verification: {
+    select: {
+      status: true,
+      identityVerified: true,
+      certificateVerified: true,
+      lastSubmittedAt: true,
+    },
+  },
+  featuredContent: { orderBy: { displayOrder: "asc" as const } },
+  user: {
+    select: { firstName: true, lastName: true, avatarUrl: true, email: true },
+  },
 } as const;
 
 @Injectable()
@@ -55,7 +70,7 @@ export class TeacherProfileRepository {
 
   async findPublicById(userId: string) {
     return this.prisma.teacherProfile.findFirst({
-      where: { userId, isPublic: true, verificationStatus: 'APPROVED' },
+      where: { userId, isPublic: true, verificationStatus: "APPROVED" },
       include: FULL_PROFILE_INCLUDE,
     });
   }
@@ -79,29 +94,38 @@ export class TeacherProfileRepository {
   }
 
   async list(query: TeacherListQueryDto) {
-    const { page = 1, limit = 20, specialization, teachingMode, countryCode, language, minRating, search } = query;
+    const {
+      page = 1,
+      limit = 20,
+      specialization,
+      teachingMode,
+      countryCode,
+      language,
+      minRating,
+      search,
+    } = query;
     const skip = (page - 1) * limit;
 
     const where: Record<string, unknown> = {
       isPublic: true,
-      verificationStatus: 'APPROVED',
+      verificationStatus: "APPROVED",
     };
 
-    if (countryCode) where['countryCode'] = countryCode;
-    if (language) where['teachingLanguages'] = { has: language };
-    if (minRating) where['stats'] = { averageRating: { gte: minRating } };
+    if (countryCode) where["countryCode"] = countryCode;
+    if (language) where["teachingLanguages"] = { has: language };
+    if (minRating) where["stats"] = { averageRating: { gte: minRating } };
     if (specialization) {
-      where['specializations'] = { some: { specialization } };
+      where["specializations"] = { some: { specialization } };
     }
     if (teachingMode) {
-      where['teachingPreference'] = { teachingModes: { has: teachingMode } };
+      where["teachingPreference"] = { teachingModes: { has: teachingMode } };
     }
     if (search) {
-      where['OR'] = [
-        { headline: { contains: search, mode: 'insensitive' } },
-        { bio: { contains: search, mode: 'insensitive' } },
-        { user: { firstName: { contains: search, mode: 'insensitive' } } },
-        { user: { lastName: { contains: search, mode: 'insensitive' } } },
+      where["OR"] = [
+        { headline: { contains: search, mode: "insensitive" } },
+        { bio: { contains: search, mode: "insensitive" } },
+        { user: { firstName: { contains: search, mode: "insensitive" } } },
+        { user: { lastName: { contains: search, mode: "insensitive" } } },
       ];
     }
 
@@ -110,11 +134,13 @@ export class TeacherProfileRepository {
         where,
         skip,
         take: limit,
-        orderBy: [{ isFeatured: 'desc' }, { stats: { averageRating: 'desc' } }],
+        orderBy: [{ isFeatured: "desc" }, { stats: { averageRating: "desc" } }],
         include: {
-          specializations: { take: 3, orderBy: { isPrimary: 'desc' } },
+          specializations: { take: 3, orderBy: { isPrimary: "desc" } },
           stats: true,
-          user: { select: { firstName: true, lastName: true, avatarUrl: true } },
+          user: {
+            select: { firstName: true, lastName: true, avatarUrl: true },
+          },
           verification: { select: { status: true } },
         },
       }),
@@ -126,7 +152,12 @@ export class TeacherProfileRepository {
 
   async upsertSpecialization(userId: string, dto: UpsertSpecializationDto) {
     return this.prisma.teacherSpecialization.upsert({
-      where: { uq_teacher_specialization: { userId, specialization: dto.specialization } },
+      where: {
+        uq_teacher_specialization: {
+          userId,
+          specialization: dto.specialization,
+        },
+      },
       create: {
         userId,
         specialization: dto.specialization,
@@ -148,7 +179,10 @@ export class TeacherProfileRepository {
     });
   }
 
-  async upsertTeachingPreference(userId: string, dto: UpdateTeachingPreferenceDto) {
+  async upsertTeachingPreference(
+    userId: string,
+    dto: UpdateTeachingPreferenceDto,
+  ) {
     return this.prisma.teacherTeachingPreference.upsert({
       where: { userId },
       create: { userId, ...dto },
@@ -159,25 +193,41 @@ export class TeacherProfileRepository {
   async upsertSocialLink(userId: string, dto: UpsertSocialLinkDto) {
     return this.prisma.teacherSocialLink.upsert({
       where: { uq_teacher_social_platform: { userId, platform: dto.platform } },
-      create: { userId, platform: dto.platform, url: dto.url, isPublic: dto.isPublic ?? true },
+      create: {
+        userId,
+        platform: dto.platform,
+        url: dto.url,
+        isPublic: dto.isPublic ?? true,
+      },
       update: { url: dto.url, isPublic: dto.isPublic },
     });
   }
 
   async removeSocialLink(userId: string, platform: string) {
-    return this.prisma.teacherSocialLink.deleteMany({ where: { userId, platform } });
+    return this.prisma.teacherSocialLink.deleteMany({
+      where: { userId, platform },
+    });
   }
 
-  async pinFeaturedContent(userId: string, contentType: string, contentId: string, displayOrder: number) {
+  async pinFeaturedContent(
+    userId: string,
+    contentType: string,
+    contentId: string,
+    displayOrder: number,
+  ) {
     return this.prisma.teacherFeaturedContent.upsert({
-      where: { uq_teacher_featured_content: { userId, contentType, contentId } },
+      where: {
+        uq_teacher_featured_content: { userId, contentType, contentId },
+      },
       create: { userId, contentType, contentId, displayOrder },
       update: { displayOrder },
     });
   }
 
   async unpinFeaturedContent(userId: string, contentId: string) {
-    return this.prisma.teacherFeaturedContent.deleteMany({ where: { userId, contentId } });
+    return this.prisma.teacherFeaturedContent.deleteMany({
+      where: { userId, contentId },
+    });
   }
 
   async setVerificationStatus(
@@ -189,7 +239,7 @@ export class TeacherProfileRepository {
       where: { userId },
       data: {
         verificationStatus: status as any,
-        approvedAt: status === 'APPROVED' ? new Date() : undefined,
+        approvedAt: status === "APPROVED" ? new Date() : undefined,
         approvedBy: extra?.approvedBy,
         rejectionReason: extra?.rejectionReason,
       },

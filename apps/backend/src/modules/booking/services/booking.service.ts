@@ -2,16 +2,16 @@
 // Yoga24X AI Engineering OS — Booking Service (Prompt 7)
 // ==============================================================================
 
-import { Injectable, Logger } from '@nestjs/common';
-import { BookingRepository } from '../repositories/booking.repository';
-import { WaitlistRepository } from '../repositories/waitlist.repository';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+import { Injectable, Logger } from "@nestjs/common";
+import { BookingRepository } from "../repositories/booking.repository";
+import { WaitlistRepository } from "../repositories/waitlist.repository";
+import { EventEmitter2 } from "@nestjs/event-emitter";
 import {
   CreateBookingDto,
   RescheduleBookingDto,
   CancelBookingDto,
   BookingQueryDto,
-} from '../dto/booking.dto';
+} from "../dto/booking.dto";
 
 @Injectable()
 export class BookingService {
@@ -26,7 +26,11 @@ export class BookingService {
   async createBooking(userId: string, dto: CreateBookingDto, tenantId: string) {
     const booking = await this.bookingRepo.createBooking(userId, dto, tenantId);
     this.logger.log(`Booking created: ${booking.id} for user ${userId}`);
-    this.events.emit('booking.created', { bookingId: booking.id, userId, tenantId });
+    this.events.emit("booking.created", {
+      bookingId: booking.id,
+      userId,
+      tenantId,
+    });
     return booking;
   }
 
@@ -44,7 +48,7 @@ export class BookingService {
 
   async reschedule(userId: string, dto: RescheduleBookingDto) {
     const booking = await this.bookingRepo.rescheduleBooking(userId, dto);
-    this.events.emit('booking.rescheduled', { bookingId: booking.id, userId });
+    this.events.emit("booking.rescheduled", { bookingId: booking.id, userId });
 
     // Promote next on waitlist for the old session
     const oldBooking = await this.bookingRepo.findById(dto.bookingId);
@@ -55,7 +59,11 @@ export class BookingService {
 
   async cancel(userId: string, dto: CancelBookingDto, role: string) {
     const booking = await this.bookingRepo.cancelBooking(userId, dto, role);
-    this.events.emit('booking.cancelled', { bookingId: booking.id, userId, reason: dto.reason });
+    this.events.emit("booking.cancelled", {
+      bookingId: booking.id,
+      userId,
+      reason: dto.reason,
+    });
 
     // Promote next on waitlist when a slot opens
     await this.waitlistRepo.promoteNext(booking.sessionId);

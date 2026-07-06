@@ -1,6 +1,6 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.module';
-import { WalletCreditDto, WalletTransferDto } from '../dto/commerce.dto';
+import { Injectable, BadRequestException } from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.module";
+import { WalletCreditDto, WalletTransferDto } from "../dto/commerce.dto";
 
 @Injectable()
 export class WalletRepository {
@@ -9,7 +9,7 @@ export class WalletRepository {
   async getWallet(userId: string) {
     return this.prisma.wallet.findUnique({
       where: { userId },
-      include: { transactions: { orderBy: { createdAt: 'desc' }, take: 20 } },
+      include: { transactions: { orderBy: { createdAt: "desc" }, take: 20 } },
     });
   }
 
@@ -17,7 +17,11 @@ export class WalletRepository {
     return this.prisma.$transaction(async (tx) => {
       const wallet = await tx.wallet.upsert({
         where: { userId },
-        create: { userId, balanceCents: BigInt(dto.amountCents), currency: 'INR' },
+        create: {
+          userId,
+          balanceCents: BigInt(dto.amountCents),
+          currency: "INR",
+        },
         update: { balanceCents: { increment: BigInt(dto.amountCents) } },
       });
 
@@ -25,7 +29,7 @@ export class WalletRepository {
         data: {
           walletId: userId,
           amountCents: BigInt(dto.amountCents),
-          transactionType: 'CREDIT',
+          transactionType: "CREDIT",
           description: dto.description,
           referenceId: dto.referenceId,
         },
@@ -35,11 +39,16 @@ export class WalletRepository {
     });
   }
 
-  async debitWallet(userId: string, amountCents: number, description: string, referenceId?: string) {
+  async debitWallet(
+    userId: string,
+    amountCents: number,
+    description: string,
+    referenceId?: string,
+  ) {
     return this.prisma.$transaction(async (tx) => {
       const wallet = await tx.wallet.findUnique({ where: { userId } });
       if (!wallet || wallet.balanceCents < BigInt(amountCents)) {
-        throw new BadRequestException('Insufficient wallet balance');
+        throw new BadRequestException("Insufficient wallet balance");
       }
 
       await tx.wallet.update({
@@ -51,7 +60,7 @@ export class WalletRepository {
         data: {
           walletId: userId,
           amountCents: BigInt(amountCents),
-          transactionType: 'DEBIT',
+          transactionType: "DEBIT",
           description,
           referenceId,
         },
@@ -61,9 +70,11 @@ export class WalletRepository {
 
   async transferWallet(fromUserId: string, dto: WalletTransferDto) {
     return this.prisma.$transaction(async (tx) => {
-      const fromWallet = await tx.wallet.findUnique({ where: { userId: fromUserId } });
+      const fromWallet = await tx.wallet.findUnique({
+        where: { userId: fromUserId },
+      });
       if (!fromWallet || fromWallet.balanceCents < BigInt(dto.amountCents)) {
-        throw new BadRequestException('Insufficient balance for transfer');
+        throw new BadRequestException("Insufficient balance for transfer");
       }
 
       await tx.wallet.update({
@@ -73,7 +84,11 @@ export class WalletRepository {
 
       await tx.wallet.upsert({
         where: { userId: dto.recipientUserId },
-        create: { userId: dto.recipientUserId, balanceCents: BigInt(dto.amountCents), currency: 'INR' },
+        create: {
+          userId: dto.recipientUserId,
+          balanceCents: BigInt(dto.amountCents),
+          currency: "INR",
+        },
         update: { balanceCents: { increment: BigInt(dto.amountCents) } },
       });
 
@@ -82,13 +97,14 @@ export class WalletRepository {
           {
             walletId: fromUserId,
             amountCents: BigInt(dto.amountCents),
-            transactionType: 'TRANSFER_OUT',
-            description: dto.description ?? `Transfer to ${dto.recipientUserId}`,
+            transactionType: "TRANSFER_OUT",
+            description:
+              dto.description ?? `Transfer to ${dto.recipientUserId}`,
           },
           {
             walletId: dto.recipientUserId,
             amountCents: BigInt(dto.amountCents),
-            transactionType: 'TRANSFER_IN',
+            transactionType: "TRANSFER_IN",
             description: dto.description ?? `Transfer from ${fromUserId}`,
           },
         ],
@@ -99,7 +115,7 @@ export class WalletRepository {
   async getTransactionHistory(userId: string, limit = 50) {
     return this.prisma.walletTransaction.findMany({
       where: { walletId: userId },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
       take: limit,
     });
   }

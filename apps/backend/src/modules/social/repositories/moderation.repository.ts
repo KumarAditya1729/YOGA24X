@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.module';
-import { ReportContentDto } from '../dto/social.dto';
+import { Injectable } from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.module";
+import { ReportContentDto } from "../dto/social.dto";
 
 @Injectable()
 export class ModerationRepository {
@@ -13,8 +13,8 @@ export class ModerationRepository {
         reason: data.reason,
         details: data.details,
         postId: data.postId,
-        commentId: data.commentId
-      }
+        commentId: data.commentId,
+      },
     });
   }
 
@@ -22,8 +22,8 @@ export class ModerationRepository {
     return this.prisma.blockedUser.create({
       data: {
         blockerId,
-        blockedId
-      }
+        blockedId,
+      },
     });
   }
 }

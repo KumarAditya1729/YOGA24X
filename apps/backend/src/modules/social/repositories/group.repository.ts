@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.module';
-import { CreateGroupDto } from '../dto/social.dto';
+import { Injectable } from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.module";
+import { CreateGroupDto } from "../dto/social.dto";
 
 @Injectable()
 export class GroupRepository {
@@ -12,7 +12,7 @@ export class GroupRepository {
         name: data.name,
         description: data.description,
         groupType: data.groupType,
-      }
+      },
     });
   }
 
@@ -21,9 +21,9 @@ export class GroupRepository {
       where: type ? { groupType: type as any } : undefined,
       include: {
         _count: {
-          select: { members: true }
-        }
-      }
+          select: { members: true },
+        },
+      },
     });
   }
 
@@ -32,7 +32,7 @@ export class GroupRepository {
       data: {
         groupId,
         userId,
-      }
+      },
     });
   }
 }

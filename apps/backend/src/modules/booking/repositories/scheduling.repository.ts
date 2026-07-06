@@ -2,8 +2,8 @@
 // Yoga24X AI Engineering OS — Scheduling Repository (Prompt 7)
 // ==============================================================================
 
-import { Injectable, ConflictException } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.module';
+import { Injectable, ConflictException } from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.module";
 
 @Injectable()
 export class SchedulingRepository {
@@ -22,12 +22,9 @@ export class SchedulingRepository {
     return this.prisma.teacherSession.findMany({
       where: {
         teacherUserId,
-        id: { not: excludeSessionId ?? '' },
-        status: { notIn: ['CANCELLED', 'COMPLETED'] },
-        AND: [
-          { startTime: { lt: endTime } },
-          { endTime: { gt: startTime } },
-        ],
+        id: { not: excludeSessionId ?? "" },
+        status: { notIn: ["CANCELLED", "COMPLETED"] },
+        AND: [{ startTime: { lt: endTime } }, { endTime: { gt: startTime } }],
       },
     });
   }
@@ -36,30 +33,32 @@ export class SchedulingRepository {
    * Generate time slots from a teacher's availability windows,
    * filtered by capacity and existing bookings.
    */
-  async getAvailableSlots(
-    teacherUserId: string,
-    fromDate: Date,
-    toDate: Date,
-  ) {
+  async getAvailableSlots(teacherUserId: string, fromDate: Date, toDate: Date) {
     return this.prisma.teacherSession.findMany({
       where: {
         teacherUserId,
         startTime: { gte: fromDate },
         endTime: { lte: toDate },
-        status: { in: ['SCHEDULED'] },
+        status: { in: ["SCHEDULED"] },
       },
       include: {
         sessionType: true,
-        bookings: { where: { status: { in: ['CONFIRMED', 'CHECKED_IN', 'STARTED'] } } },
+        bookings: {
+          where: { status: { in: ["CONFIRMED", "CHECKED_IN", "STARTED"] } },
+        },
       },
-      orderBy: { startTime: 'asc' },
+      orderBy: { startTime: "asc" },
     });
   }
 
   /**
    * Get a teacher's upcoming schedule with all relevant bookings.
    */
-  async getTeacherSchedule(teacherUserId: string, fromDate: Date, toDate: Date) {
+  async getTeacherSchedule(
+    teacherUserId: string,
+    fromDate: Date,
+    toDate: Date,
+  ) {
     const sessions = await this.prisma.teacherSession.findMany({
       where: {
         teacherUserId,
@@ -74,7 +73,7 @@ export class SchedulingRepository {
           },
         },
       },
-      orderBy: { startTime: 'asc' },
+      orderBy: { startTime: "asc" },
     });
 
     const events = await this.prisma.learningEvent.findMany({
@@ -83,7 +82,7 @@ export class SchedulingRepository {
         scheduledStartAt: { gte: fromDate, lte: toDate },
       },
       include: { registrations: true },
-      orderBy: { scheduledStartAt: 'asc' },
+      orderBy: { scheduledStartAt: "asc" },
     });
 
     return { sessions, events };
@@ -92,18 +91,31 @@ export class SchedulingRepository {
   /**
    * Get a student's unified calendar (bookings + enrollments).
    */
-  async getStudentCalendar(studentUserId: string, fromDate: Date, toDate: Date) {
+  async getStudentCalendar(
+    studentUserId: string,
+    fromDate: Date,
+    toDate: Date,
+  ) {
     const bookings = await this.prisma.teacherBooking.findMany({
       where: {
         studentUserId,
-        status: { in: ['CONFIRMED', 'RESCHEDULED', 'CHECKED_IN', 'STARTED'] },
+        status: { in: ["CONFIRMED", "RESCHEDULED", "CHECKED_IN", "STARTED"] },
         session: { startTime: { gte: fromDate, lte: toDate } },
       },
       include: {
-        session: { include: { teacher: { include: { user: { select: { firstName: true, lastName: true } } } }, sessionType: true } },
+        session: {
+          include: {
+            teacher: {
+              include: {
+                user: { select: { firstName: true, lastName: true } },
+              },
+            },
+            sessionType: true,
+          },
+        },
         attendance: true,
       },
-      orderBy: { session: { startTime: 'asc' } },
+      orderBy: { session: { startTime: "asc" } },
     });
 
     const enrollments = await this.prisma.eventRegistration.findMany({
@@ -114,7 +126,7 @@ export class SchedulingRepository {
         },
       },
       include: { event: true },
-      orderBy: { event: { scheduledStartAt: 'asc' } },
+      orderBy: { event: { scheduledStartAt: "asc" } },
     });
 
     return { bookings, enrollments };

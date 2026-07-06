@@ -3,9 +3,13 @@
 // Handles Daily Wellness Timeline Logs, Streaks, and User Goals/Milestones
 // ==============================================================================
 
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.module';
-import { LogTimelineDto, CreateUserGoalDto, UpdateUserGoalDto } from '@yoga24x/shared-types';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.module";
+import {
+  LogTimelineDto,
+  CreateUserGoalDto,
+  UpdateUserGoalDto,
+} from "@yoga24x/shared-types";
 
 @Injectable()
 export class TimelineGoalRepository {
@@ -16,7 +20,7 @@ export class TimelineGoalRepository {
     const logDate = new Date(dto.logDate);
     const data: any = {
       logDate,
-      dailyMood: dto.dailyMood || 'GOOD',
+      dailyMood: dto.dailyMood || "GOOD",
       painLevel: dto.painLevel ?? 0,
       stressScore: dto.stressScore ?? 4,
       sleepHours: dto.sleepHours ?? 7.5,
@@ -36,7 +40,11 @@ export class TimelineGoalRepository {
     });
   }
 
-  async getTimelineLogs(userId: string, startDate?: string, endDate?: string): Promise<any[]> {
+  async getTimelineLogs(
+    userId: string,
+    startDate?: string,
+    endDate?: string,
+  ): Promise<any[]> {
     const where: any = { userId };
     if (startDate || endDate) {
       where.logDate = {};
@@ -46,7 +54,7 @@ export class TimelineGoalRepository {
 
     return this.prisma.wellnessTimelineLog.findMany({
       where,
-      orderBy: { logDate: 'desc' },
+      orderBy: { logDate: "desc" },
       take: 90, // Last 90 days max by default
     });
   }
@@ -75,7 +83,7 @@ export class TimelineGoalRepository {
 
     return this.prisma.userGoal.findMany({
       where,
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
     });
   }
 
@@ -83,11 +91,15 @@ export class TimelineGoalRepository {
     const goal = await this.prisma.userGoal.findFirst({
       where: { id: goalId, userId },
     });
-    if (!goal) throw new NotFoundException('Goal not found');
+    if (!goal) throw new NotFoundException("Goal not found");
     return goal;
   }
 
-  async updateGoal(goalId: string, userId: string, dto: UpdateUserGoalDto): Promise<any> {
+  async updateGoal(
+    goalId: string,
+    userId: string,
+    dto: UpdateUserGoalDto,
+  ): Promise<any> {
     const existing = await this.getGoalById(goalId, userId);
     const data: any = {};
     if (dto.title !== undefined) data.title = dto.title;
@@ -96,13 +108,15 @@ export class TimelineGoalRepository {
     if (dto.currentValue !== undefined) data.currentValue = dto.currentValue;
     if (dto.status !== undefined) {
       data.status = dto.status;
-      if (dto.status === 'COMPLETED' && existing.status !== 'COMPLETED') {
+      if (dto.status === "COMPLETED" && existing.status !== "COMPLETED") {
         data.completedAt = new Date();
       }
     }
-    if (dto.targetDate !== undefined) data.targetDate = dto.targetDate ? new Date(dto.targetDate) : null;
+    if (dto.targetDate !== undefined)
+      data.targetDate = dto.targetDate ? new Date(dto.targetDate) : null;
     if (dto.milestones !== undefined) data.milestonesJson = dto.milestones;
-    if (dto.achievements !== undefined) data.achievementsJson = dto.achievements;
+    if (dto.achievements !== undefined)
+      data.achievementsJson = dto.achievements;
 
     return this.prisma.userGoal.update({
       where: { id: goalId },

@@ -2,8 +2,8 @@
 // Yoga24X AI Engineering OS — Scheduling Service (Prompt 7)
 // ==============================================================================
 
-import { Injectable, Logger, ConflictException } from '@nestjs/common';
-import { SchedulingRepository } from '../repositories/scheduling.repository';
+import { Injectable, Logger, ConflictException } from "@nestjs/common";
+import { SchedulingRepository } from "../repositories/scheduling.repository";
 
 @Injectable()
 export class SchedulingService {
@@ -18,7 +18,10 @@ export class SchedulingService {
     excludeSessionId?: string,
   ) {
     const conflicts = await this.schedulingRepo.detectConflicts(
-      teacherUserId, startTime, endTime, excludeSessionId,
+      teacherUserId,
+      startTime,
+      endTime,
+      excludeSessionId,
     );
     if (conflicts.length > 0) {
       throw new ConflictException(
@@ -29,7 +32,11 @@ export class SchedulingService {
   }
 
   async getAvailableSlots(teacherUserId: string, fromDate: Date, toDate: Date) {
-    const sessions = await this.schedulingRepo.getAvailableSlots(teacherUserId, fromDate, toDate);
+    const sessions = await this.schedulingRepo.getAvailableSlots(
+      teacherUserId,
+      fromDate,
+      toDate,
+    );
     return sessions.map((s) => ({
       sessionId: s.id,
       title: s.title,
@@ -58,16 +65,26 @@ export class SchedulingService {
   }
 
   /** AI Hook: Schedule Optimization (stub for future AI integration) */
-  async getAIOptimizedSchedule(teacherUserId: string, preferences: Record<string, unknown>) {
-    this.logger.log(`[AI Hook] Schedule optimization requested for teacher ${teacherUserId}`);
+  async getAIOptimizedSchedule(
+    teacherUserId: string,
+    preferences: Record<string, unknown>,
+  ) {
+    this.logger.log(
+      `[AI Hook] Schedule optimization requested for teacher ${teacherUserId}`,
+    );
     // TODO: Integrate with AI scheduling engine in Prompt 10
-    return { suggestions: [], message: 'AI schedule optimization not yet active.' };
+    return {
+      suggestions: [],
+      message: "AI schedule optimization not yet active.",
+    };
   }
 
   /** AI Hook: Demand Forecasting (stub) */
   async getDemandForecast(teacherUserId: string, daysAhead: number) {
-    this.logger.log(`[AI Hook] Demand forecast for teacher ${teacherUserId}, ${daysAhead} days`);
-    return { forecast: [], message: 'AI demand forecast not yet active.' };
+    this.logger.log(
+      `[AI Hook] Demand forecast for teacher ${teacherUserId}, ${daysAhead} days`,
+    );
+    return { forecast: [], message: "AI demand forecast not yet active." };
   }
 
   /** Generate ICS export string for a session */
@@ -79,23 +96,23 @@ export class SchedulingService {
     meetingUrl?: string | null;
   }): string {
     const formatDate = (d: Date) =>
-      d.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+      d.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
 
     return [
-      'BEGIN:VCALENDAR',
-      'VERSION:2.0',
-      'PRODID:-//Yoga24X//EN',
-      'BEGIN:VEVENT',
+      "BEGIN:VCALENDAR",
+      "VERSION:2.0",
+      "PRODID:-//Yoga24X//EN",
+      "BEGIN:VEVENT",
       `UID:${session.id}@yoga24x`,
       `DTSTAMP:${formatDate(new Date())}`,
       `DTSTART:${formatDate(session.startTime)}`,
       `DTEND:${formatDate(session.endTime)}`,
       `SUMMARY:${session.title}`,
-      session.meetingUrl ? `URL:${session.meetingUrl}` : '',
-      'END:VEVENT',
-      'END:VCALENDAR',
+      session.meetingUrl ? `URL:${session.meetingUrl}` : "",
+      "END:VEVENT",
+      "END:VCALENDAR",
     ]
       .filter(Boolean)
-      .join('\r\n');
+      .join("\r\n");
   }
 }

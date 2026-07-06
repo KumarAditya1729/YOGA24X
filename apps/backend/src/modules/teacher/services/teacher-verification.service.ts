@@ -3,16 +3,21 @@
 // KYC workflow: submit → under review → approve/reject → resubmit
 // ==============================================================================
 import {
-  Injectable, BadRequestException, NotFoundException,
-} from '@nestjs/common';
-import { EventEmitter2 } from '@nestjs/event-emitter';
-import { TeacherVerificationRepository } from '../repositories/teacher-verification.repository';
-import { TeacherProfileRepository } from '../repositories/teacher-profile.repository';
-import { SubmitVerificationDto, ReviewVerificationDto } from '../dto/teacher.dto';
-import { TeacherEventType } from '../events/teacher.events';
-import { randomUUID } from 'crypto';
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from "@nestjs/common";
+import { EventEmitter2 } from "@nestjs/event-emitter";
+import { TeacherVerificationRepository } from "../repositories/teacher-verification.repository";
+import { TeacherProfileRepository } from "../repositories/teacher-profile.repository";
+import {
+  SubmitVerificationDto,
+  ReviewVerificationDto,
+} from "../dto/teacher.dto";
+import { TeacherEventType } from "../events/teacher.events";
+import { randomUUID } from "crypto";
 
-const RESUBMITTABLE_STATUSES = ['REJECTED'];
+const RESUBMITTABLE_STATUSES = ["REJECTED"];
 
 @Injectable()
 export class TeacherVerificationService {
@@ -24,7 +29,10 @@ export class TeacherVerificationService {
 
   async submitVerification(userId: string, dto: SubmitVerificationDto) {
     const profile = await this.profileRepo.findByUserId(userId);
-    if (!profile) throw new NotFoundException('Teacher profile not found. Create it first.');
+    if (!profile)
+      throw new NotFoundException(
+        "Teacher profile not found. Create it first.",
+      );
 
     const existing = await this.verifRepo.getVerification(userId);
     if (existing && !RESUBMITTABLE_STATUSES.includes(existing.status)) {
@@ -36,7 +44,7 @@ export class TeacherVerificationService {
     const verif = await this.verifRepo.submitVerification(userId, dto);
 
     // Update profile status
-    await this.profileRepo.setVerificationStatus(userId, 'PENDING');
+    await this.profileRepo.setVerificationStatus(userId, "PENDING");
 
     const eventType = existing
       ? TeacherEventType.VERIFICATION_RESUBMITTED
@@ -45,7 +53,7 @@ export class TeacherVerificationService {
     this.events.emit(eventType, {
       type: eventType,
       userId,
-      status: 'PENDING',
+      status: "PENDING",
       timestamp: new Date(),
       correlationId: randomUUID(),
     });
@@ -55,28 +63,37 @@ export class TeacherVerificationService {
 
   async getVerificationStatus(userId: string) {
     const verif = await this.verifRepo.getVerification(userId);
-    if (!verif) return { status: 'NOT_SUBMITTED', submissionCount: 0 };
+    if (!verif) return { status: "NOT_SUBMITTED", submissionCount: 0 };
     return verif;
   }
 
-  async adminReview(userId: string, dto: ReviewVerificationDto, reviewerId: string) {
+  async adminReview(
+    userId: string,
+    dto: ReviewVerificationDto,
+    reviewerId: string,
+  ) {
     const verif = await this.verifRepo.getVerification(userId);
-    if (!verif) throw new NotFoundException('No verification submission found for this teacher');
+    if (!verif)
+      throw new NotFoundException(
+        "No verification submission found for this teacher",
+      );
 
-    if (!['PENDING', 'RESUBMITTED', 'UNDER_REVIEW'].includes(verif.status)) {
-      throw new BadRequestException(`Cannot review verification in status: ${verif.status}`);
+    if (!["PENDING", "RESUBMITTED", "UNDER_REVIEW"].includes(verif.status)) {
+      throw new BadRequestException(
+        `Cannot review verification in status: ${verif.status}`,
+      );
     }
 
     const updated = await this.verifRepo.review(userId, dto, reviewerId);
 
     // Sync status to teacher profile
     await this.profileRepo.setVerificationStatus(userId, dto.decision, {
-      approvedBy: dto.decision === 'APPROVED' ? reviewerId : undefined,
+      approvedBy: dto.decision === "APPROVED" ? reviewerId : undefined,
       rejectionReason: dto.rejectionReason,
     });
 
     const eventType =
-      dto.decision === 'APPROVED'
+      dto.decision === "APPROVED"
         ? TeacherEventType.VERIFICATION_APPROVED
         : TeacherEventType.VERIFICATION_REJECTED;
 
@@ -94,7 +111,7 @@ export class TeacherVerificationService {
 
   async startManualReview(userId: string, reviewerId: string) {
     const verif = await this.verifRepo.getVerification(userId);
-    if (!verif) throw new NotFoundException('No verification found');
+    if (!verif) throw new NotFoundException("No verification found");
     return this.verifRepo.startReview(userId, reviewerId);
   }
 

@@ -1,9 +1,11 @@
-import { Injectable } from '@nestjs/common';
-import { TeacherSessionRepository } from '../repositories/teacher-session.repository';
+import { Injectable } from "@nestjs/common";
+import { TeacherSessionRepository } from "../repositories/teacher-session.repository";
 import {
-  CreateTeacherSessionTypeDto, UpdateTeacherSessionTypeDto,
-  CreateTeacherPricingRuleDto, CreateTeacherSessionDto,
-} from '../dto/teacher-operations.dto';
+  CreateTeacherSessionTypeDto,
+  UpdateTeacherSessionTypeDto,
+  CreateTeacherPricingRuleDto,
+  CreateTeacherSessionDto,
+} from "../dto/teacher-operations.dto";
 
 @Injectable()
 export class TeacherSessionService {
@@ -22,7 +24,11 @@ export class TeacherSessionService {
     return this.sessionRepo.createSessionType(userId, data);
   }
 
-  async updateSessionType(userId: string, id: string, data: UpdateTeacherSessionTypeDto) {
+  async updateSessionType(
+    userId: string,
+    id: string,
+    data: UpdateTeacherSessionTypeDto,
+  ) {
     return this.sessionRepo.updateSessionType(userId, id, data);
   }
 

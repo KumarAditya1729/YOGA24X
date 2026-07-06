@@ -3,17 +3,23 @@
 // Core business logic for professional profile management
 // ==============================================================================
 import {
-  Injectable, NotFoundException, ConflictException, ForbiddenException,
-} from '@nestjs/common';
-import { EventEmitter2 } from '@nestjs/event-emitter';
-import { TeacherProfileRepository } from '../repositories/teacher-profile.repository';
+  Injectable,
+  NotFoundException,
+  ConflictException,
+  ForbiddenException,
+} from "@nestjs/common";
+import { EventEmitter2 } from "@nestjs/event-emitter";
+import { TeacherProfileRepository } from "../repositories/teacher-profile.repository";
 import {
-  CreateTeacherProfileDto, UpdateTeacherProfileDto,
-  UpdateTeachingPreferenceDto, UpsertSpecializationDto,
-  UpsertSocialLinkDto, TeacherListQueryDto,
-} from '../dto/teacher.dto';
-import { TeacherEventType } from '../events/teacher.events';
-import { randomUUID } from 'crypto';
+  CreateTeacherProfileDto,
+  UpdateTeacherProfileDto,
+  UpdateTeachingPreferenceDto,
+  UpsertSpecializationDto,
+  UpsertSocialLinkDto,
+  TeacherListQueryDto,
+} from "../dto/teacher.dto";
+import { TeacherEventType } from "../events/teacher.events";
+import { randomUUID } from "crypto";
 
 @Injectable()
 export class TeacherProfileService {
@@ -24,7 +30,7 @@ export class TeacherProfileService {
 
   async createProfile(userId: string, dto: CreateTeacherProfileDto) {
     const existing = await this.repo.findByUserId(userId);
-    if (existing) throw new ConflictException('Teacher profile already exists');
+    if (existing) throw new ConflictException("Teacher profile already exists");
 
     const profile = await this.repo.create(userId, dto);
 
@@ -40,13 +46,16 @@ export class TeacherProfileService {
 
   async getOwnProfile(userId: string) {
     const profile = await this.repo.findByUserId(userId);
-    if (!profile) throw new NotFoundException('Teacher profile not found');
+    if (!profile) throw new NotFoundException("Teacher profile not found");
     return profile;
   }
 
   async getPublicProfile(userId: string) {
     const profile = await this.repo.findPublicById(userId);
-    if (!profile) throw new NotFoundException('Teacher profile not found or not yet approved');
+    if (!profile)
+      throw new NotFoundException(
+        "Teacher profile not found or not yet approved",
+      );
     return profile;
   }
 
@@ -82,7 +91,10 @@ export class TeacherProfileService {
     return this.repo.removeSpecialization(userId, specialization);
   }
 
-  async upsertTeachingPreference(userId: string, dto: UpdateTeachingPreferenceDto) {
+  async upsertTeachingPreference(
+    userId: string,
+    dto: UpdateTeachingPreferenceDto,
+  ) {
     await this.ensureProfileExists(userId);
     return this.repo.upsertTeachingPreference(userId, dto);
   }
@@ -96,7 +108,12 @@ export class TeacherProfileService {
     return this.repo.removeSocialLink(userId, platform);
   }
 
-  async pinFeaturedContent(userId: string, contentType: string, contentId: string, order: number) {
+  async pinFeaturedContent(
+    userId: string,
+    contentType: string,
+    contentId: string,
+    order: number,
+  ) {
     await this.ensureProfileExists(userId);
     return this.repo.pinFeaturedContent(userId, contentType, contentId, order);
   }
@@ -109,7 +126,10 @@ export class TeacherProfileService {
 
   private async ensureProfileExists(userId: string) {
     const profile = await this.repo.findByUserId(userId);
-    if (!profile) throw new NotFoundException('Teacher profile not found. Create it first.');
+    if (!profile)
+      throw new NotFoundException(
+        "Teacher profile not found. Create it first.",
+      );
     return profile;
   }
 

@@ -2,11 +2,11 @@
 // Yoga24X — Teacher Admin Service
 // Admin-only operations: feature, suspend, bulk list, stats recalculation
 // ==============================================================================
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.module';
-import { TeacherProfileRepository } from '../repositories/teacher-profile.repository';
-import { TeacherStatsRepository } from '../repositories/teacher-stats.repository';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.module";
+import { TeacherProfileRepository } from "../repositories/teacher-profile.repository";
+import { TeacherStatsRepository } from "../repositories/teacher-stats.repository";
+import { EventEmitter2 } from "@nestjs/event-emitter";
 
 @Injectable()
 export class TeacherAdminService {
@@ -18,8 +18,10 @@ export class TeacherAdminService {
   ) {}
 
   async featureTeacher(userId: string, isFeatured: boolean) {
-    const profile = await this.prisma.teacherProfile.findUnique({ where: { userId } });
-    if (!profile) throw new NotFoundException('Teacher profile not found');
+    const profile = await this.prisma.teacherProfile.findUnique({
+      where: { userId },
+    });
+    if (!profile) throw new NotFoundException("Teacher profile not found");
 
     return this.prisma.teacherProfile.update({
       where: { userId },
@@ -33,14 +35,14 @@ export class TeacherAdminService {
   async suspendTeacher(userId: string, reason: string) {
     return this.prisma.teacherProfile.update({
       where: { userId },
-      data: { verificationStatus: 'SUSPENDED' as any },
+      data: { verificationStatus: "SUSPENDED" as any },
     });
   }
 
   async reinstateTeacher(userId: string) {
     return this.prisma.teacherProfile.update({
       where: { userId },
-      data: { verificationStatus: 'APPROVED' as any },
+      data: { verificationStatus: "APPROVED" as any },
     });
   }
 
@@ -48,7 +50,7 @@ export class TeacherAdminService {
     const results = await Promise.allSettled(
       userIds.map((id) => this.statsRepo.recalculate(id)),
     );
-    const succeeded = results.filter((r) => r.status === 'fulfilled').length;
+    const succeeded = results.filter((r) => r.status === "fulfilled").length;
     const failed = results.length - succeeded;
     return { succeeded, failed, total: results.length };
   }
@@ -56,10 +58,16 @@ export class TeacherAdminService {
   async getAdminDashboardMetrics() {
     const [total, approved, pending, underReview, flagged] = await Promise.all([
       this.prisma.teacherProfile.count(),
-      this.prisma.teacherProfile.count({ where: { verificationStatus: 'APPROVED' } }),
-      this.prisma.teacherVerification.count({ where: { status: 'PENDING' } }),
-      this.prisma.teacherVerification.count({ where: { status: 'UNDER_REVIEW' } }),
-      this.prisma.teacherVerification.count({ where: { aiFraudFlagged: true } }),
+      this.prisma.teacherProfile.count({
+        where: { verificationStatus: "APPROVED" },
+      }),
+      this.prisma.teacherVerification.count({ where: { status: "PENDING" } }),
+      this.prisma.teacherVerification.count({
+        where: { status: "UNDER_REVIEW" },
+      }),
+      this.prisma.teacherVerification.count({
+        where: { aiFraudFlagged: true },
+      }),
     ]);
 
     return {
@@ -76,10 +84,22 @@ export class TeacherAdminService {
     const where = search
       ? {
           OR: [
-            { user: { email: { contains: search, mode: 'insensitive' as const } } },
-            { user: { firstName: { contains: search, mode: 'insensitive' as const } } },
-            { user: { lastName: { contains: search, mode: 'insensitive' as const } } },
-            { headline: { contains: search, mode: 'insensitive' as const } },
+            {
+              user: {
+                email: { contains: search, mode: "insensitive" as const },
+              },
+            },
+            {
+              user: {
+                firstName: { contains: search, mode: "insensitive" as const },
+              },
+            },
+            {
+              user: {
+                lastName: { contains: search, mode: "insensitive" as const },
+              },
+            },
+            { headline: { contains: search, mode: "insensitive" as const } },
           ],
         }
       : {};
@@ -89,11 +109,24 @@ export class TeacherAdminService {
         where,
         skip,
         take: limit,
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: "desc" },
         include: {
-          user: { select: { firstName: true, lastName: true, email: true, avatarUrl: true } },
+          user: {
+            select: {
+              firstName: true,
+              lastName: true,
+              email: true,
+              avatarUrl: true,
+            },
+          },
           stats: true,
-          verification: { select: { status: true, aiFraudFlagged: true, lastSubmittedAt: true } },
+          verification: {
+            select: {
+              status: true,
+              aiFraudFlagged: true,
+              lastSubmittedAt: true,
+            },
+          },
         },
       }),
       this.prisma.teacherProfile.count({ where }),

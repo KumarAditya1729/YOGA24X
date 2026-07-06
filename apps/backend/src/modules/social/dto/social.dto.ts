@@ -1,6 +1,19 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsOptional, IsEnum, IsArray, IsInt, IsUUID } from 'class-validator';
-import { GroupType, GroupRole, ChallengeType, ReportReason, ChatType } from '@prisma/client';
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import {
+  IsString,
+  IsOptional,
+  IsEnum,
+  IsArray,
+  IsInt,
+  IsUUID,
+} from "class-validator";
+import {
+  GroupType,
+  GroupRole,
+  ChallengeType,
+  ReportReason,
+  ChatType,
+} from "@prisma/client";
 
 export class CreateGroupDto {
   @ApiProperty()

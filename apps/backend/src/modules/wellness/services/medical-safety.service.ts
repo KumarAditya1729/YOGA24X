@@ -3,9 +3,9 @@
 // Business Logic for Safety Flags, Contraindications, and Pose Restrictions
 // ==============================================================================
 
-import { Injectable } from '@nestjs/common';
-import { MedicalSafetyRepository } from '../repositories/medical-safety.repository';
-import { CreateMedicalSafetyFlagDto } from '@yoga24x/shared-types';
+import { Injectable } from "@nestjs/common";
+import { MedicalSafetyRepository } from "../repositories/medical-safety.repository";
+import { CreateMedicalSafetyFlagDto } from "@yoga24x/shared-types";
 
 @Injectable()
 export class MedicalSafetyService {
@@ -27,8 +27,14 @@ export class MedicalSafetyService {
     return this.safetyRepo.deactivateFlag(flagId, userId);
   }
 
-  async checkPoseRestrictions(userId: string, poseNames: string[]): Promise<any> {
-    const warnings = await this.safetyRepo.checkRestrictedPoses(userId, poseNames);
+  async checkPoseRestrictions(
+    userId: string,
+    poseNames: string[],
+  ): Promise<any> {
+    const warnings = await this.safetyRepo.checkRestrictedPoses(
+      userId,
+      poseNames,
+    );
     return {
       userId,
       checkedPosesCount: poseNames.length,

@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
-import { TeacherEarningsRepository } from '../repositories/teacher-earnings.repository';
-import { CreatePayoutRequestDto } from '../dto/teacher-operations.dto';
+import { Injectable } from "@nestjs/common";
+import { TeacherEarningsRepository } from "../repositories/teacher-earnings.repository";
+import { CreatePayoutRequestDto } from "../dto/teacher-operations.dto";
 
 @Injectable()
 export class TeacherEarningsService {
@@ -14,7 +14,7 @@ export class TeacherEarningsService {
     // Basic validation to ensure they have enough balance
     const wallet = await this.earningsRepo.getWalletBalance(userId);
     if (wallet.balanceCents < data.amountCents) {
-      throw new Error('Insufficient funds');
+      throw new Error("Insufficient funds");
     }
     // Note: real implementation would deduct the balance here within a transaction
     return this.earningsRepo.createPayout(userId, data);

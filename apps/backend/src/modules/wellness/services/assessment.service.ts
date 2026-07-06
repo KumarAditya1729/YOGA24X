@@ -3,22 +3,25 @@
 // Business Logic for Wellness, Yoga, Nutrition, Meditation & AI Personalization
 // ==============================================================================
 
-import { Injectable } from '@nestjs/common';
-import { WellnessAssessmentRepository } from '../repositories/wellness-assessment.repository';
+import { Injectable } from "@nestjs/common";
+import { WellnessAssessmentRepository } from "../repositories/wellness-assessment.repository";
 import {
   SubmitWellnessAssessmentDto,
   UpdateYogaAssessmentDto,
   UpdateNutritionProfileDto,
   UpdateMeditationProfileDto,
   UpdateAiPersonalizationDto,
-} from '@yoga24x/shared-types';
+} from "@yoga24x/shared-types";
 
 @Injectable()
 export class AssessmentService {
   constructor(private readonly assessRepo: WellnessAssessmentRepository) {}
 
   // 1. Wellness Assessment
-  async submitWellnessAssessment(userId: string, dto: SubmitWellnessAssessmentDto): Promise<any> {
+  async submitWellnessAssessment(
+    userId: string,
+    dto: SubmitWellnessAssessmentDto,
+  ): Promise<any> {
     return this.assessRepo.createWellnessAssessment(userId, dto);
   }
 
@@ -34,15 +37,18 @@ export class AssessmentService {
         flexibilityScore: 5,
         strengthScore: 5,
         mobilityScore: 5,
-        breathingPattern: 'DIAPHRAGMATIC',
-        dailyActivityLevel: 'MODERATELY_ACTIVE',
+        breathingPattern: "DIAPHRAGMATIC",
+        dailyActivityLevel: "MODERATELY_ACTIVE",
         assessedAt: new Date().toISOString(),
       };
     }
     return latest;
   }
 
-  async getAssessmentHistory(userId: string, limit: number = 30): Promise<any[]> {
+  async getAssessmentHistory(
+    userId: string,
+    limit: number = 30,
+  ): Promise<any[]> {
     return this.assessRepo.getAssessmentHistory(userId, limit);
   }
 
@@ -52,22 +58,25 @@ export class AssessmentService {
     if (!assessment) {
       return {
         userId,
-        experienceLevel: 'BEGINNER',
-        yogaGoals: ['STRESS_RELIEF', 'FLEXIBILITY'],
-        preferredYogaStyle: 'HATHA',
+        experienceLevel: "BEGINNER",
+        yogaGoals: ["STRESS_RELIEF", "FLEXIBILITY"],
+        preferredYogaStyle: "HATHA",
         preferredSessionLengthMin: 30,
-        preferredInstructorGender: 'ANY',
+        preferredInstructorGender: "ANY",
         practiceFrequencyPerWeek: 3,
         favoriteTeachers: [],
         favoriteCourses: [],
-        favoriteMusic: ['FLUTE', 'NATURE_SOUNDS'],
-        preferredPracticeTime: 'MORNING',
+        favoriteMusic: ["FLUTE", "NATURE_SOUNDS"],
+        preferredPracticeTime: "MORNING",
       };
     }
     return assessment;
   }
 
-  async updateYogaAssessment(userId: string, dto: UpdateYogaAssessmentDto): Promise<any> {
+  async updateYogaAssessment(
+    userId: string,
+    dto: UpdateYogaAssessmentDto,
+  ): Promise<any> {
     return this.assessRepo.upsertYogaAssessment(userId, dto);
   }
 
@@ -77,20 +86,23 @@ export class AssessmentService {
     if (!profile) {
       return {
         userId,
-        dietType: 'VEGETARIAN',
+        dietType: "VEGETARIAN",
         dailyCaloriesGoal: 2000,
         dailyProteinGoalGrams: 60,
         dailyWaterGoalMl: 3000,
         foodAllergies: [],
         foodPreferences: [],
-        mealTiming: { breakfast: '08:00', lunch: '13:00', dinner: '19:00' },
+        mealTiming: { breakfast: "08:00", lunch: "13:00", dinner: "19:00" },
         supplements: [],
       };
     }
     return profile;
   }
 
-  async updateNutritionProfile(userId: string, dto: UpdateNutritionProfileDto): Promise<any> {
+  async updateNutritionProfile(
+    userId: string,
+    dto: UpdateNutritionProfileDto,
+  ): Promise<any> {
     return this.assessRepo.upsertNutritionProfile(userId, dto);
   }
 
@@ -100,18 +112,21 @@ export class AssessmentService {
     if (!profile) {
       return {
         userId,
-        meditationExperience: 'BEGINNER',
+        meditationExperience: "BEGINNER",
         preferredDurationMin: 15,
-        preferredVoice: 'NEUTRAL',
-        preferredMusic: 'AMBIENT',
-        focusArea: 'MINDFULNESS',
-        mindfulnessGoals: ['STRESS_REDUCTION', 'BETTER_FOCUS'],
+        preferredVoice: "NEUTRAL",
+        preferredMusic: "AMBIENT",
+        focusArea: "MINDFULNESS",
+        mindfulnessGoals: ["STRESS_REDUCTION", "BETTER_FOCUS"],
       };
     }
     return profile;
   }
 
-  async updateMeditationProfile(userId: string, dto: UpdateMeditationProfileDto): Promise<any> {
+  async updateMeditationProfile(
+    userId: string,
+    dto: UpdateMeditationProfileDto,
+  ): Promise<any> {
     return this.assessRepo.upsertMeditationProfile(userId, dto);
   }
 
@@ -121,22 +136,28 @@ export class AssessmentService {
     if (!profile) {
       return {
         userId,
-        coachingStyle: 'ENCOURAGING',
-        motivationStyle: 'POSITIVE_REINFORCEMENT',
-        reminderStyle: 'REGULAR',
-        communicationTone: 'WARM_AND_EMPATHETIC',
-        preferredLanguage: 'en',
-        difficultyProgression: 'MODERATE',
-        learningStyle: 'VISUAL',
-        voicePreference: 'WARM_FEMALE_EN_IN',
-        notificationBehaviour: 'SMART_ADAPTIVE',
-        recommendationPreferences: { poseCorrectionSensitivity: 'HIGH', pacingPreference: 'MODERATE' },
+        coachingStyle: "ENCOURAGING",
+        motivationStyle: "POSITIVE_REINFORCEMENT",
+        reminderStyle: "REGULAR",
+        communicationTone: "WARM_AND_EMPATHETIC",
+        preferredLanguage: "en",
+        difficultyProgression: "MODERATE",
+        learningStyle: "VISUAL",
+        voicePreference: "WARM_FEMALE_EN_IN",
+        notificationBehaviour: "SMART_ADAPTIVE",
+        recommendationPreferences: {
+          poseCorrectionSensitivity: "HIGH",
+          pacingPreference: "MODERATE",
+        },
       };
     }
     return profile;
   }
 
-  async updateAiPersonalization(userId: string, dto: UpdateAiPersonalizationDto): Promise<any> {
+  async updateAiPersonalization(
+    userId: string,
+    dto: UpdateAiPersonalizationDto,
+  ): Promise<any> {
     return this.assessRepo.upsertAiPersonalization(userId, dto);
   }
 }

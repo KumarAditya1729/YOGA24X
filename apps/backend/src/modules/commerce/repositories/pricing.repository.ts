@@ -1,7 +1,17 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.module';
-import { CreateCouponDto, ApplyCouponDto, PurchaseGiftCardDto, RedeemGiftCardDto, CreatePricingRuleDto } from '../dto/commerce.dto';
-import * as crypto from 'crypto';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.module";
+import {
+  CreateCouponDto,
+  ApplyCouponDto,
+  PurchaseGiftCardDto,
+  RedeemGiftCardDto,
+  CreatePricingRuleDto,
+} from "../dto/commerce.dto";
+import * as crypto from "crypto";
 
 @Injectable()
 export class PricingRepository {
@@ -27,30 +37,51 @@ export class PricingRepository {
   }
 
   async validateAndApplyCoupon(userId: string, dto: ApplyCouponDto) {
-    const coupon = await this.prisma.coupon.findUnique({ where: { code: dto.code.toUpperCase() } });
+    const coupon = await this.prisma.coupon.findUnique({
+      where: { code: dto.code.toUpperCase() },
+    });
 
-    if (!coupon || !coupon.isActive) throw new NotFoundException('Coupon not found or inactive');
-    if (coupon.expiresAt && coupon.expiresAt < new Date()) throw new BadRequestException('Coupon has expired');
-    if (coupon.maxUsageCount && coupon.usageCount >= coupon.maxUsageCount) throw new BadRequestException('Coupon usage limit reached');
-    if (coupon.minOrderCents && dto.orderAmountCents < coupon.minOrderCents) throw new BadRequestException(`Minimum order amount is ${coupon.minOrderCents / 100}`);
+    if (!coupon || !coupon.isActive)
+      throw new NotFoundException("Coupon not found or inactive");
+    if (coupon.expiresAt && coupon.expiresAt < new Date())
+      throw new BadRequestException("Coupon has expired");
+    if (coupon.maxUsageCount && coupon.usageCount >= coupon.maxUsageCount)
+      throw new BadRequestException("Coupon usage limit reached");
+    if (coupon.minOrderCents && dto.orderAmountCents < coupon.minOrderCents)
+      throw new BadRequestException(
+        `Minimum order amount is ${coupon.minOrderCents / 100}`,
+      );
 
     const userRedemptionCount = await this.prisma.couponRedemption.count({
       where: { couponId: coupon.id, userId },
     });
-    if (userRedemptionCount >= coupon.perUserLimit) throw new BadRequestException('You have already used this coupon');
+    if (userRedemptionCount >= coupon.perUserLimit)
+      throw new BadRequestException("You have already used this coupon");
 
     let discountCents = 0;
     if (coupon.discountPercent) {
-      discountCents = Math.floor((dto.orderAmountCents * coupon.discountPercent) / 100);
-      if (coupon.maxDiscountCents) discountCents = Math.min(discountCents, coupon.maxDiscountCents);
+      discountCents = Math.floor(
+        (dto.orderAmountCents * coupon.discountPercent) / 100,
+      );
+      if (coupon.maxDiscountCents)
+        discountCents = Math.min(discountCents, coupon.maxDiscountCents);
     } else if (coupon.discountCents) {
       discountCents = coupon.discountCents;
     }
 
-    return { coupon, discountCents, finalAmountCents: dto.orderAmountCents - discountCents };
+    return {
+      coupon,
+      discountCents,
+      finalAmountCents: dto.orderAmountCents - discountCents,
+    };
   }
 
-  async redeemCoupon(couponId: string, userId: string, orderId: string | undefined, discountCents: number) {
+  async redeemCoupon(
+    couponId: string,
+    userId: string,
+    orderId: string | undefined,
+    discountCents: number,
+  ) {
     await this.prisma.$transaction([
       this.prisma.couponRedemption.create({
         data: { couponId, userId, orderId, discountCents },
@@ -69,7 +100,7 @@ export class PricingRepository {
   // ── Gift Cards ─────────────────────────────────────────────────────────────
 
   async purchaseGiftCard(purchasedById: string, dto: PurchaseGiftCardDto) {
-    const code = `GC-${crypto.randomBytes(6).toString('hex').toUpperCase()}`;
+    const code = `GC-${crypto.randomBytes(6).toString("hex").toUpperCase()}`;
     return this.prisma.giftCard.create({
       data: {
         code,
@@ -82,15 +113,19 @@ export class PricingRepository {
   }
 
   async redeemGiftCard(userId: string, dto: RedeemGiftCardDto) {
-    const card = await this.prisma.giftCard.findUnique({ where: { code: dto.code.toUpperCase() } });
-    if (!card) throw new NotFoundException('Gift card not found');
-    if (card.status !== 'ACTIVE') throw new BadRequestException('Gift card is not active');
-    if (card.expiresAt && card.expiresAt < new Date()) throw new BadRequestException('Gift card has expired');
+    const card = await this.prisma.giftCard.findUnique({
+      where: { code: dto.code.toUpperCase() },
+    });
+    if (!card) throw new NotFoundException("Gift card not found");
+    if (card.status !== "ACTIVE")
+      throw new BadRequestException("Gift card is not active");
+    if (card.expiresAt && card.expiresAt < new Date())
+      throw new BadRequestException("Gift card has expired");
 
     await this.prisma.$transaction([
       this.prisma.giftCard.update({
         where: { id: card.id },
-        data: { status: 'REDEEMED' },
+        data: { status: "REDEEMED" },
       }),
       this.prisma.giftCardRedemption.create({
         data: { giftCardId: card.id, userId, amountCents: card.amountCents },
@@ -122,11 +157,15 @@ export class PricingRepository {
         isActive: true,
         OR: [{ expiresAt: null }, { expiresAt: { gte: new Date() } }],
       },
-      orderBy: { priority: 'desc' },
+      orderBy: { priority: "desc" },
     });
   }
 
-  async calculateFinalPrice(basePriceCents: number, userId?: string, couponCode?: string): Promise<{ finalPriceCents: number; appliedDiscounts: any[] }> {
+  async calculateFinalPrice(
+    basePriceCents: number,
+    userId?: string,
+    couponCode?: string,
+  ): Promise<{ finalPriceCents: number; appliedDiscounts: any[] }> {
     const appliedDiscounts: any[] = [];
     let finalPrice = basePriceCents;
 
@@ -139,7 +178,10 @@ export class PricingRepository {
         appliedDiscounts.push({ type: rule.ruleType, discountCents: discount });
       } else if (rule.discountCents) {
         finalPrice -= rule.discountCents;
-        appliedDiscounts.push({ type: rule.ruleType, discountCents: rule.discountCents });
+        appliedDiscounts.push({
+          type: rule.ruleType,
+          discountCents: rule.discountCents,
+        });
       }
     }
 

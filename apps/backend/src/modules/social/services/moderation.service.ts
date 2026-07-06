@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
-import { ModerationRepository } from '../repositories/moderation.repository';
-import { ReportContentDto } from '../dto/social.dto';
+import { Injectable } from "@nestjs/common";
+import { ModerationRepository } from "../repositories/moderation.repository";
+import { ReportContentDto } from "../dto/social.dto";
 
 @Injectable()
 export class ModerationService {

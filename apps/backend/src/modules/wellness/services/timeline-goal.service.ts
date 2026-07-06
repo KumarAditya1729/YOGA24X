@@ -3,10 +3,14 @@
 // Business Logic for Timeline Logs, Streaks, Milestones, and Goal Tracking
 // ==============================================================================
 
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { TimelineGoalRepository } from '../repositories/timeline-goal.repository';
-import { PrismaService } from '../../prisma/prisma.module';
-import { LogTimelineDto, CreateUserGoalDto, UpdateUserGoalDto } from '@yoga24x/shared-types';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { TimelineGoalRepository } from "../repositories/timeline-goal.repository";
+import { PrismaService } from "../../prisma/prisma.module";
+import {
+  LogTimelineDto,
+  CreateUserGoalDto,
+  UpdateUserGoalDto,
+} from "@yoga24x/shared-types";
 
 @Injectable()
 export class TimelineAndGoalService {
@@ -20,7 +24,10 @@ export class TimelineAndGoalService {
     const log = await this.timelineGoalRepo.logDailyTimeline(userId, dto);
 
     // Update user streak if yogaMinutes or meditationMinutes > 0
-    if ((dto.yogaMinutes && dto.yogaMinutes > 0) || (dto.meditationMinutes && dto.meditationMinutes > 0)) {
+    if (
+      (dto.yogaMinutes && dto.yogaMinutes > 0) ||
+      (dto.meditationMinutes && dto.meditationMinutes > 0)
+    ) {
       await this.updateUserStreak(userId);
     }
 
@@ -30,13 +37,19 @@ export class TimelineAndGoalService {
     return log;
   }
 
-  async getTimelineLogs(userId: string, startDate?: string, endDate?: string): Promise<any[]> {
+  async getTimelineLogs(
+    userId: string,
+    startDate?: string,
+    endDate?: string,
+  ): Promise<any[]> {
     return this.timelineGoalRepo.getTimelineLogs(userId, startDate, endDate);
   }
 
   private async updateUserStreak(userId: string): Promise<void> {
     const now = new Date();
-    const streak = await this.prisma.userStreak.findUnique({ where: { userId } });
+    const streak = await this.prisma.userStreak.findUnique({
+      where: { userId },
+    });
     if (!streak) {
       await this.prisma.userStreak.create({
         data: {
@@ -47,8 +60,12 @@ export class TimelineAndGoalService {
         },
       });
     } else {
-      const lastDate = streak.lastActivityDate ? new Date(streak.lastActivityDate) : new Date(0);
-      const diffDays = Math.floor((now.getTime() - lastDate.getTime()) / (1000 * 3600 * 24));
+      const lastDate = streak.lastActivityDate
+        ? new Date(streak.lastActivityDate)
+        : new Date(0);
+      const diffDays = Math.floor(
+        (now.getTime() - lastDate.getTime()) / (1000 * 3600 * 24),
+      );
 
       if (diffDays === 1) {
         // Consecutive day
@@ -76,13 +93,17 @@ export class TimelineAndGoalService {
     }
   }
 
-  private async evaluateGoalsProgress(userId: string, logDto: LogTimelineDto): Promise<void> {
-    const activeGoals = await this.timelineGoalRepo.getGoals(userId, 'ACTIVE');
+  private async evaluateGoalsProgress(
+    userId: string,
+    logDto: LogTimelineDto,
+  ): Promise<void> {
+    const activeGoals = await this.timelineGoalRepo.getGoals(userId, "ACTIVE");
     for (const goal of activeGoals) {
-      if (goal.goalType === 'WEIGHT' && logDto.weightKg) {
+      if (goal.goalType === "WEIGHT" && logDto.weightKg) {
         await this.timelineGoalRepo.updateGoal(goal.id, userId, {
           currentValue: logDto.weightKg,
-          status: logDto.weightKg <= (goal.targetValue || 0) ? 'COMPLETED' : 'ACTIVE',
+          status:
+            logDto.weightKg <= (goal.targetValue || 0) ? "COMPLETED" : "ACTIVE",
         });
       }
     }
@@ -101,7 +122,11 @@ export class TimelineAndGoalService {
     return this.timelineGoalRepo.getGoalById(goalId, userId);
   }
 
-  async updateGoal(goalId: string, userId: string, dto: UpdateUserGoalDto): Promise<any> {
+  async updateGoal(
+    goalId: string,
+    userId: string,
+    dto: UpdateUserGoalDto,
+  ): Promise<any> {
     return this.timelineGoalRepo.updateGoal(goalId, userId, dto);
   }
 

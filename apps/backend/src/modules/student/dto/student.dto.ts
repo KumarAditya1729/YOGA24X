@@ -1,6 +1,20 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsOptional, IsEnum, IsBoolean, IsArray, IsInt, IsUrl, IsObject } from 'class-validator';
-import { RelationshipType, AchievementType, CourseLevel, DoshaType } from '@prisma/client';
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import {
+  IsString,
+  IsOptional,
+  IsEnum,
+  IsBoolean,
+  IsArray,
+  IsInt,
+  IsUrl,
+  IsObject,
+} from "class-validator";
+import {
+  RelationshipType,
+  AchievementType,
+  CourseLevel,
+  DoshaType,
+} from "@prisma/client";
 
 export class UpdateStudentProfileDto {
   @ApiPropertyOptional({ enum: DoshaType })

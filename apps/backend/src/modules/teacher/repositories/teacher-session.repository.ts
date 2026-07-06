@@ -1,9 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.module';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.module";
 import {
-  CreateTeacherSessionTypeDto, UpdateTeacherSessionTypeDto,
-  CreateTeacherPricingRuleDto, CreateTeacherSessionDto,
-} from '../dto/teacher-operations.dto';
+  CreateTeacherSessionTypeDto,
+  UpdateTeacherSessionTypeDto,
+  CreateTeacherPricingRuleDto,
+  CreateTeacherSessionDto,
+} from "../dto/teacher-operations.dto";
 
 @Injectable()
 export class TeacherSessionRepository {
@@ -14,14 +16,14 @@ export class TeacherSessionRepository {
   async getSessionTypes(userId: string) {
     return this.prisma.teacherSessionType.findMany({
       where: { userId },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
     });
   }
 
   async getActiveSessionTypes(userId: string) {
     return this.prisma.teacherSessionType.findMany({
       where: { userId, isActive: true },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
     });
   }
 
@@ -31,15 +33,25 @@ export class TeacherSessionRepository {
     });
   }
 
-  async updateSessionType(userId: string, id: string, data: UpdateTeacherSessionTypeDto) {
-    const st = await this.prisma.teacherSessionType.findUnique({ where: { id } });
-    if (!st || st.userId !== userId) throw new NotFoundException('Session Type not found');
+  async updateSessionType(
+    userId: string,
+    id: string,
+    data: UpdateTeacherSessionTypeDto,
+  ) {
+    const st = await this.prisma.teacherSessionType.findUnique({
+      where: { id },
+    });
+    if (!st || st.userId !== userId)
+      throw new NotFoundException("Session Type not found");
     return this.prisma.teacherSessionType.update({ where: { id }, data });
   }
 
   async deleteSessionType(userId: string, id: string) {
-    const st = await this.prisma.teacherSessionType.findUnique({ where: { id } });
-    if (!st || st.userId !== userId) throw new NotFoundException('Session Type not found');
+    const st = await this.prisma.teacherSessionType.findUnique({
+      where: { id },
+    });
+    if (!st || st.userId !== userId)
+      throw new NotFoundException("Session Type not found");
     return this.prisma.teacherSessionType.delete({ where: { id } });
   }
 
@@ -48,7 +60,7 @@ export class TeacherSessionRepository {
   async getPricingRules(userId: string) {
     return this.prisma.teacherPricingRule.findMany({
       where: { userId },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
     });
   }
 
@@ -59,8 +71,11 @@ export class TeacherSessionRepository {
   }
 
   async deletePricingRule(userId: string, id: string) {
-    const pr = await this.prisma.teacherPricingRule.findUnique({ where: { id } });
-    if (!pr || pr.userId !== userId) throw new NotFoundException('Pricing Rule not found');
+    const pr = await this.prisma.teacherPricingRule.findUnique({
+      where: { id },
+    });
+    if (!pr || pr.userId !== userId)
+      throw new NotFoundException("Pricing Rule not found");
     return this.prisma.teacherPricingRule.delete({ where: { id } });
   }
 
@@ -70,12 +85,14 @@ export class TeacherSessionRepository {
     return this.prisma.teacherSession.findMany({
       where: {
         teacherUserId: userId,
-        ...(from && to ? { startTime: { gte: from }, endTime: { lte: to } } : {}),
+        ...(from && to
+          ? { startTime: { gte: from }, endTime: { lte: to } }
+          : {}),
       },
       include: {
         sessionType: true,
       },
-      orderBy: { startTime: 'asc' },
+      orderBy: { startTime: "asc" },
     });
   }
 
@@ -95,7 +112,8 @@ export class TeacherSessionRepository {
 
   async deleteSession(userId: string, id: string) {
     const sess = await this.prisma.teacherSession.findUnique({ where: { id } });
-    if (!sess || sess.teacherUserId !== userId) throw new NotFoundException('Session not found');
+    if (!sess || sess.teacherUserId !== userId)
+      throw new NotFoundException("Session not found");
     return this.prisma.teacherSession.delete({ where: { id } });
   }
 }

@@ -1,12 +1,15 @@
-import { Injectable } from '@nestjs/common';
-import { TeacherAvailabilityRepository } from '../repositories/teacher-availability.repository';
+import { Injectable } from "@nestjs/common";
+import { TeacherAvailabilityRepository } from "../repositories/teacher-availability.repository";
 import {
-  UpdateTeacherBookingRuleDto, CreateTeacherHolidayDto,
-} from '../dto/teacher-operations.dto';
+  UpdateTeacherBookingRuleDto,
+  CreateTeacherHolidayDto,
+} from "../dto/teacher-operations.dto";
 
 @Injectable()
 export class TeacherAvailabilityService {
-  constructor(private readonly availabilityRepo: TeacherAvailabilityRepository) {}
+  constructor(
+    private readonly availabilityRepo: TeacherAvailabilityRepository,
+  ) {}
 
   async getBookingRule(userId: string) {
     return this.availabilityRepo.getBookingRule(userId);

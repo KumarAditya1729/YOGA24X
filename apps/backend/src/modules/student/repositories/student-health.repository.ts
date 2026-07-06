@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.module';
-import { Prisma } from '@prisma/client';
+import { Injectable } from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.module";
+import { Prisma } from "@prisma/client";
 
 @Injectable()
 export class StudentHealthRepository {
@@ -8,45 +8,48 @@ export class StudentHealthRepository {
 
   async getHealthProfile(userId: string) {
     return this.prisma.healthProfile.findUnique({
-      where: { userId }
+      where: { userId },
     });
   }
 
   async getWellnessAssessments(userId: string) {
     return this.prisma.wellnessAssessment.findMany({
       where: { userId },
-      orderBy: { assessedAt: 'desc' }
+      orderBy: { assessedAt: "desc" },
     });
   }
 
   async getTimelineLogs(userId: string, limit: number = 30) {
     return this.prisma.wellnessTimelineLog.findMany({
       where: { userId },
-      orderBy: { logDate: 'desc' },
+      orderBy: { logDate: "desc" },
       take: limit,
     });
   }
 
   async addTimelineLog(data: Prisma.WellnessTimelineLogUncheckedCreateInput) {
     return this.prisma.wellnessTimelineLog.create({
-      data
+      data,
     });
   }
 
   async getMedicalVisibility(userId: string) {
     return this.prisma.medicalVisibilityControl.findUnique({
-      where: { userId }
+      where: { userId },
     });
   }
 
-  async updateMedicalVisibility(userId: string, data: Prisma.MedicalVisibilityControlUpdateInput) {
+  async updateMedicalVisibility(
+    userId: string,
+    data: Prisma.MedicalVisibilityControlUpdateInput,
+  ) {
     return this.prisma.medicalVisibilityControl.upsert({
       where: { userId },
       update: data,
       create: {
         userId,
-        ...data as any,
-      }
+        ...(data as any),
+      },
     });
   }
 }

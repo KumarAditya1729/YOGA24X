@@ -2,10 +2,14 @@
 // Yoga24X AI Engineering OS — Attendance Repository (Prompt 7)
 // ==============================================================================
 
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.module';
-import { CheckInDto } from '../dto/booking.dto';
-import * as crypto from 'crypto';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.module";
+import { CheckInDto } from "../dto/booking.dto";
+import * as crypto from "crypto";
 
 @Injectable()
 export class AttendanceRepository {
@@ -16,7 +20,12 @@ export class AttendanceRepository {
    */
   generateCheckInToken(bookingId: string): string {
     const payload = `${bookingId}:${Date.now()}`;
-    return crypto.createHash('sha256').update(payload).digest('hex').substring(0, 16).toUpperCase();
+    return crypto
+      .createHash("sha256")
+      .update(payload)
+      .digest("hex")
+      .substring(0, 16)
+      .toUpperCase();
   }
 
   /**
@@ -27,25 +36,30 @@ export class AttendanceRepository {
       where: { id: dto.bookingId },
       include: { session: true, attendance: true },
     });
-    if (!booking) throw new NotFoundException(`Booking ${dto.bookingId} not found`);
-    if (booking.studentUserId !== userId) throw new ConflictException('Not your booking.');
-    if (booking.attendance) throw new ConflictException('Already checked in.');
-    if (!['CONFIRMED', 'RESCHEDULED'].includes(booking.status)) {
-      throw new ConflictException(`Cannot check in: booking status is ${booking.status}`);
+    if (!booking)
+      throw new NotFoundException(`Booking ${dto.bookingId} not found`);
+    if (booking.studentUserId !== userId)
+      throw new ConflictException("Not your booking.");
+    if (booking.attendance) throw new ConflictException("Already checked in.");
+    if (!["CONFIRMED", "RESCHEDULED"].includes(booking.status)) {
+      throw new ConflictException(
+        `Cannot check in: booking status is ${booking.status}`,
+      );
     }
 
     // OTP / QR token validation
-    if ((dto.method === 'QR' || dto.method === 'OTP') && !dto.token) {
-      throw new ConflictException('Token is required for QR/OTP check-in.');
+    if ((dto.method === "QR" || dto.method === "OTP") && !dto.token) {
+      throw new ConflictException("Token is required for QR/OTP check-in.");
     }
 
     // Geo validation: ensure student is within 500m of session venue (simplified)
-    if (dto.method === 'GEO' && (!dto.geoLat || !dto.geoLng)) {
-      throw new ConflictException('Geo coordinates required for GEO check-in.');
+    if (dto.method === "GEO" && (!dto.geoLat || !dto.geoLng)) {
+      throw new ConflictException("Geo coordinates required for GEO check-in.");
     }
 
     const sessionStart = booking.session.startTime;
-    const isLate = new Date() > new Date(sessionStart.getTime() + 10 * 60 * 1000);
+    const isLate =
+      new Date() > new Date(sessionStart.getTime() + 10 * 60 * 1000);
 
     return this.prisma.$transaction(async (tx) => {
       const attendance = await tx.teacherSessionAttendance.create({
@@ -64,7 +78,7 @@ export class AttendanceRepository {
       });
       await tx.teacherBooking.update({
         where: { id: dto.bookingId },
-        data: { status: 'CHECKED_IN' },
+        data: { status: "CHECKED_IN" },
       });
       return attendance;
     });
@@ -74,7 +88,9 @@ export class AttendanceRepository {
    * Mark a session as manually attended by teacher or admin.
    */
   async markManualAttendance(bookingId: string, markedByUserId: string) {
-    const booking = await this.prisma.teacherBooking.findUnique({ where: { id: bookingId } });
+    const booking = await this.prisma.teacherBooking.findUnique({
+      where: { id: bookingId },
+    });
     if (!booking) throw new NotFoundException(`Booking ${bookingId} not found`);
 
     return this.prisma.teacherSessionAttendance.upsert({
@@ -84,7 +100,7 @@ export class AttendanceRepository {
         studentUserId: booking.studentUserId,
         attended: true,
         joinedAt: new Date(),
-        checkInMethod: 'MANUAL',
+        checkInMethod: "MANUAL",
         markedByUserId,
       },
       update: { attended: true, markedByUserId },
@@ -97,7 +113,7 @@ export class AttendanceRepository {
   async markSessionComplete(bookingId: string) {
     return this.prisma.teacherBooking.update({
       where: { id: bookingId },
-      data: { status: 'COMPLETED' },
+      data: { status: "COMPLETED" },
     });
   }
 
@@ -105,7 +121,9 @@ export class AttendanceRepository {
     return this.prisma.teacherSessionAttendance.findMany({
       where: { booking: { sessionId } },
       include: {
-        student: { select: { id: true, firstName: true, lastName: true, email: true } },
+        student: {
+          select: { id: true, firstName: true, lastName: true, email: true },
+        },
       },
     });
   }

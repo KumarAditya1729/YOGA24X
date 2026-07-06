@@ -1,6 +1,6 @@
-import { Injectable, Logger, BadRequestException } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.module';
-import { AiSafetyLevel } from '@prisma/client';
+import { Injectable, Logger, BadRequestException } from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.module";
+import { AiSafetyLevel } from "@prisma/client";
 
 @Injectable()
 export class AiSafetyService {
@@ -16,11 +16,27 @@ export class AiSafetyService {
     const lowerInput = input.toLowerCase();
 
     // 1. Medical Guardrail Check
-    const medicalKeywords = ['diagnose', 'prescription', 'cancer', 'tumor', 'broken bone', 'suicide', 'chest pain'];
+    const medicalKeywords = [
+      "diagnose",
+      "prescription",
+      "cancer",
+      "tumor",
+      "broken bone",
+      "suicide",
+      "chest pain",
+    ];
     for (const kw of medicalKeywords) {
       if (lowerInput.includes(kw)) {
-        await this.logSafetyEvent(userId, 'MEDICAL_ADVICE_BLOCKED', input, null, AiSafetyLevel.STRICT);
-        throw new BadRequestException('I am a wellness coach, not a medical professional. Please seek immediate advice from a doctor for medical conditions.');
+        await this.logSafetyEvent(
+          userId,
+          "MEDICAL_ADVICE_BLOCKED",
+          input,
+          null,
+          AiSafetyLevel.STRICT,
+        );
+        throw new BadRequestException(
+          "I am a wellness coach, not a medical professional. Please seek immediate advice from a doctor for medical conditions.",
+        );
       }
     }
 
@@ -31,15 +47,27 @@ export class AiSafetyService {
     const emailRegex = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g;
 
     if (phoneRegex.test(sanitized) || emailRegex.test(sanitized)) {
-      sanitized = sanitized.replace(phoneRegex, '[PHONE REDACTED]');
-      sanitized = sanitized.replace(emailRegex, '[EMAIL REDACTED]');
-      await this.logSafetyEvent(userId, 'PII_SCRUBBED', input, sanitized, AiSafetyLevel.MODERATE);
+      sanitized = sanitized.replace(phoneRegex, "[PHONE REDACTED]");
+      sanitized = sanitized.replace(emailRegex, "[EMAIL REDACTED]");
+      await this.logSafetyEvent(
+        userId,
+        "PII_SCRUBBED",
+        input,
+        sanitized,
+        AiSafetyLevel.MODERATE,
+      );
     }
 
     return sanitized;
   }
 
-  private async logSafetyEvent(userId: string, eventType: string, original: string, sanitized: string | null, level: AiSafetyLevel) {
+  private async logSafetyEvent(
+    userId: string,
+    eventType: string,
+    original: string,
+    sanitized: string | null,
+    level: AiSafetyLevel,
+  ) {
     await this.prisma.aiSafetyAuditLog.create({
       data: {
         userId,
@@ -47,7 +75,7 @@ export class AiSafetyService {
         originalInput: original,
         sanitizedInput: sanitized,
         safetyLevel: level,
-      }
+      },
     });
     this.logger.warn(`Safety Event Logged: ${eventType} for User: ${userId}`);
   }

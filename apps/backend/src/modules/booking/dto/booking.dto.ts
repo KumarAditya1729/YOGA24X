@@ -3,10 +3,19 @@
 // ==============================================================================
 
 import {
-  IsString, IsOptional, IsEnum, IsUUID, IsInt, IsBoolean,
-  IsDateString, IsLatitude, IsLongitude, Min, Max,
-} from 'class-validator';
-import { BookingStatus } from '@prisma/client';
+  IsString,
+  IsOptional,
+  IsEnum,
+  IsUUID,
+  IsInt,
+  IsBoolean,
+  IsDateString,
+  IsLatitude,
+  IsLongitude,
+  Min,
+  Max,
+} from "class-validator";
+import { BookingStatus } from "@prisma/client";
 
 // ─── Create / Instant Booking ─────────────────────────────────────────────────
 export class CreateBookingDto {
@@ -24,7 +33,7 @@ export class ApproveBookingDto {
   bookingId: string;
 
   @IsEnum(BookingStatus)
-  decision: 'CONFIRMED' | 'CANCELLED';
+  decision: "CONFIRMED" | "CANCELLED";
 
   @IsOptional()
   @IsString()
@@ -59,11 +68,11 @@ export class CheckInDto {
   bookingId: string;
 
   @IsString()
-  method: 'QR' | 'OTP' | 'GEO' | 'MANUAL' | 'REPLAY';
+  method: "QR" | "OTP" | "GEO" | "MANUAL" | "REPLAY";
 
   @IsOptional()
   @IsString()
-  token?: string;  // QR or OTP token
+  token?: string; // QR or OTP token
 
   @IsOptional()
   @IsLatitude()
@@ -99,7 +108,7 @@ export class JoinWaitlistDto {
 // ─── Calendar Sync ────────────────────────────────────────────────────────────
 export class CalendarSyncDto {
   @IsString()
-  provider: 'GOOGLE' | 'APPLE';
+  provider: "GOOGLE" | "APPLE";
 
   @IsString()
   accessToken: string;

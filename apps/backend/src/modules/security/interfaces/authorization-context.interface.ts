@@ -19,7 +19,7 @@ export interface AuthorizationContext {
   /** Caller IP address */
   ipAddress?: string;
   /** Device trust level resolved by DevicePolicy */
-  deviceTrust?: 'TRUSTED' | 'UNKNOWN' | 'BLOCKED';
+  deviceTrust?: "TRUSTED" | "UNKNOWN" | "BLOCKED";
   /** Subscription tier of the user */
   subscriptionTier?: string;
   /** Computed risk score (0-100) */

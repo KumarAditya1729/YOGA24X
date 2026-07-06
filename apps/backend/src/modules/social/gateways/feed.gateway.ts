@@ -6,15 +6,15 @@ import {
   ConnectedSocket,
   OnGatewayConnection,
   OnGatewayDisconnect,
-} from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
-import { FeedService } from '../services/feed.service';
+} from "@nestjs/websockets";
+import { Server, Socket } from "socket.io";
+import { FeedService } from "../services/feed.service";
 
 @WebSocketGateway({
   cors: {
-    origin: '*',
+    origin: "*",
   },
-  namespace: '/feed'
+  namespace: "/feed",
 })
 export class FeedGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
@@ -30,13 +30,13 @@ export class FeedGateway implements OnGatewayConnection, OnGatewayDisconnect {
     console.log(`Client disconnected from Feed: ${client.id}`);
   }
 
-  @SubscribeMessage('subscribeFeed')
+  @SubscribeMessage("subscribeFeed")
   handleSubscribeFeed(
     @MessageBody() data: { groupId?: string },
     @ConnectedSocket() client: Socket,
   ) {
-    const room = data.groupId ? `feed:group:${data.groupId}` : 'feed:global';
+    const room = data.groupId ? `feed:group:${data.groupId}` : "feed:global";
     client.join(room);
-    return { event: 'subscribed', data: { room } };
+    return { event: "subscribed", data: { room } };
   }
 }

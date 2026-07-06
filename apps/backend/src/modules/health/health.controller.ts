@@ -3,12 +3,16 @@
 // Kubernetes-compatible liveness & readiness endpoints
 // ==============================================================================
 
-import { Controller, Get } from '@nestjs/common';
-import { HealthCheck, HealthCheckService, PrismaHealthIndicator } from '@nestjs/terminus';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
-import { PrismaService } from '../prisma/prisma.module';
+import { Controller, Get } from "@nestjs/common";
+import {
+  HealthCheck,
+  HealthCheckService,
+  PrismaHealthIndicator,
+} from "@nestjs/terminus";
+import { ApiTags, ApiOperation } from "@nestjs/swagger";
+import { PrismaService } from "../prisma/prisma.module";
 
-@ApiTags('Health')
+@ApiTags("Health")
 @Controller()
 export class HealthController {
   constructor(
@@ -21,13 +25,15 @@ export class HealthController {
    * Liveness probe — process is running and responsive
    * Used by: Kubernetes liveness probe, load balancer health check
    */
-  @Get('health')
-  @ApiOperation({ summary: 'Liveness probe — always returns 200 if process is running' })
+  @Get("health")
+  @ApiOperation({
+    summary: "Liveness probe — always returns 200 if process is running",
+  })
   liveness() {
     return {
-      status: 'ok',
-      environment: process.env.NODE_ENV || 'development',
-      version: process.env.APP_VERSION || '1.0.0',
+      status: "ok",
+      environment: process.env.NODE_ENV || "development",
+      version: process.env.APP_VERSION || "1.0.0",
       timestamp: new Date().toISOString(),
       uptime: Math.floor(process.uptime()),
       memory: {
@@ -42,12 +48,14 @@ export class HealthController {
    * Readiness probe — all dependencies are healthy
    * Used by: Kubernetes readiness probe
    */
-  @Get('ready')
+  @Get("ready")
   @HealthCheck()
-  @ApiOperation({ summary: 'Readiness probe — checks DB and Redis connectivity' })
+  @ApiOperation({
+    summary: "Readiness probe — checks DB and Redis connectivity",
+  })
   async readiness() {
     return this.health.check([
-      () => this.prismaHealth.pingCheck('database', this.prisma),
+      () => this.prismaHealth.pingCheck("database", this.prisma),
     ]);
   }
 }

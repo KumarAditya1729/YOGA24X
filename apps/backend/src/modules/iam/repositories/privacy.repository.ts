@@ -3,9 +3,13 @@
 // Handles consent, cookie/marketing/AI/health preferences, GDPR exports & deletion
 // ==============================================================================
 
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.module';
-import { UpdateConsentDto, ConsentType, IAM_CONSTANTS } from '@yoga24x/shared-types';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.module";
+import {
+  UpdateConsentDto,
+  ConsentType,
+  IAM_CONSTANTS,
+} from "@yoga24x/shared-types";
 
 @Injectable()
 export class PrivacyRepository {
@@ -14,11 +18,16 @@ export class PrivacyRepository {
   async getUserConsents(userId: string): Promise<any[]> {
     return this.prisma.userConsent.findMany({
       where: { userId },
-      orderBy: { acceptedAt: 'desc' },
+      orderBy: { acceptedAt: "desc" },
     });
   }
 
-  async updateConsent(userId: string, dto: UpdateConsentDto, ipAddress?: string, userAgent?: string): Promise<any> {
+  async updateConsent(
+    userId: string,
+    dto: UpdateConsentDto,
+    ipAddress?: string,
+    userAgent?: string,
+  ): Promise<any> {
     if (dto.isAccepted) {
       return this.prisma.userConsent.create({
         data: {
@@ -33,7 +42,12 @@ export class PrivacyRepository {
     } else {
       // Find active consent and revoke it
       const existing = await this.prisma.userConsent.findFirst({
-        where: { userId, consentType: dto.consentType, isAccepted: true, revokedAt: null },
+        where: {
+          userId,
+          consentType: dto.consentType,
+          isAccepted: true,
+          revokedAt: null,
+        },
       });
       if (existing) {
         return this.prisma.userConsent.update({
@@ -49,7 +63,7 @@ export class PrivacyRepository {
     return this.prisma.dataExportRequest.create({
       data: {
         userId,
-        status: 'PROCESSING',
+        status: "PROCESSING",
         requestedAt: new Date(),
       },
     });
@@ -58,7 +72,7 @@ export class PrivacyRepository {
   async getDataExportRequests(userId: string): Promise<any[]> {
     return this.prisma.dataExportRequest.findMany({
       where: { userId },
-      orderBy: { requestedAt: 'desc' },
+      orderBy: { requestedAt: "desc" },
     });
   }
 
@@ -70,7 +84,7 @@ export class PrivacyRepository {
         data: {
           userId,
           reason,
-          status: 'SCHEDULED',
+          status: "SCHEDULED",
           scheduledFor,
         },
       });
@@ -91,8 +105,8 @@ export class PrivacyRepository {
   async cancelAccountDeletion(userId: string): Promise<any> {
     return this.prisma.$transaction(async (tx: any) => {
       await tx.accountDeletionRequest.updateMany({
-        where: { userId, status: 'SCHEDULED' },
-        data: { status: 'CANCELLED', completedAt: new Date() },
+        where: { userId, status: "SCHEDULED" },
+        data: { status: "CANCELLED", completedAt: new Date() },
       });
 
       return tx.user.update({
@@ -110,7 +124,7 @@ export class PrivacyRepository {
     return this.prisma.user.update({
       where: { id: userId },
       data: {
-        status: 'SUSPENDED',
+        status: "SUSPENDED",
         suspendedAt: new Date(),
         suspensionReason: reason,
       },
@@ -121,7 +135,7 @@ export class PrivacyRepository {
     return this.prisma.user.update({
       where: { id: userId },
       data: {
-        status: 'ACTIVE',
+        status: "ACTIVE",
         suspendedAt: null,
         suspensionReason: null,
       },

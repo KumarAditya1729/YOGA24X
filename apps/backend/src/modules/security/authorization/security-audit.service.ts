@@ -3,9 +3,9 @@
 // Persists every authorization decision + security events to PostgreSQL
 // Exposes metrics counters for observability
 // ==============================================================================
-import { Injectable, Logger } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.module';
-import { Counter, Registry } from 'prom-client';
+import { Injectable, Logger } from "@nestjs/common";
+import { PrismaService } from "../../prisma/prisma.module";
+import { Counter, Registry } from "prom-client";
 
 interface AuthzDecisionRecord {
   correlationId: string;
@@ -31,7 +31,7 @@ interface SecurityEventRecord {
   organizationId?: string;
   userId?: string;
   eventType: string;
-  severity: 'INFO' | 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  severity: "INFO" | "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
   description: string;
   metaJson?: Record<string, unknown>;
   ipAddress?: string;
@@ -51,16 +51,16 @@ export class SecurityAuditService {
     const register = new Registry();
 
     this.authzDecisionCounter = new Counter({
-      name: 'yoga24x_authz_decisions_total',
-      help: 'Total authorization decisions by outcome',
-      labelNames: ['decision', 'tenant_id'],
+      name: "yoga24x_authz_decisions_total",
+      help: "Total authorization decisions by outcome",
+      labelNames: ["decision", "tenant_id"],
       registers: [register],
     });
 
     this.securityEventCounter = new Counter({
-      name: 'yoga24x_security_events_total',
-      help: 'Total security events by type and severity',
-      labelNames: ['event_type', 'severity'],
+      name: "yoga24x_security_events_total",
+      help: "Total security events by type and severity",
+      labelNames: ["event_type", "severity"],
       registers: [register],
     });
   }
@@ -89,11 +89,11 @@ export class SecurityAuditService {
 
       this.authzDecisionCounter.inc({
         decision: data.decision,
-        tenant_id: data.tenantId ?? 'global',
+        tenant_id: data.tenantId ?? "global",
       });
     } catch (err) {
       // Non-blocking — log but don't fail the request
-      this.logger.error('Failed to persist authz audit log', err);
+      this.logger.error("Failed to persist authz audit log", err);
     }
   }
 
@@ -120,13 +120,13 @@ export class SecurityAuditService {
         severity: data.severity,
       });
 
-      if (data.severity === 'CRITICAL' || data.severity === 'HIGH') {
+      if (data.severity === "CRITICAL" || data.severity === "HIGH") {
         this.logger.error(
           `[SECURITY EVENT] ${data.eventType} | ${data.severity} | User: ${data.userId} | Tenant: ${data.tenantId}`,
         );
       }
     } catch (err) {
-      this.logger.error('Failed to persist security event', err);
+      this.logger.error("Failed to persist security event", err);
     }
   }
 
@@ -139,17 +139,25 @@ export class SecurityAuditService {
     page?: number;
     limit?: number;
   }) {
-    const { userId, tenantId, decision, from, to, page = 1, limit = 50 } = filters;
+    const {
+      userId,
+      tenantId,
+      decision,
+      from,
+      to,
+      page = 1,
+      limit = 50,
+    } = filters;
     const skip = (page - 1) * limit;
 
     const where: Record<string, unknown> = {};
-    if (userId) where['userId'] = userId;
-    if (tenantId) where['tenantId'] = tenantId;
-    if (decision) where['decision'] = decision;
+    if (userId) where["userId"] = userId;
+    if (tenantId) where["tenantId"] = tenantId;
+    if (decision) where["decision"] = decision;
     if (from || to) {
-      where['createdAt'] = {};
-      if (from) (where['createdAt'] as Record<string, unknown>)['gte'] = from;
-      if (to) (where['createdAt'] as Record<string, unknown>)['lte'] = to;
+      where["createdAt"] = {};
+      if (from) (where["createdAt"] as Record<string, unknown>)["gte"] = from;
+      if (to) (where["createdAt"] as Record<string, unknown>)["lte"] = to;
     }
 
     const [items, total] = await Promise.all([
@@ -157,7 +165,7 @@ export class SecurityAuditService {
         where,
         skip,
         take: limit,
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: "desc" },
       }),
       this.prisma.authorizationAuditLog.count({ where }),
     ]);
@@ -173,21 +181,28 @@ export class SecurityAuditService {
     page?: number;
     limit?: number;
   }) {
-    const { tenantId, severity, eventType, isAcknowledged, page = 1, limit = 50 } = filters;
+    const {
+      tenantId,
+      severity,
+      eventType,
+      isAcknowledged,
+      page = 1,
+      limit = 50,
+    } = filters;
     const skip = (page - 1) * limit;
 
     const where: Record<string, unknown> = {};
-    if (tenantId) where['tenantId'] = tenantId;
-    if (severity) where['severity'] = severity;
-    if (eventType) where['eventType'] = eventType;
-    if (isAcknowledged !== undefined) where['isAcknowledged'] = isAcknowledged;
+    if (tenantId) where["tenantId"] = tenantId;
+    if (severity) where["severity"] = severity;
+    if (eventType) where["eventType"] = eventType;
+    if (isAcknowledged !== undefined) where["isAcknowledged"] = isAcknowledged;
 
     const [items, total] = await Promise.all([
       this.prisma.securityEventLog.findMany({
         where,
         skip,
         take: limit,
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: "desc" },
       }),
       this.prisma.securityEventLog.count({ where }),
     ]);

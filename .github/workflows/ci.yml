@@ -91,6 +91,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Build shared packages
+        run: pnpm --filter @yoga24x/shared-types run build
+
       - name: Generate Prisma client
         run: pnpm --filter @yoga24x/backend exec prisma generate
 
@@ -125,6 +128,9 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Build shared packages
+        run: pnpm --filter @yoga24x/shared-types run build
 
       - name: Generate Prisma client
         run: pnpm --filter @yoga24x/backend exec prisma generate

@@ -1,47 +1,49 @@
 # ==============================================================================
 # Yoga24X Backend — Production Multi-Stage Dockerfile
-# Stage 1: deps       - Install production dependencies
-# Stage 2: builder    - Compile TypeScript
-# Stage 3: runner     - Minimal production image (non-root user)
+# Stage 1: builder    - Compile TypeScript and deploy with pnpm deploy
+# Stage 2: runner     - Minimal production image (non-root user)
 # ==============================================================================
 
-# ── Stage 1: Dependency Installation ─────────────────────────────────────────
-FROM node:20-alpine AS deps
-WORKDIR /app
-
-# Install pnpm
-RUN corepack enable && corepack prepare pnpm@9.4.0 --activate
-
-# Copy workspace files for pnpm
-COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
-COPY packages/ ./packages/
-COPY apps/backend/package.json ./apps/backend/
-
-# Install only production deps for the backend workspace
-RUN pnpm install --frozen-lockfile --filter @yoga24x/backend
-
-# ── Stage 2: Build ────────────────────────────────────────────────────────────
+# ── Stage 1: Build & Deploy ───────────────────────────────────────────────────
 FROM node:20-alpine AS builder
 WORKDIR /app
 
+# Install openssl for Prisma engine
+RUN apk add --no-cache openssl
+
 RUN corepack enable && corepack prepare pnpm@9.4.0 --activate
 
+# Copy the entire workspace
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY packages/ ./packages/
 COPY apps/backend/ ./apps/backend/
 
 # Install all deps (including devDeps for build)
-RUN pnpm install --frozen-lockfile --filter @yoga24x/backend
+RUN pnpm install --frozen-lockfile
 
-# Generate Prisma client
+# Generate Prisma client for build
 RUN cd apps/backend && npx prisma generate
 
-# Build NestJS app
-RUN cd apps/backend && pnpm run build
+# Build shared packages
+RUN pnpm --filter @yoga24x/shared-types run build
 
-# ── Stage 3: Production Runner ────────────────────────────────────────────────
+# Build NestJS app
+RUN pnpm --filter @yoga24x/backend run build
+
+# Deploy the backend app to an isolated folder (only production deps)
+RUN pnpm deploy --filter @yoga24x/backend --prod /app/out
+
+# Copy the generated Prisma client to the deployed node_modules
+# We use cp -LR to dereference symlinks from the pnpm virtual store
+RUN cp -LR node_modules/.pnpm/@prisma+client*/node_modules/.prisma /app/out/node_modules/ || true
+RUN cp -LR node_modules/.pnpm/@prisma+client*/node_modules/@prisma /app/out/node_modules/ || true
+
+# ── Stage 2: Production Runner ────────────────────────────────────────────────
 FROM node:20-alpine AS runner
 WORKDIR /app
+
+# Install openssl for Prisma engine in runner
+RUN apk add --no-cache openssl
 
 # Security: run as non-root user
 RUN addgroup --system --gid 1001 yoga24x \
@@ -51,12 +53,8 @@ RUN addgroup --system --gid 1001 yoga24x \
 ENV NODE_ENV=production
 ENV PORT=3001
 
-# Copy only what's needed from builder
-COPY --from=builder --chown=nestjs:yoga24x /app/apps/backend/dist ./dist
-COPY --from=builder --chown=nestjs:yoga24x /app/apps/backend/node_modules ./node_modules
-COPY --from=builder --chown=nestjs:yoga24x /app/apps/backend/prisma ./prisma
-COPY --from=builder --chown=nestjs:yoga24x /app/node_modules/.prisma /app/node_modules/.prisma
-COPY --from=builder --chown=nestjs:yoga24x /app/node_modules/@prisma /app/node_modules/@prisma
+# Copy the standalone deployed app from builder
+COPY --from=builder --chown=nestjs:yoga24x /app/out ./
 
 # Switch to non-root user
 USER nestjs

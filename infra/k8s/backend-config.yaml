@@ -1,0 +1,67 @@
+# ==============================================================================
+# Yoga24X — Kubernetes ConfigMap & Secrets
+# ConfigMap: non-sensitive environment config
+# Secret: sensitive credentials (use sealed-secrets or Vault in production)
+# ==============================================================================
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: yoga24x-backend-config
+  namespace: yoga24x
+data:
+  NODE_ENV: "production"
+  PORT: "3001"
+  API_PREFIX: "/api/v1"
+  APP_URL: "https://api.yoga24x.com"
+  ADMIN_URL: "https://admin.yoga24x.com"
+  APP_VERSION: "1.0.0"
+  SWAGGER_ENABLED: "false"
+  JWT_ACCESS_EXPIRY: "15m"
+  JWT_REFRESH_EXPIRY: "7d"
+  DB_MAX_CONNECTIONS: "50"
+  OTP_EXPIRY_MINUTES: "10"
+  AI_DEFAULT_PROVIDER: "OLLAMA"
+  OLLAMA_BASE_URL: "http://ollama-service:11434"
+  AI_SAFETY_ENABLED: "true"
+  LOG_LEVEL: "info"
+  LOG_FORMAT: "json"
+  THROTTLE_TTL_MS: "60000"
+  THROTTLE_LIMIT: "200"
+  FEATURE_AI_COACH: "true"
+  FEATURE_SOVEREIGN_AI: "true"
+  FEATURE_COMMERCIAL_AI: "false"
+  CORS_ALLOWED_ORIGINS: "https://yoga24x.com,https://admin.yoga24x.com,https://app.yoga24x.com"
+---
+# IMPORTANT: In production, use Sealed Secrets, Vault, or AWS Secrets Manager
+# This is a template — replace all CHANGE_ME values before deploying
+apiVersion: v1
+kind: Secret
+metadata:
+  name: yoga24x-backend-secrets
+  namespace: yoga24x
+type: Opaque
+stringData:
+  DATABASE_URL: "postgresql://yoga24x_prod:CHANGE_ME@postgres-service:5432/yoga24x_prod?schema=public"
+  REDIS_URL: "redis://:CHANGE_ME@redis-service:6379/0"
+  REDIS_PASSWORD: "CHANGE_ME"
+  JWT_ACCESS_SECRET: "CHANGE_ME_MIN_64_CHARS"
+  JWT_REFRESH_SECRET: "CHANGE_ME_MIN_64_CHARS_DIFFERENT"
+  COOKIE_SECRET: "CHANGE_ME_MIN_32_CHARS"
+  GOOGLE_CLIENT_ID: "CHANGE_ME.apps.googleusercontent.com"
+  GOOGLE_CLIENT_SECRET: "CHANGE_ME"
+  RAZORPAY_KEY_ID: "CHANGE_ME"
+  RAZORPAY_KEY_SECRET: "CHANGE_ME"
+  RAZORPAY_WEBHOOK_SECRET: "CHANGE_ME"
+  AWS_ACCESS_KEY_ID: "CHANGE_ME"
+  AWS_SECRET_ACCESS_KEY: "CHANGE_ME"
+  SENTRY_DSN: "CHANGE_ME"
+---
+# ── Namespace ─────────────────────────────────────────────────────────────────
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: yoga24x
+  labels:
+    name: yoga24x
+    environment: production

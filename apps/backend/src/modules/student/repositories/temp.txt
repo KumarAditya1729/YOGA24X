@@ -1,0 +1,2 @@
+import { Injectable } from '@nestjs/swagger'; // oops, wait, import from @nestjs/common
+import { PrismaService } from '../../../core/prisma/prisma.service'; // Let's check the PrismaService path. It's usually in core or common. I'll check first.

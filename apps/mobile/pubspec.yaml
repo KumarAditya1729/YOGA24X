@@ -1,0 +1,59 @@
+name: yoga24x_mobile
+description: Yoga24X AI-Powered Yoga & Wellness Super App Mobile Client
+version: 1.0.0+1
+publish_to: none
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+  flutter: '>=3.19.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  
+  # State Management & DI (Riverpod)
+  flutter_riverpod: ^2.5.1
+  riverpod_annotation: ^2.3.5
+  
+  # Networking & API Interceptors
+  dio: ^5.4.3
+  
+  # Secure Storage & Encryption (AES-256 / Keychain / Keystore)
+  flutter_secure_storage: ^9.2.2
+  
+  # Biometrics & Passkeys (FaceID / TouchID / Fingerprint)
+  local_auth: ^2.2.0
+  
+  # OAuth Integration
+  google_sign_in: ^6.2.1
+  sign_in_with_apple: ^6.1.1
+  
+  # UI & Animations (Premium Aesthetics, Glassmorphism, Micro-animations)
+  google_fonts: ^6.2.1
+  animate_do: ^3.3.4
+  shimmer: ^3.0.0
+  glassmorphism: ^3.0.0
+  lucide_icons: ^1.6.0
+  
+  # Utilities & Serialization
+  freezed_annotation: ^2.4.1
+  json_annotation: ^4.9.0
+  uuid: ^4.4.0
+  crypto: ^3.0.3
+  intl: ^0.19.0
+  equatable: ^2.0.5
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+  build_runner: ^2.4.9
+  freezed: ^2.5.2
+  json_serializable: ^6.8.0
+  riverpod_generator: ^2.4.0
+
+flutter:
+  uses-material-design: true

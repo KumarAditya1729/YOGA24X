@@ -25,14 +25,22 @@ export class SessionService {
     userAgent: string,
     location = "Unknown",
   ): Promise<{ sessionId: string; deviceId: string | null }> {
+    const safeDevice: DeviceInfo = deviceInfo || {
+      deviceType: "WEB_BROWSER",
+      deviceFingerprint: `web_${userId}_${Date.now()}`,
+      deviceName: "Web Browser",
+      osVersion: "Unknown",
+      appVersion: "1.0.0",
+    };
+
     // 1. Register or Update Device in PostgreSQL
     const device = await this.authRepository.upsertDevice({
       userId,
-      deviceType: deviceInfo.deviceType,
-      deviceFingerprint: deviceInfo.deviceFingerprint,
-      osVersion: deviceInfo.osVersion,
-      appVersion: deviceInfo.appVersion,
-      fcmToken: deviceInfo.fcmToken,
+      deviceType: safeDevice.deviceType || "WEB_BROWSER",
+      deviceFingerprint: safeDevice.deviceFingerprint || `web_${userId}_${Date.now()}`,
+      osVersion: safeDevice.osVersion || "Unknown",
+      appVersion: safeDevice.appVersion || "1.0.0",
+      fcmToken: safeDevice.fcmToken,
       ipAddress,
     });
 
@@ -49,11 +57,11 @@ export class SessionService {
       sessionId: dbSession.id,
       userId,
       deviceId: device.id,
-      deviceFingerprint: deviceInfo.deviceFingerprint,
+      deviceFingerprint: safeDevice.deviceFingerprint || `web_${userId}_${Date.now()}`,
       ipAddress,
       userAgent,
       location,
-      deviceType: deviceInfo.deviceType,
+      deviceType: safeDevice.deviceType || "WEB_BROWSER",
       isActive: true,
       createdAt: new Date().toISOString(),
       lastActiveAt: new Date().toISOString(),

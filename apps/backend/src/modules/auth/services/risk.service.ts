@@ -30,6 +30,13 @@ export class RiskService {
   ): Promise<RiskEvaluationResult> {
     let riskScore = 0;
     const factors: string[] = [];
+    const safeDevice: DeviceInfo = deviceInfo || {
+      deviceType: "WEB_BROWSER",
+      deviceFingerprint: `web_${userId}_${Date.now()}`,
+      deviceName: "Web Browser",
+      osVersion: "Unknown",
+      appVersion: "1.0.0",
+    };
 
     // 1. Check if IP Address is explicitly blacklisted/blocked
     const blockedIp = await this.authRepository.checkIpBlocked(ipAddress);
@@ -41,7 +48,7 @@ export class RiskService {
 
     // 2. FACTOR 1: Is this a completely new device fingerprint for this user? (+30 risk)
     const isTrusted = await this.authRepository.findTrustedDeviceByFingerprint(
-      deviceInfo.deviceFingerprint,
+      safeDevice.deviceFingerprint,
     );
     if (!isTrusted || isTrusted.userId !== userId || isTrusted.isRevoked) {
       riskScore += 30;
@@ -144,7 +151,7 @@ export class RiskService {
       ipAddress,
       userAgent,
       location,
-      deviceType,
+      deviceType: deviceType || "WEB_BROWSER",
       riskScore,
       failureReason,
     });

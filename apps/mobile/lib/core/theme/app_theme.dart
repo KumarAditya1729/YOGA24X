@@ -6,27 +6,28 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  // ── Curated Luxury Color Tokens (Apple Health, Oura, Calm, WHOOP) ───────────
-  static const Color primary = Color(0xFF0D9488); // Luminous Ocean Teal
-  static const Color secondary = Color(0xFF10B981); // Vibrant Emerald Mint
-  static const Color accent = Color(0xFFF59E0B); // Solar Readiness Gold
+  // ── Curated Luxury Color Tokens (Alo Yoga, Aman Sanctuary, Calm) ────────────
+  // Primary: Deep Organic Sage — deeply calming, rooted in nature and prana.
+  static const Color primary = Color(0xFF385E4D); // Deep Organic Sage
+  static const Color secondary = Color(0xFF5A8A70); // Soft Botanical Sage
+  static const Color accent = Color(0xFFC5A059); // Ethereal Sanctuary Gold
   
-  static const Color bgLight = Color(0xFFFAF9F6); // Clean Warm Pearl
-  static const Color surfaceLight = Color(0xFFFFFFFF); // Pure Elevated White
+  static const Color bgLight = Color(0xFFF7F5F0); // Warm Organic Sand / Oat
+  static const Color surfaceLight = Color(0xFFFFFFFF); // Pure Altar White
   
-  static const Color bgDark = Color(0xFF08090C); // OLED Luxury Obsidian Black
-  static const Color surfaceDark = Color(0xFF12151D); // Elevated Glass Slate
-  static const Color borderDark = Color(0xFF222735); // Refined Titanium Border
+  static const Color bgDark = Color(0xFF0E1110); // Deep Luxury Forest Obsidian
+  static const Color surfaceDark = Color(0xFF161B19); // Elevated Glass Slate
+  static const Color borderDark = Color(0xFF242C29); // Subtle Botanical Border
   
-  static const Color textPrimaryLight = Color(0xFF0F172A);
-  static const Color textSecondaryLight = Color(0xFF64748B);
+  static const Color textPrimaryLight = Color(0xFF1B2420); // Deep Charcoal Forest
+  static const Color textSecondaryLight = Color(0xFF6A7872); // Muted Botanist Grey
   
-  static const Color textPrimaryDark = Color(0xFFF8FAFC);
-  static const Color textSecondaryDark = Color(0xFF94A3B8);
+  static const Color textPrimaryDark = Color(0xFFF2F5F3); // Soft Pearl White
+  static const Color textSecondaryDark = Color(0xFF8E9E96); // Muted Sage Grey
   
-  static const Color success = Color(0xFF10B981); // Crisp Apple Success Green
-  static const Color meditation = Color(0xFF8B5CF6); // Spiritual Lavender / Indigo
-  static const Color breathing = Color(0xFF38BDF8); // Serene Sky Blue
+  static const Color success = Color(0xFF488A68); // Calming Botanical Green
+  static const Color meditation = Color(0xFF5D7A8C); // Serene Lake Blue-Grey
+  static const Color breathing = Color(0xFF6CA0A6); // Ethereal River Blue
 
   // ── Light Theme Definition (Warm Ivory & Deep Forest Green) ─────────────────
   static ThemeData get lightTheme {
@@ -201,33 +202,33 @@ class AppTheme {
     );
   }
 
-  // ── Curated Luxury Gradients (Apple Watch Ultra, Oura, Calm) ────────────────
+  // ── Curated Sanctuary Gradients (Aman Resorts, Alo Yoga) ────────────────────
   static LinearGradient get forestHeroGradient => const LinearGradient(
-        colors: [Color(0xFF0F172A), Color(0xFF1E293B), Color(0xFF0D9488)],
+        colors: [Color(0xFF1B2A24), Color(0xFF243830), Color(0xFF385E4D)],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
       );
 
   static LinearGradient get emeraldGlowGradient => const LinearGradient(
-        colors: [Color(0xFF10B981), Color(0xFF0D9488)],
+        colors: [Color(0xFF5A8A70), Color(0xFF385E4D)],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
       );
 
   static LinearGradient get meditationLavenderGradient => const LinearGradient(
-        colors: [Color(0xFF8B5CF6), Color(0xFF6366F1)],
+        colors: [Color(0xFF5D7A8C), Color(0xFF425A69)],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
       );
 
   static LinearGradient get breathingSkyGradient => const LinearGradient(
-        colors: [Color(0xFF38BDF8), Color(0xFF0284C7)],
+        colors: [Color(0xFF6CA0A6), Color(0xFF4A7A80)],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
       );
 
   static LinearGradient get goldAccentGradient => const LinearGradient(
-        colors: [Color(0xFFF59E0B), Color(0xFFD97706)],
+        colors: [Color(0xFFD4AF37), Color(0xFFC5A059)],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
       );

@@ -43,6 +43,16 @@ export class AuthService {
     private readonly redisService: RedisService,
   ) {}
 
+  private getSafeDeviceInfo(info?: DeviceInfo): DeviceInfo {
+    return info || {
+      deviceType: "WEB_BROWSER",
+      deviceFingerprint: `web_${Date.now()}`,
+      deviceName: "Web Browser",
+      osVersion: "Unknown",
+      appVersion: "1.0.0",
+    };
+  }
+
   // ============================================================================
   // Standard Password Login (Email or Phone) + Risk Evaluation
   // ============================================================================
@@ -52,6 +62,7 @@ export class AuthService {
     ipAddress: string,
     userAgent: string,
   ): Promise<AuthResponse> {
+    dto.deviceInfo = this.getSafeDeviceInfo(dto.deviceInfo);
     const cleanId = dto.emailOrPhone.trim().toLowerCase();
 
     // 1. Check Rate Limiter (Max 10 login attempts per 5 minutes per IP/ID)
@@ -203,6 +214,7 @@ export class AuthService {
     ipAddress: string,
     userAgent: string,
   ): Promise<AuthResponse> {
+    deviceInfo = this.getSafeDeviceInfo(deviceInfo);
     const cleanId = identifier.trim().toLowerCase();
 
     // 1. Verify OTP via OtpService
@@ -249,6 +261,7 @@ export class AuthService {
     ipAddress: string,
     userAgent: string,
   ): Promise<AuthResponse> {
+    dto.deviceInfo = this.getSafeDeviceInfo(dto.deviceInfo);
     const { user } = await this.oauthService.verifyGoogleIdToken(
       dto.idToken,
       dto.role,
@@ -273,6 +286,7 @@ export class AuthService {
     ipAddress: string,
     userAgent: string,
   ): Promise<AuthResponse> {
+    dto.deviceInfo = this.getSafeDeviceInfo(dto.deviceInfo);
     const { user } = await this.oauthService.verifyAppleIdentityToken(
       dto.identityToken,
       dto.authorizationCode,
@@ -304,6 +318,7 @@ export class AuthService {
     ipAddress: string,
     userAgent: string,
   ): Promise<AuthResponse> {
+    dto.deviceInfo = this.getSafeDeviceInfo(dto.deviceInfo);
     // 1. Verify device is trusted in PostgreSQL
     const trustedDevice =
       await this.authRepository.findTrustedDeviceByFingerprint(
@@ -367,6 +382,7 @@ export class AuthService {
     ipAddress: string,
     userAgent: string,
   ): Promise<AuthResponse> {
+    dto.deviceInfo = this.getSafeDeviceInfo(dto.deviceInfo);
     // Check existing
     const existingEmail = await this.authRepository.findUserByEmail(dto.email);
     if (existingEmail) {
@@ -461,17 +477,25 @@ export class AuthService {
     riskScore: number,
     riskLevel: string,
   ): Promise<AuthResponse> {
+    const safeDeviceInfo: DeviceInfo = deviceInfo || {
+      deviceType: "WEB_BROWSER",
+      deviceFingerprint: `web_${user.id}_${Date.now()}`,
+      deviceName: "Web Browser",
+      osVersion: "Unknown",
+      appVersion: "1.0.0",
+    };
+
     // 1. Create Session
     const { sessionId, deviceId } = await this.sessionService.createSession(
       user.id,
-      deviceInfo,
+      safeDeviceInfo,
       ipAddress,
       userAgent,
     );
 
     // 2. Check if device is trusted
     const isTrustedDevice = await this.sessionService.isDeviceTrusted(
-      deviceInfo.deviceFingerprint,
+      safeDeviceInfo.deviceFingerprint,
     );
 
     // 3. Generate RS256 Access Token & SHA-256 Refresh Token
@@ -502,7 +526,7 @@ export class AuthService {
       ipAddress,
       userAgent,
       "Unknown",
-      deviceInfo.deviceType,
+      safeDeviceInfo.deviceType,
       riskScore,
     );
 

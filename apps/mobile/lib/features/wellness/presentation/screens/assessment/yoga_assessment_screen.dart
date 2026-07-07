@@ -90,7 +90,7 @@ class _YogaAssessmentScreenState extends ConsumerState<YogaAssessmentScreen> {
             _buildSectionTitle('3. Preferred Yoga Lineage & Style', Icons.spa_outlined),
             const SizedBox(height: 12),
             DropdownButtonFormField<String>(
-              value: _preferredStyle,
+              initialValue: _preferredStyle,
               decoration: const InputDecoration(border: OutlineInputBorder()),
               items: const [
                 DropdownMenuItem(value: 'HATHA', child: Text('Hatha Yoga (Traditional & Classical)')),
@@ -126,7 +126,7 @@ class _YogaAssessmentScreenState extends ConsumerState<YogaAssessmentScreen> {
             ),
             const SizedBox(height: 12),
             DropdownButtonFormField<String>(
-              value: _practiceTime,
+              initialValue: _practiceTime,
               decoration: const InputDecoration(labelText: 'Ideal Time of Day', border: OutlineInputBorder()),
               items: const [
                 DropdownMenuItem(value: 'MORNING', child: Text('Brahma Muhurta / Morning (5 AM - 8 AM)')),
@@ -140,7 +140,7 @@ class _YogaAssessmentScreenState extends ConsumerState<YogaAssessmentScreen> {
             _buildSectionTitle('5. Teacher Preferences', Icons.person_outline),
             const SizedBox(height: 12),
             DropdownButtonFormField<String>(
-              value: _instructorGender,
+              initialValue: _instructorGender,
               decoration: const InputDecoration(labelText: 'Preferred Instructor Voice/Gender', border: OutlineInputBorder()),
               items: const [
                 DropdownMenuItem(value: 'ANY', child: Text('No Preference / Mixed')),

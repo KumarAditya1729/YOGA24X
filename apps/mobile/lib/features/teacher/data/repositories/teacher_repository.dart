@@ -1,10 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../core/network/dio_client.dart';
-import '../models/teacher_models.dart';
+import '../../../../features/auth/presentation/providers/auth_providers.dart';
+import '../../domain/models/teacher_models.dart';
 
 final teacherRepositoryProvider = Provider<TeacherRepository>((ref) {
-  final dio = ref.watch(dioClientProvider);
+  final dio = ref.watch(dioProvider);
   return TeacherRepository(dio);
 });
 

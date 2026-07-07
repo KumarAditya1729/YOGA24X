@@ -17,7 +17,7 @@ import { WalletCreditDto, WalletTransferDto } from "../dto/commerce.dto";
 @ApiTags("Wallet")
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
-@Controller("api/v1/wallet")
+@Controller("wallet")
 export class WalletController {
   constructor(private readonly walletService: WalletService) {}
 

@@ -1,4 +1,4 @@
-import { Module, OnModuleInit } from "@nestjs/common";
+import { Module, OnModuleInit, Global } from "@nestjs/common";
 import { PrismaModule } from "../prisma/prisma.module";
 import { AiProviderRegistry } from "./providers/ai-provider.registry";
 import { MockProvider } from "./providers/mock.provider";
@@ -13,6 +13,7 @@ import { AiSafetyService } from "./services/ai-safety.service";
 import { CoachService } from "./services/coach.service";
 import { AiController } from "./controllers/ai.controller";
 
+@Global()
 @Module({
   imports: [PrismaModule],
   controllers: [AiController],
@@ -29,7 +30,14 @@ import { AiController } from "./controllers/ai.controller";
     AiSafetyService,
     CoachService,
   ],
-  exports: [CoachService, RecommendationEngineService],
+  exports: [
+    CoachService,
+    RecommendationEngineService,
+    AiProviderRegistry,
+    KnowledgeEngineService,
+    PromptManagerService,
+    AiSafetyService,
+  ],
 })
 export class AiModule implements OnModuleInit {
   constructor(

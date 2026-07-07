@@ -1,11 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/network/api_client.dart';
+import '../../auth/presentation/providers/auth_providers.dart';
 import '../services/commerce_service.dart';
 import '../models/commerce_models.dart';
 
 final commerceServiceProvider = Provider<CommerceService>((ref) {
-  final apiClient = ref.watch(apiClientProvider);
-  return CommerceService(apiClient);
+  final dio = ref.watch(dioProvider);
+  return CommerceService(dio);
 });
 
 final walletBalanceProvider = FutureProvider<WalletBalance>((ref) async {

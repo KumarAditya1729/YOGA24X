@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../providers/teacher_providers.dart';
 
 class ProfileEditorScreen extends ConsumerStatefulWidget {
-  const ProfileEditorScreen({Key? key}) : super(key: key);
+  const ProfileEditorScreen({super.key});
 
   @override
   ConsumerState<ProfileEditorScreen> createState() => _ProfileEditorScreenState();

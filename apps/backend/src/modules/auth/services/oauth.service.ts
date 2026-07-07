@@ -5,14 +5,14 @@
 import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { OAuth2Client } from "google-auth-library";
 import * as jwt from "jsonwebtoken";
-import jwksClient from "jwks-rsa";
+import { JwksClient, SigningKey } from "jwks-rsa";
 import { AuthRepository } from "../repositories/auth.repository";
 import { UserRoleName } from "@yoga24x/shared-types";
 
 @Injectable()
 export class OAuthService {
   private googleClient: OAuth2Client;
-  private appleJwksClient: jwksClient.JwksClient;
+  private appleJwksClient: JwksClient;
 
   constructor(private readonly authRepository: AuthRepository) {
     this.googleClient = new OAuth2Client(
@@ -20,7 +20,7 @@ export class OAuthService {
         "sample-google-client-id.apps.googleusercontent.com",
     );
 
-    this.appleJwksClient = jwksClient({
+    this.appleJwksClient = new JwksClient({
       jwksUri: "https://appleid.apple.com/auth/keys",
       cache: true,
       rateLimit: true,
@@ -192,7 +192,7 @@ export class OAuthService {
 
   private async getAppleSigningKey(
     kid: string,
-  ): Promise<jwksClient.SigningKey> {
+  ): Promise<SigningKey> {
     return new Promise((resolve, reject) => {
       this.appleJwksClient.getSigningKey(kid, (err, key) => {
         if (err || !key) {

@@ -60,7 +60,7 @@ class _NutritionProfileScreenState extends ConsumerState<NutritionProfileScreen>
             _buildHeader('1. Dietary Classification & Lineage', Icons.restaurant_menu),
             const SizedBox(height: 12),
             DropdownButtonFormField<String>(
-              value: _dietType,
+              initialValue: _dietType,
               decoration: const InputDecoration(border: OutlineInputBorder()),
               items: const [
                 DropdownMenuItem(value: 'SATTVIC_VEGETARIAN', child: Text('Sattvic Vegetarian (Yogic Pure Diet)')),

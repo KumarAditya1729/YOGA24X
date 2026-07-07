@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../application/social_providers.dart';
 
 class CommunityFeedScreen extends ConsumerWidget {
-  const CommunityFeedScreen({Key? key}) : super(key: key);
+  const CommunityFeedScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

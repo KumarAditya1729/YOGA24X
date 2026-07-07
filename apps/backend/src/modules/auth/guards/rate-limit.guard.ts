@@ -33,11 +33,10 @@ export class RateLimitGuard implements CanActivate {
     const config = this.reflector.getAllAndOverride<{
       limit: number;
       windowSeconds: number;
-    }>(RATE_LIMIT_KEY, [context.getHandler(), context.getClass()]);
-
-    if (!config) {
-      return true; // No explicit limit defined on route
-    }
+    }>(RATE_LIMIT_KEY, [context.getHandler(), context.getClass()]) || {
+      limit: 100,
+      windowSeconds: 60,
+    };
 
     const request = context.switchToHttp().getRequest();
     const response = context.switchToHttp().getResponse();

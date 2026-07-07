@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class RefundScreen extends ConsumerWidget {
-  const RefundScreen({Key? key}) : super(key: key);
+  const RefundScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

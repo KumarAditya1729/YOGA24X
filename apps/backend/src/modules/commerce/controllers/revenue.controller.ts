@@ -18,7 +18,7 @@ import { CreateRevenueShareRuleDto } from "../dto/commerce.dto";
 @ApiTags("Revenue & Settlements")
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
-@Controller("api/v1/revenue")
+@Controller("revenue")
 export class RevenueController {
   constructor(private readonly revenueService: RevenueService) {}
 

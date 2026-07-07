@@ -90,7 +90,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String password,
     required Map<String, dynamic> deviceInfo,
   }) async {
-    final response = await dio.post('/v1/auth/login', data: {
+    final response = await dio.post('/api/v1/auth/login', data: {
       'emailOrPhone': emailOrPhone,
       'password': password,
       'deviceInfo': deviceInfo,
@@ -108,7 +108,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String role,
     required Map<String, dynamic> deviceInfo,
   }) async {
-    final response = await dio.post('/v1/auth/register', data: {
+    final response = await dio.post('/api/v1/auth/register', data: {
       'email': email,
       if (phoneNumber != null) 'phoneNumber': phoneNumber,
       'password': password,
@@ -126,7 +126,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String purpose,
     required String channel,
   }) async {
-    await dio.post('/v1/auth/otp/request', data: {
+    await dio.post('/api/v1/auth/otp/request', data: {
       'identifier': identifier,
       'purpose': purpose,
       'channel': channel,
@@ -140,7 +140,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String purpose,
     required Map<String, dynamic> deviceInfo,
   }) async {
-    final response = await dio.post('/v1/auth/otp/login', data: {
+    final response = await dio.post('/api/v1/auth/otp/verify', data: {
       'identifier': identifier,
       'otpCode': otpCode,
       'purpose': purpose,
@@ -155,7 +155,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String role,
     required Map<String, dynamic> deviceInfo,
   }) async {
-    final response = await dio.post('/v1/auth/oauth/google', data: {
+    final response = await dio.post('/api/v1/auth/oauth/google', data: {
       'idToken': idToken,
       'role': role,
       'deviceInfo': deviceInfo,
@@ -172,7 +172,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String role,
     required Map<String, dynamic> deviceInfo,
   }) async {
-    final response = await dio.post('/v1/auth/oauth/apple', data: {
+    final response = await dio.post('/api/v1/auth/oauth/apple', data: {
       'identityToken': identityToken,
       'authorizationCode': authorizationCode,
       if (firstName != null) 'firstName': firstName,
@@ -190,7 +190,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String cryptographicSignature,
     required Map<String, dynamic> deviceInfo,
   }) async {
-    final response = await dio.post('/v1/auth/biometric/login', data: {
+    final response = await dio.post('/api/v1/auth/biometric/login', data: {
       'userId': userId,
       'deviceFingerprint': deviceFingerprint,
       'cryptographicSignature': cryptographicSignature,
@@ -201,7 +201,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   @override
   Future<AuthTokenModel> refreshToken(String refreshToken) async {
-    final response = await dio.post('/v1/auth/token/refresh', data: {
+    final response = await dio.post('/api/v1/auth/refresh', data: {
       'refreshToken': refreshToken,
     });
     return AuthTokenModel.fromJson(response.data['tokens'] as Map<String, dynamic>);
@@ -209,7 +209,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   @override
   Future<void> logout({required String refreshToken, bool allDevices = false}) async {
-    await dio.post('/v1/auth/logout', data: {
+    await dio.post('/api/v1/auth/logout', data: {
       'refreshToken': refreshToken,
       'allDevices': allDevices,
     });
@@ -217,30 +217,30 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   @override
   Future<AuthUserModel> getCurrentUser() async {
-    final response = await dio.get('/v1/auth/me');
+    final response = await dio.get('/api/v1/auth/me');
     return AuthUserModel.fromJson(response.data as Map<String, dynamic>);
   }
 
   @override
   Future<List<UserSessionModel>> listActiveSessions() async {
-    final response = await dio.get('/v1/sessions');
+    final response = await dio.get('/api/v1/sessions');
     final list = response.data as List<dynamic>;
     return list.map((e) => UserSessionModel.fromJson(e as Map<String, dynamic>)).toList();
   }
 
   @override
   Future<void> revokeSession(String sessionId) async {
-    await dio.delete('/v1/sessions/$sessionId');
+    await dio.delete('/api/v1/sessions/$sessionId');
   }
 
   @override
   Future<void> revokeAllOtherSessions() async {
-    await dio.delete('/v1/sessions');
+    await dio.delete('/api/v1/sessions/revoke/others');
   }
 
   @override
   Future<List<TrustedDeviceModel>> listTrustedDevices() async {
-    final response = await dio.get('/v1/sessions/trusted-devices');
+    final response = await dio.get('/api/v1/sessions/devices/trusted');
     final list = response.data as List<dynamic>;
     return list.map((e) => TrustedDeviceModel.fromJson(e as Map<String, dynamic>)).toList();
   }
@@ -251,7 +251,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String deviceName,
     String? publicKey,
   }) async {
-    final response = await dio.post('/v1/sessions/trusted-devices', data: {
+    final response = await dio.post('/api/v1/sessions/devices/trusted', data: {
       'deviceFingerprint': deviceFingerprint,
       'deviceName': deviceName,
       if (publicKey != null) 'publicKey': publicKey,
@@ -261,7 +261,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   @override
   Future<void> revokeTrustedDevice(String fingerprint) async {
-    await dio.delete('/v1/sessions/trusted-devices/$fingerprint');
+    await dio.delete('/api/v1/sessions/devices/trusted/$fingerprint');
   }
 
   @override
@@ -270,7 +270,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String otpCode,
     required String newPassword,
   }) async {
-    await dio.post('/v1/auth/reset-password', data: {
+    await dio.post('/api/v1/auth/password/reset', data: {
       'identifier': identifier,
       'otpCode': otpCode,
       'newPassword': newPassword,

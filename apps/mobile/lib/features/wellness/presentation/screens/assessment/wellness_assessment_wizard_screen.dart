@@ -21,7 +21,7 @@ class _WellnessAssessmentWizardScreenState extends ConsumerState<WellnessAssessm
   double _stressLevel = 5.0;
   double _sleepQuality = 7.0;
   double _energyLevel = 6.0;
-  double _hydrationScore = 7.0;
+  final double _hydrationScore = 7.0;
   double _flexibilityScore = 5.0;
   double _strengthScore = 5.0;
   double _mobilityScore = 6.0;
@@ -193,7 +193,7 @@ class _WellnessAssessmentWizardScreenState extends ConsumerState<WellnessAssessm
         ),
         const SizedBox(height: 16),
         Card(
-          color: theme.colorScheme.primaryContainer.withOpacity(0.4),
+          color: theme.colorScheme.primaryContainer.withValues(alpha: 0.4),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           child: Padding(
             padding: const EdgeInsets.all(16),
@@ -201,7 +201,7 @@ class _WellnessAssessmentWizardScreenState extends ConsumerState<WellnessAssessm
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text('Calculated BMI Baseline:', style: TextStyle(fontWeight: FontWeight.w600)),
-                Text('${_calculatedBmi} kg/m²', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: theme.colorScheme.primary)),
+                Text('$_calculatedBmi kg/m²', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: theme.colorScheme.primary)),
               ],
             ),
           ),
@@ -214,7 +214,7 @@ class _WellnessAssessmentWizardScreenState extends ConsumerState<WellnessAssessm
         ),
         const SizedBox(height: 24),
         DropdownButtonFormField<String>(
-          value: _breathingPattern,
+          initialValue: _breathingPattern,
           decoration: const InputDecoration(labelText: 'Primary Breathing Pattern', border: OutlineInputBorder()),
           items: const [
             DropdownMenuItem(value: 'DEEP_DIAPHRAGMATIC', child: Text('Deep Diaphragmatic (Belly)')),
@@ -226,7 +226,7 @@ class _WellnessAssessmentWizardScreenState extends ConsumerState<WellnessAssessm
         ),
         const SizedBox(height: 24),
         DropdownButtonFormField<String>(
-          value: _activityLevel,
+          initialValue: _activityLevel,
           decoration: const InputDecoration(labelText: 'Daily Physical Activity Level', border: OutlineInputBorder()),
           items: const [
             DropdownMenuItem(value: 'SEDENTARY', child: Text('Sedentary (Desk Job, <3k steps)')),
@@ -261,7 +261,7 @@ class _WellnessAssessmentWizardScreenState extends ConsumerState<WellnessAssessm
                 const Divider(),
                 _buildSummaryRow('Strength Baseline', '${_strengthScore.toInt()} / 10', Colors.blue),
                 const Divider(),
-                _buildSummaryRow('Estimated BMI', '${_calculatedBmi} kg/m²', Colors.teal),
+                _buildSummaryRow('Estimated BMI', '$_calculatedBmi kg/m²', Colors.teal),
                 const Divider(),
                 _buildSummaryRow('Activity Level', _activityLevel, Colors.amber.shade800),
               ],
@@ -320,7 +320,7 @@ class _WellnessAssessmentWizardScreenState extends ConsumerState<WellnessAssessm
             Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-              decoration: BoxDecoration(color: activeColor.withOpacity(0.15), borderRadius: BorderRadius.circular(12)),
+              decoration: BoxDecoration(color: activeColor.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(12)),
               child: Text(value.toInt().toString(), style: TextStyle(fontWeight: FontWeight.bold, color: activeColor, fontSize: 16)),
             ),
           ],
@@ -357,7 +357,7 @@ class _WellnessAssessmentWizardScreenState extends ConsumerState<WellnessAssessm
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, -5))],
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, -5))],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

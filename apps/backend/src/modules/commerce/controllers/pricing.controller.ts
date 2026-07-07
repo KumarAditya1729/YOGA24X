@@ -23,7 +23,7 @@ import {
 @ApiTags("Pricing & Promotions")
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
-@Controller("api/v1/pricing")
+@Controller("pricing")
 export class PricingController {
   constructor(private readonly pricingService: PricingService) {}
 

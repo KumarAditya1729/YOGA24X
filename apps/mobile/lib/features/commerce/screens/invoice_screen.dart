@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class InvoiceScreen extends ConsumerWidget {
-  const InvoiceScreen({Key? key}) : super(key: key);
+  const InvoiceScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

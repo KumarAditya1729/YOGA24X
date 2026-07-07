@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/teacher_models.dart';
+import '../../domain/models/teacher_models.dart';
 import '../../data/repositories/teacher_repository.dart';
 
 // ── Profile Provider ────────────────────────────────────────────────────────
@@ -38,7 +38,7 @@ class TeacherProfileNotifier extends StateNotifier<AsyncValue<TeacherProfile?>> 
     try {
       final profile = await _repo.getOwnProfile();
       state = AsyncValue.data(profile);
-    } catch (e, st) {
+    } catch (e) {
       // 404 means no profile created yet
       state = const AsyncValue.data(null);
     }

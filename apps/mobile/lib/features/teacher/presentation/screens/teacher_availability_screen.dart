@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/teacher_operations_providers.dart';
 
 class TeacherAvailabilityManagerScreen extends ConsumerWidget {
-  const TeacherAvailabilityManagerScreen({Key? key}) : super(key: key);
+  const TeacherAvailabilityManagerScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

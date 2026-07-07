@@ -33,7 +33,7 @@ import { RbacService } from "../rbac/rbac.service";
 @ApiTags("Security — RBAC & Roles")
 @ApiBearerAuth()
 @UseGuards(AuthorizationGuard)
-@Controller("api/v1/security/roles")
+@Controller("security/roles")
 export class RolesController {
   constructor(private readonly rbacService: RbacService) {}
 

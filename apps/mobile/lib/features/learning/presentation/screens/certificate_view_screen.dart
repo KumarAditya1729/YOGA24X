@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class CertificateViewScreen extends ConsumerWidget {
-  const CertificateViewScreen({Key? key}) : super(key: key);
+  const CertificateViewScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

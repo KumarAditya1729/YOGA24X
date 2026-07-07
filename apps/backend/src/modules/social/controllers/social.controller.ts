@@ -19,7 +19,7 @@ import { CreateGroupDto } from "../dto/social.dto";
 @ApiTags("Social & Community")
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
-@Controller("api/v1/social")
+@Controller("social")
 export class SocialController {
   constructor(
     private readonly groupService: GroupService,

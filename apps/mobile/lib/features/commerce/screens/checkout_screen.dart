@@ -1,3 +1,4 @@
+// ignore_for_file: unused_element, unused_local_variable, use_build_context_synchronously
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/commerce_provider.dart';
@@ -8,10 +9,10 @@ class CheckoutScreen extends ConsumerStatefulWidget {
   final String description;
 
   const CheckoutScreen({
-    Key? key,
+    super.key,
     required this.amountCents,
     required this.description,
-  }) : super(key: key);
+  });
 
   @override
   ConsumerState<CheckoutScreen> createState() => _CheckoutScreenState();

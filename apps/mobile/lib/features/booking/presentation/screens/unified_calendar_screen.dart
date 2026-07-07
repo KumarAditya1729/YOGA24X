@@ -4,7 +4,7 @@ import '../providers/booking_providers.dart';
 import '../../domain/models/booking_models.dart';
 
 class UnifiedCalendarScreen extends ConsumerStatefulWidget {
-  const UnifiedCalendarScreen({Key? key}) : super(key: key);
+  const UnifiedCalendarScreen({super.key});
 
   @override
   ConsumerState<UnifiedCalendarScreen> createState() => _UnifiedCalendarScreenState();
@@ -164,7 +164,7 @@ class _BookingCalendarTile extends StatelessWidget {
           padding:
               const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
           decoration: BoxDecoration(
-              color: _statusColor.withOpacity(0.15),
+              color: _statusColor.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(6)),
           child: Text(booking.status.name.toUpperCase(),
               style: TextStyle(

@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../providers/teacher_providers.dart';
 
 class TeacherProfileHubScreen extends ConsumerWidget {
-  const TeacherProfileHubScreen({Key? key}) : super(key: key);
+  const TeacherProfileHubScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -91,7 +91,7 @@ class TeacherProfileHubScreen extends ConsumerWidget {
                 const SizedBox(height: 8),
                 LinearProgressIndicator(
                   value: profile.profileCompletion / 100,
-                  backgroundColor: theme.colorScheme.onPrimaryContainer.withOpacity(0.2),
+                  backgroundColor: theme.colorScheme.onPrimaryContainer.withValues(alpha: 0.2),
                 ),
                 const SizedBox(height: 8),
                 Text('${profile.profileCompletion}% Complete', style: theme.textTheme.bodyMedium),
@@ -216,7 +216,7 @@ class TeacherProfileHubScreen extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: color),
       ),

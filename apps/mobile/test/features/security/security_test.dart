@@ -5,11 +5,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mobile/features/security/presentation/providers/security_providers.dart';
-import 'package:mobile/features/security/presentation/widgets/permission_guard_widget.dart';
-import 'package:mobile/features/security/presentation/screens/access_denied_screen.dart';
-import 'package:mobile/features/security/presentation/screens/security_screens.dart';
-import 'package:mobile/features/security/domain/models/security_models.dart';
+import 'package:yoga24x_mobile/features/security/presentation/providers/security_providers.dart';
+import 'package:yoga24x_mobile/features/security/presentation/widgets/permission_guard_widget.dart';
+import 'package:yoga24x_mobile/features/security/presentation/screens/access_denied_screen.dart';
+import 'package:yoga24x_mobile/features/security/presentation/screens/security_screens.dart';
+import 'package:yoga24x_mobile/features/security/domain/models/security_models.dart';
 
 Widget buildTestApp(Widget child, {List<Override> overrides = const []}) {
   return ProviderScope(
@@ -25,20 +25,20 @@ Widget buildTestApp(Widget child, {List<Override> overrides = const []}) {
 void main() {
   group('PermissionState — Logic Tests', () {
     test('hasPermission returns true for ALLOW permission', () {
-      final state = PermissionState(
+      const state = PermissionState(
         status: SecurityStatus.loaded,
         permissions: [
-          const Permission(key: 'courses:read', effect: 'ALLOW', state: 'DIRECT'),
+          Permission(key: 'courses:read', effect: 'ALLOW', state: 'DIRECT'),
         ],
       );
       expect(state.hasPermission('courses:read'), isTrue);
     });
 
     test('hasPermission returns false for DENY permission', () {
-      final state = PermissionState(
+      const state = PermissionState(
         status: SecurityStatus.loaded,
         permissions: [
-          const Permission(key: 'courses:grade', effect: 'DENY', state: 'OVERRIDDEN'),
+          Permission(key: 'courses:grade', effect: 'DENY', state: 'OVERRIDDEN'),
         ],
       );
       expect(state.hasPermission('courses:grade'), isFalse);
@@ -60,20 +60,20 @@ void main() {
     });
 
     test('hasAnyPermission returns true when any permission in list is granted', () {
-      final state = PermissionState(
+      const state = PermissionState(
         status: SecurityStatus.loaded,
         permissions: [
-          const Permission(key: 'courses:read', effect: 'ALLOW', state: 'INHERITED'),
+          Permission(key: 'courses:read', effect: 'ALLOW', state: 'INHERITED'),
         ],
       );
       expect(state.hasAnyPermission(['courses:read', 'courses:grade']), isTrue);
     });
 
     test('hasAllPermissions returns false when one is missing', () {
-      final state = PermissionState(
+      const state = PermissionState(
         status: SecurityStatus.loaded,
         permissions: [
-          const Permission(key: 'courses:read', effect: 'ALLOW', state: 'INHERITED'),
+          Permission(key: 'courses:read', effect: 'ALLOW', state: 'INHERITED'),
         ],
       );
       expect(state.hasAllPermissions(['courses:read', 'courses:grade']), isFalse);
@@ -82,18 +82,18 @@ void main() {
 
   group('RoleState — Logic Tests', () {
     test('isAdmin returns true for STUDIO_OWNER', () {
-      final state = RoleState(
+      const state = RoleState(
         status: SecurityStatus.loaded,
-        roles: [const UserRole(id: 'STUDIO_OWNER', name: 'STUDIO_OWNER', isSystemRole: true)],
+        roles: [UserRole(id: 'STUDIO_OWNER', name: 'STUDIO_OWNER', isSystemRole: true)],
         activeRole: 'STUDIO_OWNER',
       );
       expect(state.isAdmin, isTrue);
     });
 
     test('isTeacher returns true for MEDITATION_COACH', () {
-      final state = RoleState(
+      const state = RoleState(
         status: SecurityStatus.loaded,
-        roles: [const UserRole(id: 'MEDITATION_COACH', name: 'MEDITATION_COACH', isSystemRole: true)],
+        roles: [UserRole(id: 'MEDITATION_COACH', name: 'MEDITATION_COACH', isSystemRole: true)],
         activeRole: 'MEDITATION_COACH',
       );
       expect(state.isTeacher, isTrue);
@@ -111,10 +111,10 @@ void main() {
 
   group('FeatureFlagState — Logic Tests', () {
     test('isEnabled returns true for enabled flag', () {
-      final state = FeatureFlagState(
+      const state = FeatureFlagState(
         status: SecurityStatus.loaded,
         flags: {
-          'ai_pose_coach': const FeatureFlag(key: 'ai_pose_coach', enabled: true, source: 'tenant'),
+          'ai_pose_coach': FeatureFlag(key: 'ai_pose_coach', enabled: true, source: 'tenant'),
         },
       );
       expect(state.isEnabled('ai_pose_coach'), isTrue);

@@ -5,7 +5,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../domain/models/wellness_models.dart';
+import 'package:yoga24x_mobile/features/wellness/domain/models/wellness_models.dart';
 import '../../providers/health_profile_provider.dart';
 
 class HealthProfileScreen extends ConsumerStatefulWidget {

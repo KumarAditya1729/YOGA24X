@@ -8,7 +8,7 @@ import { LeaderboardService } from "../services/leaderboard.service";
 @ApiTags("Leaderboard")
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
-@Controller("api/v1/leaderboards")
+@Controller("leaderboards")
 export class LeaderboardController {
   constructor(private readonly leaderboardService: LeaderboardService) {}
 

@@ -26,7 +26,7 @@ import { AddPortfolioItemDto } from "../dto/teacher.dto";
 
 @ApiTags("Teachers — Portfolio")
 @ApiBearerAuth()
-@Controller("api/v1/teachers")
+@Controller("teachers")
 export class TeacherPortfolioController {
   constructor(private readonly portfolioService: TeacherPortfolioService) {}
 

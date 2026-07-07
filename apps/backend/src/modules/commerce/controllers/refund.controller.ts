@@ -17,7 +17,7 @@ import { RequestRefundDto, ProcessRefundDto } from "../dto/commerce.dto";
 @ApiTags("Refunds")
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
-@Controller("api/v1/refunds")
+@Controller("refunds")
 export class RefundController {
   constructor(private readonly refundService: RefundService) {}
 

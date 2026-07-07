@@ -23,7 +23,7 @@ import { SessionService } from "../services/session.service";
 import { RedisService } from "../../redis/redis.module";
 import { AUTH_CONSTANTS } from "@yoga24x/shared-types";
 
-@Controller("api/v1/admin/security")
+@Controller("admin/security")
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles("SUPER_ADMIN", "ADMIN")
 export class AdminAuthController {

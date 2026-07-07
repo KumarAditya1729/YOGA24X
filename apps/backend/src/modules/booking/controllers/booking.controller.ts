@@ -28,7 +28,7 @@ import {
   BookingQueryDto,
 } from "../dto/booking.dto";
 
-@Controller("api/v1/bookings")
+@Controller("bookings")
 @UseGuards(JwtAuthGuard)
 export class BookingController {
   constructor(private readonly bookingService: BookingService) {}

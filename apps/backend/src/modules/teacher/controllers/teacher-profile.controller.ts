@@ -29,7 +29,7 @@ import {
 
 @ApiTags("Teachers — Profile")
 @ApiBearerAuth()
-@Controller("api/v1/teachers")
+@Controller("teachers")
 export class TeacherProfileController {
   constructor(private readonly profileService: TeacherProfileService) {}
 

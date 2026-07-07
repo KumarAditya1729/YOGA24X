@@ -23,7 +23,7 @@ import {
 
 @ApiTags("Teachers — Verification")
 @ApiBearerAuth()
-@Controller("api/v1/teachers")
+@Controller("teachers")
 export class TeacherVerificationController {
   constructor(private readonly verifService: TeacherVerificationService) {}
 

@@ -4,8 +4,7 @@ import '../providers/booking_providers.dart';
 
 class RescheduleFlowScreen extends ConsumerStatefulWidget {
   final String bookingId;
-  const RescheduleFlowScreen({Key? key, required this.bookingId})
-      : super(key: key);
+  const RescheduleFlowScreen({super.key, required this.bookingId});
   @override
   ConsumerState<RescheduleFlowScreen> createState() =>
       _RescheduleFlowScreenState();

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'features/auth/auth.dart';
 import 'features/wellness/presentation/screens/dashboard/wellness_dashboard_screen.dart';
+import 'features/wellness/presentation/screens/luxury_home_experience.dart';
 import 'features/learning/presentation/screens/course_catalog_screen.dart';
 import 'features/learning/presentation/screens/course_detail_screen.dart';
 import 'features/learning/presentation/screens/lesson_player_screen.dart';
@@ -21,6 +22,7 @@ import 'features/booking/presentation/screens/attendance_scanner_screen.dart';
 import 'features/booking/presentation/screens/waitlist_manager_screen.dart';
 import 'features/booking/presentation/screens/reschedule_flow_screen.dart';
 import 'features/booking/presentation/screens/cancellation_flow_screen.dart';
+import 'core/theme/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -55,22 +57,8 @@ class _Yoga24XAppState extends ConsumerState<Yoga24XApp> {
     return MaterialApp(
       title: 'Yoga24X — AI Yoga & Wellness Super App',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF6750A4),
-          brightness: Brightness.light,
-        ),
-        fontFamily: 'Inter',
-      ),
-      darkTheme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFFD0BCFF),
-          brightness: Brightness.dark,
-        ),
-        fontFamily: 'Inter',
-      ),
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system,
       home: _buildHome(authState),
       onGenerateRoute: (settings) {
@@ -92,7 +80,7 @@ class _Yoga24XAppState extends ConsumerState<Yoga24XApp> {
           case '/auth/active-sessions':
             return MaterialPageRoute(builder: (_) => const ActiveSessionsScreen());
           case '/home':
-            return MaterialPageRoute(builder: (_) => const MockHomeScreen());
+            return MaterialPageRoute(builder: (_) => const SuperAppMainShell());
           case '/wellness':
             return MaterialPageRoute(builder: (_) => const WellnessDashboardScreen());
           case '/learning/courses':
@@ -148,78 +136,196 @@ class _Yoga24XAppState extends ConsumerState<Yoga24XApp> {
         ),
       );
     } else if (authState.status == AuthStatus.authenticated && authState.user != null) {
-      return const MockHomeScreen();
+      return const SuperAppMainShell();
     } else {
       return const LoginScreen();
     }
   }
 }
 
-class MockHomeScreen extends ConsumerWidget {
+class MockHomeScreen extends StatelessWidget {
   const MockHomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
+    return const SuperAppMainShell();
+  }
+}
+
+class SuperAppMainShell extends ConsumerStatefulWidget {
+  const SuperAppMainShell({super.key});
+
+  @override
+  ConsumerState<SuperAppMainShell> createState() => _SuperAppMainShellState();
+}
+
+class _SuperAppMainShellState extends ConsumerState<SuperAppMainShell> {
+  int _currentIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
     final user = ref.watch(authStateNotifierProvider).user;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    final pages = [
+      const LuxuryHomeExperienceScreen(),
+      const WellnessDashboardScreen(),
+      const UnifiedCalendarScreen(),
+      const CourseCatalogScreen(),
+      _buildProfileTab(context, ref, user, theme, isDark),
+    ];
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Welcome, ${user?.firstName ?? "Yoga Warrior"}!'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.security),
-            tooltip: 'Active Sessions',
-            onPressed: () => Navigator.pushNamed(context, '/auth/active-sessions'),
-          ),
-          IconButton(
-            icon: const Icon(Icons.fingerprint),
-            tooltip: 'Biometric Setup',
-            onPressed: () => Navigator.pushNamed(context, '/auth/biometric-setup'),
-          ),
-          IconButton(
-            icon: const Icon(Icons.logout),
-            tooltip: 'Sign Out',
-            onPressed: () {
-              ref.read(authStateNotifierProvider.notifier).logout();
-            },
-          ),
-        ],
+      body: IndexedStack(
+        index: _currentIndex,
+        children: pages,
       ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.self_improvement, size: 80, color: Color(0xFF6750A4)),
-              const SizedBox(height: 16),
-              Text(
-                'Yoga24X Super App Dashboard',
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Role: ${user?.roles.map((r) => r.name.toUpperCase()).join(", ") ?? "STUDENT"}',
-                style: TextStyle(color: Colors.grey[600], fontSize: 16),
-              ),
-              const SizedBox(height: 32),
-              ElevatedButton.icon(
-                icon: const Icon(Icons.security),
-                label: const Text('Manage Active Sessions & Devices'),
-                onPressed: () => Navigator.pushNamed(context, '/auth/active-sessions'),
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton.icon(
-                icon: const Icon(Icons.favorite, color: Colors.red),
-                label: const Text('Open Wellness & Health Hub'),
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-                  textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                onPressed: () => Navigator.pushNamed(context, '/wellness'),
-              ),
-            ],
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: isDark ? AppTheme.surfaceDark : AppTheme.surfaceLight,
+          border: Border(
+            top: BorderSide(
+              color: isDark ? AppTheme.borderDark : Colors.black.withValues(alpha: 0.05),
+              width: 1.0,
+            ),
           ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.04),
+              blurRadius: 25,
+              offset: const Offset(0, -8),
+            ),
+          ],
+        ),
+        child: BottomNavigationBar(
+          currentIndex: _currentIndex,
+          onTap: (index) => setState(() => _currentIndex = index),
+          type: BottomNavigationBarType.fixed,
+          backgroundColor: Colors.transparent,
+          selectedItemColor: isDark ? AppTheme.secondary : AppTheme.primary,
+          unselectedItemColor: isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight,
+          selectedLabelStyle: const TextStyle(fontFamily: 'Outfit', fontWeight: FontWeight.w700, fontSize: 12),
+          unselectedLabelStyle: const TextStyle(fontFamily: 'Outfit', fontWeight: FontWeight.w500, fontSize: 11),
+          elevation: 0,
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.self_improvement_outlined),
+              activeIcon: Icon(Icons.self_improvement),
+              label: 'Today',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.favorite_border),
+              activeIcon: Icon(Icons.favorite),
+              label: 'Wellness',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.calendar_today_outlined),
+              activeIcon: Icon(Icons.calendar_today),
+              label: 'Schedule',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.school_outlined),
+              activeIcon: Icon(Icons.school),
+              label: 'Academy',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person_outline),
+              activeIcon: Icon(Icons.person),
+              label: 'Profile',
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProfileTab(BuildContext context, WidgetRef ref, AuthUser? user, ThemeData theme, bool isDark) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Account & Profile')),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: isDark ? AppTheme.surfaceDark : AppTheme.surfaceLight,
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: theme.colorScheme.primary.withValues(alpha: 0.2)),
+              ),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    radius: 36,
+                    backgroundColor: theme.colorScheme.primary,
+                    child: Text(
+                      (user?.firstName.isNotEmpty == true ? user!.firstName[0] : 'Y').toUpperCase(),
+                      style: const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${user?.firstName ?? "Yoga"} ${user?.lastName ?? "Warrior"}',
+                          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(user?.email ?? 'warrior@yoga24x.com', style: const TextStyle(color: Colors.grey, fontSize: 13)),
+                        const SizedBox(height: 8),
+                        Wrap(
+                          spacing: 6,
+                          children: (user?.roles ?? [UserRole.student]).map((r) {
+                            return Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                              decoration: BoxDecoration(color: theme.colorScheme.primary.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(8)),
+                              child: Text(r.name.toUpperCase(), style: TextStyle(color: theme.colorScheme.primary, fontSize: 10, fontWeight: FontWeight.bold)),
+                            );
+                          }).toList(),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+            ListTile(
+              leading: const Icon(Icons.security, color: Colors.blue),
+              title: const Text('Active Sessions & Devices', style: TextStyle(fontWeight: FontWeight.w600)),
+              subtitle: const Text('Manage signed-in devices & tokens'),
+              trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+              onTap: () => Navigator.pushNamed(context, '/auth/active-sessions'),
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.fingerprint, color: Colors.teal),
+              title: const Text('Biometric Passkey Setup', style: TextStyle(fontWeight: FontWeight.w600)),
+              subtitle: const Text('Touch ID / Face ID quick login'),
+              trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+              onTap: () => Navigator.pushNamed(context, '/auth/biometric-setup'),
+            ),
+            const Divider(),
+            const SizedBox(height: 32),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red.shade600,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                ),
+                icon: const Icon(Icons.logout),
+                label: const Text('Sign Out of Ecosystem'),
+                onPressed: () {
+                  ref.read(authStateNotifierProvider.notifier).logout();
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );

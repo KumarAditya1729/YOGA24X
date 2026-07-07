@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class LiveEventBrowserScreen extends ConsumerWidget {
-  const LiveEventBrowserScreen({Key? key}) : super(key: key);
+  const LiveEventBrowserScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

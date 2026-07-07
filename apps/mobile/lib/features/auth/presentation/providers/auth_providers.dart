@@ -16,14 +16,14 @@ import '../../data/repositories/auth_repository_impl.dart';
 // Infrastructure & Datasource Providers
 // ------------------------------------------------------------------------------
 
-final secureStorageProvider = Provider<FlutterSecureStorage>((ref) {
+final Provider<FlutterSecureStorage> secureStorageProvider = Provider<FlutterSecureStorage>((ref) {
   return const FlutterSecureStorage(
     aOptions: AndroidOptions(encryptedSharedPreferences: true),
     iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock),
   );
 });
 
-final dioProvider = Provider<Dio>((ref) {
+final Provider<Dio> dioProvider = Provider<Dio>((ref) {
   final dio = Dio(
     BaseOptions(
       baseUrl: 'http://localhost:3000', // Configurable via environment in production
@@ -42,6 +42,15 @@ final dioProvider = Provider<Dio>((ref) {
         options.headers['Authorization'] = 'Bearer ${tokens.accessToken}';
       }
       return handler.next(options);
+    },
+    onResponse: (response, handler) {
+      if (response.data is Map<String, dynamic>) {
+        final map = response.data as Map<String, dynamic>;
+        if (map.containsKey('data') && map['success'] == true) {
+          response.data = map['data'];
+        }
+      }
+      return handler.next(response);
     },
     onError: (error, handler) async {
       if (error.response?.statusCode == 401) {
@@ -62,15 +71,15 @@ final dioProvider = Provider<Dio>((ref) {
   return dio;
 });
 
-final authLocalDataSourceProvider = Provider<AuthLocalDataSource>((ref) {
+final Provider<AuthLocalDataSource> authLocalDataSourceProvider = Provider<AuthLocalDataSource>((ref) {
   return AuthLocalDataSourceImpl(ref.watch(secureStorageProvider));
 });
 
-final authRemoteDataSourceProvider = Provider<AuthRemoteDataSource>((ref) {
+final Provider<AuthRemoteDataSource> authRemoteDataSourceProvider = Provider<AuthRemoteDataSource>((ref) {
   return AuthRemoteDataSourceImpl(ref.watch(dioProvider));
 });
 
-final authRepositoryProvider = Provider<AuthRepository>((ref) {
+final Provider<AuthRepository> authRepositoryProvider = Provider<AuthRepository>((ref) {
   return AuthRepositoryImpl(
     remoteDataSource: ref.watch(authRemoteDataSourceProvider),
     localDataSource: ref.watch(authLocalDataSourceProvider),
@@ -81,14 +90,14 @@ final authRepositoryProvider = Provider<AuthRepository>((ref) {
 // Use Case Providers
 // ------------------------------------------------------------------------------
 
-final loginWithPasswordUseCaseProvider = Provider((ref) => LoginWithPasswordUseCase(ref.watch(authRepositoryProvider)));
-final registerUseCaseProvider = Provider((ref) => RegisterUseCase(ref.watch(authRepositoryProvider)));
-final requestOtpUseCaseProvider = Provider((ref) => RequestOtpUseCase(ref.watch(authRepositoryProvider)));
-final loginWithOtpUseCaseProvider = Provider((ref) => LoginWithOtpUseCase(ref.watch(authRepositoryProvider)));
-final loginWithGoogleUseCaseProvider = Provider((ref) => LoginWithGoogleUseCase(ref.watch(authRepositoryProvider)));
-final loginWithAppleUseCaseProvider = Provider((ref) => LoginWithAppleUseCase(ref.watch(authRepositoryProvider)));
-final loginWithBiometricUseCaseProvider = Provider((ref) => LoginWithBiometricUseCase(ref.watch(authRepositoryProvider)));
-final logoutUseCaseProvider = Provider((ref) => LogoutUseCase(ref.watch(authRepositoryProvider)));
+final Provider<LoginWithPasswordUseCase> loginWithPasswordUseCaseProvider = Provider((ref) => LoginWithPasswordUseCase(ref.watch(authRepositoryProvider)));
+final Provider<RegisterUseCase> registerUseCaseProvider = Provider((ref) => RegisterUseCase(ref.watch(authRepositoryProvider)));
+final Provider<RequestOtpUseCase> requestOtpUseCaseProvider = Provider((ref) => RequestOtpUseCase(ref.watch(authRepositoryProvider)));
+final Provider<LoginWithOtpUseCase> loginWithOtpUseCaseProvider = Provider((ref) => LoginWithOtpUseCase(ref.watch(authRepositoryProvider)));
+final Provider<LoginWithGoogleUseCase> loginWithGoogleUseCaseProvider = Provider((ref) => LoginWithGoogleUseCase(ref.watch(authRepositoryProvider)));
+final Provider<LoginWithAppleUseCase> loginWithAppleUseCaseProvider = Provider((ref) => LoginWithAppleUseCase(ref.watch(authRepositoryProvider)));
+final Provider<LoginWithBiometricUseCase> loginWithBiometricUseCaseProvider = Provider((ref) => LoginWithBiometricUseCase(ref.watch(authRepositoryProvider)));
+final Provider<LogoutUseCase> logoutUseCaseProvider = Provider((ref) => LogoutUseCase(ref.watch(authRepositoryProvider)));
 
 // ------------------------------------------------------------------------------
 // Auth State & Notifier

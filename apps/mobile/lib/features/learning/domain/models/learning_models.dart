@@ -5,7 +5,7 @@ part 'learning_models.freezed.dart';
 part 'learning_models.g.dart';
 
 @freezed
-class Course with _ {
+class Course with _$Course {
   const factory Course({
     required String id,
     required String title,
@@ -15,11 +15,11 @@ class Course with _ {
     String? thumbnailUrl,
     required int priceCents,
   }) = _Course;
-  factory Course.fromJson(Map<String, dynamic> json) => _(json);
+  factory Course.fromJson(Map<String, dynamic> json) => _$CourseFromJson(json);
 }
 
 @freezed
-class LearningEvent with _ {
+class LearningEvent with _$LearningEvent {
   const factory LearningEvent({
     required String id,
     required String title,
@@ -29,11 +29,11 @@ class LearningEvent with _ {
     required int capacity,
     String? meetingUrl,
   }) = _LearningEvent;
-  factory LearningEvent.fromJson(Map<String, dynamic> json) => _(json);
+  factory LearningEvent.fromJson(Map<String, dynamic> json) => _$LearningEventFromJson(json);
 }
 
 @freezed
-class TeacherPublication with _ {
+class TeacherPublication with _$TeacherPublication {
   const factory TeacherPublication({
     required String id,
     required String title,
@@ -41,5 +41,5 @@ class TeacherPublication with _ {
     String? contentBody,
     String? assetUrl,
   }) = _TeacherPublication;
-  factory TeacherPublication.fromJson(Map<String, dynamic> json) => _(json);
+  factory TeacherPublication.fromJson(Map<String, dynamic> json) => _$TeacherPublicationFromJson(json);
 }

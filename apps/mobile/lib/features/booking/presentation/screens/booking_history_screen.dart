@@ -4,7 +4,7 @@ import '../providers/booking_providers.dart';
 import '../../domain/models/booking_models.dart';
 
 class BookingHistoryScreen extends ConsumerStatefulWidget {
-  const BookingHistoryScreen({Key? key}) : super(key: key);
+  const BookingHistoryScreen({super.key});
   @override
   ConsumerState<BookingHistoryScreen> createState() => _BookingHistoryScreenState();
 }
@@ -50,7 +50,7 @@ class _BookingHistoryScreenState extends ConsumerState<BookingHistoryScreen>
 }
 
 class _BookingList extends ConsumerWidget {
-  final AutoDisposeProvider<AsyncValue<List<BookingItem>>> asyncBookings;
+  final ProviderListenable<AsyncValue<List<BookingItem>>> asyncBookings;
   const _BookingList({required this.asyncBookings});
 
   @override

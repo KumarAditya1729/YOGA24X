@@ -16,7 +16,7 @@ import { ReportContentDto } from "../dto/social.dto";
 @ApiTags("Moderation")
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
-@Controller("api/v1/moderation")
+@Controller("moderation")
 export class ModerationController {
   constructor(private readonly moderationService: ModerationService) {}
 

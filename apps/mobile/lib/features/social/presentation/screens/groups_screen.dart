@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../application/social_providers.dart';
 
 class GroupsScreen extends ConsumerWidget {
-  const GroupsScreen({Key? key}) : super(key: key);
+  const GroupsScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

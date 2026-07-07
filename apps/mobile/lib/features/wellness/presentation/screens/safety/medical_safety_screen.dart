@@ -5,7 +5,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../domain/models/wellness_models.dart';
+import 'package:yoga24x_mobile/features/wellness/domain/models/wellness_models.dart';
 import '../../providers/safety_flags_provider.dart';
 
 class MedicalSafetyScreen extends ConsumerStatefulWidget {
@@ -65,17 +65,17 @@ class _MedicalSafetyScreenState extends ConsumerState<MedicalSafetyScreen> {
       decoration: BoxDecoration(
         gradient: LinearGradient(colors: [Colors.teal.shade700, Colors.teal.shade900]),
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [BoxShadow(color: Colors.teal.withOpacity(0.3), blurRadius: 10, offset: const Offset(0, 4))],
+        boxShadow: [BoxShadow(color: Colors.teal.withValues(alpha: 0.3), blurRadius: 10, offset: const Offset(0, 4))],
       ),
-      child: Row(
+      child: const Row(
         children: [
-          const CircleAvatar(
+          CircleAvatar(
             radius: 28,
             backgroundColor: Colors.white24,
             child: Icon(Icons.verified_user, color: Colors.white, size: 32),
           ),
-          const SizedBox(width: 16),
-          const Expanded(
+          SizedBox(width: 16),
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -231,16 +231,16 @@ class _MedicalSafetyScreenState extends ConsumerState<MedicalSafetyScreen> {
             const Text('Doctor & AI Clinical Advice:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
             const SizedBox(height: 4),
             Text(flag.doctorAdvice, style: const TextStyle(fontSize: 13, height: 1.4, color: Colors.black87)),
-            if (flag.verifiedByDoctor != null) ...[
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  const Icon(Icons.verified, size: 16, color: Colors.teal),
-                  const SizedBox(width: 6),
-                  Text('Verified by ${flag.verifiedByDoctor}', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.teal)),
-                ],
-              ),
-            ],
+            ...[
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                const Icon(Icons.verified, size: 16, color: Colors.teal),
+                const SizedBox(width: 6),
+                Text('Verified by ${flag.verifiedByDoctor}', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.teal)),
+              ],
+            ),
+          ],
           ],
         ),
       ),
@@ -255,7 +255,7 @@ class _MedicalSafetyScreenState extends ConsumerState<MedicalSafetyScreen> {
         title: const Text('Live Class Teacher Safety Alert', style: TextStyle(fontWeight: FontWeight.bold)),
         subtitle: const Text('Automatically broadcast encrypted contraindication flags to live instructors when joining classes.'),
         value: true,
-        activeColor: theme.colorScheme.primary,
+        activeThumbColor: theme.colorScheme.primary,
         onChanged: (val) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(val ? 'Teacher alerts enabled' : 'Teacher alerts disabled')));
         },

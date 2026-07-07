@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class CourseCatalogScreen extends ConsumerWidget {
-  const CourseCatalogScreen({Key? key}) : super(key: key);
+  const CourseCatalogScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

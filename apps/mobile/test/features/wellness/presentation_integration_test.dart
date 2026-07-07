@@ -7,12 +7,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:mobile/features/wellness/domain/models/wellness_models.dart';
-import 'package:mobile/features/wellness/domain/repositories/wellness_repository.dart';
-import 'package:mobile/features/wellness/presentation/providers/wellness_providers.dart';
-import 'package:mobile/features/wellness/presentation/screens/dashboard/wellness_dashboard_screen.dart';
-import 'package:mobile/features/wellness/presentation/screens/health_profile/health_profile_screen.dart';
-import 'package:mobile/features/wellness/presentation/screens/assessment/wellness_assessment_wizard_screen.dart';
+import 'package:yoga24x_mobile/features/wellness/domain/models/wellness_models.dart';
+import 'package:yoga24x_mobile/features/wellness/domain/repositories/wellness_repository.dart';
+import 'package:yoga24x_mobile/features/wellness/presentation/providers/wellness_providers.dart';
+import 'package:yoga24x_mobile/features/wellness/presentation/screens/dashboard/wellness_dashboard_screen.dart';
+import 'package:yoga24x_mobile/features/wellness/presentation/screens/health_profile/health_profile_screen.dart';
+import 'package:yoga24x_mobile/features/wellness/presentation/screens/assessment/wellness_assessment_wizard_screen.dart';
 
 class MockWellnessRepositoryForUI extends Mock implements WellnessRepository {}
 
@@ -29,22 +29,22 @@ void main() {
           bloodGroup: 'O+',
           pregnancyStatus: 'NOT_PREGNANT',
           medicalHistory: const [],
-          currentConditions: [
-            const MedicalConditionItem(condition: 'Mild Scoliosis', status: 'ACTIVE', notes: 'Thoracic curve')
+          currentConditions: const [
+            MedicalConditionItem(condition: 'Mild Scoliosis', status: 'ACTIVE', notes: 'Thoracic curve')
           ],
           pastConditions: const [],
           surgeries: const [],
           medications: const [],
-          allergies: [
-            const AllergyItem(allergen: 'Dust Mites', type: 'ENVIRONMENTAL', severity: 'MILD')
+          allergies: const [
+            AllergyItem(allergen: 'Dust Mites', type: 'ENVIRONMENTAL', severity: 'MILD')
           ],
-          physicalLimitations: const ['Avoid heavy spinal compression'],
+          physicalLimitations: const [PhysicalLimitationItem(bodyPart: 'Spine', issue: 'Avoid heavy spinal compression', severity: 'HIGH', restrictedMovements: ['Backbend'])],
           lifestyle: const LifestyleProfile(isSmoker: false, alcoholConsumption: 'NONE', workNature: 'SEDENTARY', averageScreenTimeHours: 6.0),
           isVerifiedByDoctor: true,
           updatedAt: DateTime.now(),
         ));
 
-    when(() => mockRepository.getLatestAssessment()).thenAnswer((_) async => WellnessAssessment(
+    when(() => mockRepository.getLatestWellnessAssessment()).thenAnswer((_) async => WellnessAssessment(
           id: 'as_ui_test',
           userId: 'usr_ui_test',
           stressLevel: 4,
@@ -62,12 +62,12 @@ void main() {
         ));
 
     when(() => mockRepository.getAssessmentHistory(limit: any(named: 'limit'))).thenAnswer((_) async => []);
-    when(() => mockRepository.getYogaAssessment()).thenAnswer((_) async => const YogaAssessment(experienceLevel: 'INTERMEDIATE', yogaGoals: ['Flexibility'], preferredYogaStyle: 'HATHA', preferredSessionLengthMin: 45, preferredInstructorGender: 'ANY', practiceFrequencyPerWeek: 4, favoriteTeachers: [], favoriteCourses: [], favoriteMusic: [], preferredPracticeTime: 'MORNING'));
-    when(() => mockRepository.getNutritionProfile()).thenAnswer((_) async => const NutritionProfile(dietType: 'SATTVIC_VEGETARIAN', dailyCaloriesGoal: 2100, dailyProteinGoalGrams: 65, dailyWaterGoalMl: 3000, foodAllergies: [], foodPreferences: [], mealTiming: {}, supplements: []));
-    when(() => mockRepository.getMeditationProfile()).thenAnswer((_) async => const MeditationProfile(experienceLevel: 'INTERMEDIATE', preferredVoice: 'CALM_FEMALE', preferredMusic: 'TIBETAN_SINGING_BOWLS', preferredDurationMin: 20, focusAreas: ['Stress Reduction'], meditationGoals: []));
-    when(() => mockRepository.getAiPersonalization()).thenAnswer((_) async => const AiPersonalizationProfile(coachingStyle: 'GENTLE_GUIDE', reminderStyle: 'SMART_ADAPTIVE', motivationStyle: 'PHILOSOPHICAL', preferredLanguage: 'en', preferredVoiceName: 'Aria', difficultyProgression: 'ADAPTIVE', learningStyle: 'VISUAL_DEMO'));
+    when(() => mockRepository.getYogaAssessment()).thenAnswer((_) async => const YogaAssessment(id: 'ya_1', userId: 'usr_ui_test', experienceLevel: 'INTERMEDIATE', yogaGoals: ['Flexibility'], preferredYogaStyle: 'HATHA', preferredSessionLengthMin: 45, preferredInstructorGender: 'ANY', practiceFrequencyPerWeek: 4, favoriteTeachers: [], favoriteCourses: [], favoriteMusic: [], preferredPracticeTime: 'MORNING'));
+    when(() => mockRepository.getNutritionProfile()).thenAnswer((_) async => const NutritionProfile(id: 'np_1', userId: 'usr_ui_test', dietType: 'SATTVIC_VEGETARIAN', dailyCaloriesGoal: 2100, dailyProteinGoalGrams: 65, dailyWaterGoalMl: 3000, foodAllergies: [], foodPreferences: [], mealTiming: {}, supplements: []));
+    when(() => mockRepository.getMeditationProfile()).thenAnswer((_) async => const MeditationProfile(id: 'mp_1', userId: 'usr_ui_test', meditationExperience: 'INTERMEDIATE', preferredVoice: 'CALM_FEMALE', preferredMusic: 'TIBETAN_SINGING_BOWLS', preferredDurationMin: 20, focusArea: 'Stress Reduction', mindfulnessGoals: []));
+    when(() => mockRepository.getAiPersonalization()).thenAnswer((_) async => const AiPersonalizationProfile(id: 'ai_1', userId: 'usr_ui_test', coachingStyle: 'GENTLE_GUIDE', reminderStyle: 'SMART_ADAPTIVE', motivationStyle: 'PHILOSOPHICAL', communicationTone: 'CALM', preferredLanguage: 'en', voicePreference: 'Aria', difficultyProgression: 'ADAPTIVE', learningStyle: 'VISUAL_DEMO', notificationBehaviour: 'GENTLE', recommendationPreferences: {}));
     when(() => mockRepository.getActiveSafetyFlags()).thenAnswer((_) async => [
-          const MedicalSafetyFlag(id: 'flag_1', userId: 'usr_ui_test', condition: 'Lumbar Disc Bulge', severity: 'HIGH', restrictedPoses: ['Chakrasana', 'Halasana'], doctorAdvice: 'Avoid deep backbends and inversion compression.', isActive: true, createdAt: '2026-07-01')
+          MedicalSafetyFlag(id: 'flag_1', userId: 'usr_ui_test', flagType: 'SPINE', title: 'Lumbar Disc Bulge', severity: 'HIGH', restrictedPoses: const ['Chakrasana', 'Halasana'], description: 'Avoid deep backbends and inversion compression.', isActive: true, createdAt: DateTime.now())
         ]);
     when(() => mockRepository.getAllSafetyFlags()).thenAnswer((_) async => []);
   });

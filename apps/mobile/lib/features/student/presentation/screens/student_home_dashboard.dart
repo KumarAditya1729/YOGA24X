@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../application/student_providers.dart';
 
 class StudentHomeDashboard extends ConsumerWidget {
-  const StudentHomeDashboard({Key? key}) : super(key: key);
+  const StudentHomeDashboard({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -34,7 +34,7 @@ class StudentHomeDashboard extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Today\\'s Wellness', style: Theme.of(context).textTheme.titleLarge),
+                      Text("Today's Wellness", style: Theme.of(context).textTheme.titleLarge),
                       const SizedBox(height: 10),
                       if (data.todaysWellness == null)
                         ElevatedButton(

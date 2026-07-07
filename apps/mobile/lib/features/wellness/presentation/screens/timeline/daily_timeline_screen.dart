@@ -5,7 +5,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../domain/models/wellness_models.dart';
+import 'package:yoga24x_mobile/features/wellness/domain/models/wellness_models.dart';
 import '../../providers/timeline_provider.dart';
 
 class DailyTimelineScreen extends ConsumerStatefulWidget {
@@ -19,11 +19,11 @@ class _DailyTimelineScreenState extends ConsumerState<DailyTimelineScreen> {
   String _selectedMood = 'CALM';
   double _painScore = 2.0;
   double _stressScore = 3.0;
-  double _weightKg = 68.0;
+  final double _weightKg = 68.0;
   int _waterIntakeMl = 1750;
-  int _yogaMinutes = 45;
-  int _meditationMinutes = 20;
-  int _sleepMinutes = 450; // 7.5 hours
+  final int _yogaMinutes = 45;
+  final int _meditationMinutes = 20;
+  final int _sleepMinutes = 450; // 7.5 hours
   final TextEditingController _journalController = TextEditingController();
 
   final List<Map<String, dynamic>> _moods = [

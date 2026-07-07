@@ -26,7 +26,7 @@ export class AuthExceptionFilter implements ExceptionFilter {
     const exceptionResponse: any =
       exception instanceof HttpException ? exception.getResponse() : null;
 
-    const message =
+    const rawMessage =
       typeof exceptionResponse === "object" && exceptionResponse?.message
         ? Array.isArray(exceptionResponse.message)
           ? exceptionResponse.message.join(", ")
@@ -34,6 +34,11 @@ export class AuthExceptionFilter implements ExceptionFilter {
         : exception instanceof Error
           ? exception.message
           : "Internal server error during authentication";
+
+    const message =
+      status === HttpStatus.INTERNAL_SERVER_ERROR
+        ? "An unexpected internal server error occurred during authentication."
+        : rawMessage;
 
     const errorCode =
       typeof exceptionResponse === "object" && exceptionResponse?.error

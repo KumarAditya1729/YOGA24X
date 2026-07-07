@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/teacher_providers.dart';
 
 class VerificationKycDashboard extends ConsumerWidget {
-  const VerificationKycDashboard({Key? key}) : super(key: key);
+  const VerificationKycDashboard({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -56,7 +56,7 @@ class VerificationKycDashboard extends ConsumerWidget {
                   
                 if (status == 'REJECTED' && verif?.rejectionReason != null)
                   Card(
-                    color: Colors.red.withOpacity(0.1),
+                    color: Colors.red.withValues(alpha: 0.1),
                     child: Padding(
                       padding: const EdgeInsets.all(16),
                       child: Text('Reason: ${verif?.rejectionReason}', style: const TextStyle(color: Colors.red)),

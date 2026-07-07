@@ -19,7 +19,7 @@ import { CurrentUser } from "../decorators/auth.decorators";
 import { JwtAccessPayload } from "@yoga24x/shared-types";
 import { AuthRepository } from "../repositories/auth.repository";
 
-@Controller("api/v1/sessions")
+@Controller("sessions")
 @UseGuards(JwtAuthGuard)
 export class SessionController {
   constructor(

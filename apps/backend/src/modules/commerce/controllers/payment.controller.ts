@@ -20,7 +20,7 @@ import {
 
 @ApiTags("Payments")
 @ApiBearerAuth()
-@Controller("api/v1/payments")
+@Controller("payments")
 export class PaymentController {
   constructor(private readonly paymentService: PaymentService) {}
 

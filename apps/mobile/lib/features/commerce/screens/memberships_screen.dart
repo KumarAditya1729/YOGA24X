@@ -1,9 +1,10 @@
+// ignore_for_file: use_build_context_synchronously
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/commerce_provider.dart';
 
 class MembershipsScreen extends ConsumerWidget {
-  const MembershipsScreen({Key? key}) : super(key: key);
+  const MembershipsScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -38,7 +39,7 @@ class MembershipsScreen extends ConsumerWidget {
                           ),
                           Chip(
                             label: Text(plan.membershipType),
-                            backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
+                            backgroundColor: Theme.of(context).primaryColor.withValues(alpha: 0.1),
                             labelStyle: TextStyle(color: Theme.of(context).primaryColor),
                           ),
                         ],

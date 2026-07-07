@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
 import '../../data/teacher_operations_repository.dart';
 import '../../domain/models/teacher_operations_models.dart';
-import '../../../../core/network/dio_client.dart'; // Assume standard location for API client
 
 // ── Repository Provider ──────────────────────────────────────────────────────
 

@@ -85,6 +85,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 const SizedBox(height: 12),
                 ..._roles.map((role) {
                   final isSelected = _selectedRole == role['value'];
+                  final isDark = Theme.of(context).brightness == Brightness.dark;
                   return GestureDetector(
                     onTap: () => setState(() => _selectedRole = role['value']!),
                     child: Container(
@@ -92,11 +93,13 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
                         border: Border.all(
-                          color: isSelected ? Theme.of(context).primaryColor : Colors.grey.shade300,
+                          color: isSelected ? Theme.of(context).primaryColor : (isDark ? Colors.white12 : Colors.grey.shade300),
                           width: isSelected ? 2 : 1,
                         ),
                         borderRadius: BorderRadius.circular(16),
-                        color: isSelected ? Theme.of(context).primaryColor.withOpacity(0.05) : Colors.white,
+                        color: isSelected
+                            ? Theme.of(context).primaryColor.withValues(alpha: isDark ? 0.15 : 0.05)
+                            : (isDark ? const Color(0xFF12151D) : Colors.white),
                       ),
                       child: Row(
                         children: [
@@ -111,12 +114,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                               children: [
                                 Text(
                                   role['label']!,
-                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: isDark ? Colors.white : Colors.black87),
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
                                   role['desc']!,
-                                  style: TextStyle(color: Colors.grey[600], fontSize: 13),
+                                  style: TextStyle(color: isDark ? Colors.white60 : Colors.grey[600], fontSize: 13),
                                 ),
                               ],
                             ),

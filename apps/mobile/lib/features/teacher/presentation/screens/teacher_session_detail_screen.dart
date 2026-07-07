@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class TeacherSessionDetailScreen extends ConsumerWidget {
   final String sessionId;
-  const TeacherSessionDetailScreen({Key? key, required this.sessionId}) : super(key: key);
+  const TeacherSessionDetailScreen({super.key, required this.sessionId});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

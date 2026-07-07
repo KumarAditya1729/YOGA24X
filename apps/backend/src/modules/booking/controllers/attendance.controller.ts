@@ -22,7 +22,7 @@ import { AttendanceService } from "../services/attendance.service";
 import { ATTENDANCE_PERMISSIONS } from "../constants/booking-permissions";
 import { CheckInDto } from "../dto/booking.dto";
 
-@Controller("api/v1/attendance")
+@Controller("attendance")
 @UseGuards(JwtAuthGuard)
 export class AttendanceController {
   constructor(private readonly attendanceService: AttendanceService) {}

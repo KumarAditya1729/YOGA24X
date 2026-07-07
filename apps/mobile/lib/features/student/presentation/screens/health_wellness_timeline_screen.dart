@@ -1,18 +1,19 @@
+// ignore_for_file: unused_field
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class HealthWellnessTimelineScreen extends ConsumerStatefulWidget {
-  const HealthWellnessTimelineScreen({Key? key}) : super(key: key);
+  const HealthWellnessTimelineScreen({super.key});
 
   @override
-  _HealthWellnessTimelineScreenState createState() => _HealthWellnessTimelineScreenState();
+  ConsumerState<HealthWellnessTimelineScreen> createState() => _HealthWellnessTimelineScreenState();
 }
 
 class _HealthWellnessTimelineScreenState extends ConsumerState<HealthWellnessTimelineScreen> {
   double _moodScore = 5;
   double _painLevel = 1;
   double _sleepHours = 7;
-  double _waterIntake = 2000;
+  final double _waterIntake = 2000;
   double _energyScore = 5;
 
   void _submitCheckin() {

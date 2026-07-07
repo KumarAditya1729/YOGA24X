@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import '../providers/commerce_provider.dart';
 
 class WalletScreen extends ConsumerWidget {
-  const WalletScreen({Key? key}) : super(key: key);
+  const WalletScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -22,7 +22,7 @@ class WalletScreen extends ConsumerWidget {
                 margin: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [Theme.of(context).primaryColor, Theme.of(context).primaryColor.withOpacity(0.7)],
+                    colors: [Theme.of(context).primaryColor, Theme.of(context).primaryColor.withValues(alpha: 0.7)],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -70,7 +70,7 @@ class WalletScreen extends ConsumerWidget {
                   final isCredit = tx.type == 'CREDIT';
                   return ListTile(
                     leading: CircleAvatar(
-                      backgroundColor: isCredit ? Colors.green.withOpacity(0.1) : Colors.red.withOpacity(0.1),
+                      backgroundColor: isCredit ? Colors.green.withValues(alpha: 0.1) : Colors.red.withValues(alpha: 0.1),
                       child: Icon(
                         isCredit ? Icons.arrow_downward : Icons.arrow_upward,
                         color: isCredit ? Colors.green : Colors.red,

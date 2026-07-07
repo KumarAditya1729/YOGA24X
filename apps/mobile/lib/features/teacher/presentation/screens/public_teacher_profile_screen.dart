@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class PublicTeacherProfileScreen extends ConsumerWidget {
   final String userId;
 
-  const PublicTeacherProfileScreen({Key? key, required this.userId}) : super(key: key);
+  const PublicTeacherProfileScreen({super.key, required this.userId});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -62,15 +62,15 @@ class PublicTeacherProfileScreen extends ConsumerWidget {
                   const SizedBox(height: 16),
                   
                   // Stats Row
-                  Row(
+                  const Row(
                     children: [
-                      const Icon(Icons.star, color: Colors.amber, size: 20),
-                      const SizedBox(width: 4),
-                      const Text('4.9 (120 reviews)'),
-                      const SizedBox(width: 16),
-                      const Icon(Icons.location_on, size: 20),
-                      const SizedBox(width: 4),
-                      const Text('New York, USA'),
+                      Icon(Icons.star, color: Colors.amber, size: 20),
+                      SizedBox(width: 4),
+                      Text('4.9 (120 reviews)'),
+                      SizedBox(width: 16),
+                      Icon(Icons.location_on, size: 20),
+                      SizedBox(width: 4),
+                      Text('New York, USA'),
                     ],
                   ),
                   

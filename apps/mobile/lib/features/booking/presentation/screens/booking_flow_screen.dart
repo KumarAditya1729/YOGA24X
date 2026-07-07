@@ -5,7 +5,7 @@ import '../../domain/models/booking_models.dart';
 
 class BookingFlowScreen extends ConsumerStatefulWidget {
   final String? teacherUserId;
-  const BookingFlowScreen({Key? key, this.teacherUserId}) : super(key: key);
+  const BookingFlowScreen({super.key, this.teacherUserId});
   @override
   ConsumerState<BookingFlowScreen> createState() => _BookingFlowScreenState();
 }

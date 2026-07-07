@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../application/social_providers.dart';
 
 class ChatListScreen extends ConsumerWidget {
-  const ChatListScreen({Key? key}) : super(key: key);
+  const ChatListScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

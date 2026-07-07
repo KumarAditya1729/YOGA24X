@@ -19,7 +19,7 @@ import {
 
 @ApiTags("Student — Profile & Dashboard")
 @ApiBearerAuth()
-@Controller("api/v1/students/me")
+@Controller("students/me")
 export class StudentController {
   constructor(
     private readonly studentService: StudentService,

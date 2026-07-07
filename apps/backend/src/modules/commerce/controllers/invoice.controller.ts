@@ -16,7 +16,7 @@ import { InvoiceService } from "../services/invoice.service";
 @ApiTags("Invoices")
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
-@Controller("api/v1/invoices")
+@Controller("invoices")
 export class InvoiceController {
   constructor(private readonly invoiceService: InvoiceService) {}
 

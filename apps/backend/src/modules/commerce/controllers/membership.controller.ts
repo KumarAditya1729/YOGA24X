@@ -21,7 +21,7 @@ import {
 @ApiTags("Memberships")
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
-@Controller("api/v1/memberships")
+@Controller("memberships")
 export class MembershipController {
   constructor(private readonly membershipService: MembershipService) {}
 

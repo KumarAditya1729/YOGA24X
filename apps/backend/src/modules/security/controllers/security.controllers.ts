@@ -35,7 +35,7 @@ import { SecurityAuditService } from "../authorization/security-audit.service";
 @ApiTags("Security — Tenants")
 @ApiBearerAuth()
 @UseGuards(AuthorizationGuard)
-@Controller("api/v1/security/tenants")
+@Controller("security/tenants")
 export class TenantsController {
   constructor(private readonly tenantService: TenantService) {}
 
@@ -101,7 +101,7 @@ export class TenantsController {
 @ApiTags("Security — Feature Flags")
 @ApiBearerAuth()
 @UseGuards(AuthorizationGuard)
-@Controller("api/v1/security/flags")
+@Controller("security/flags")
 export class FeatureFlagsController {
   constructor(private readonly flagService: FeatureFlagService) {}
 
@@ -190,7 +190,7 @@ export class FeatureFlagsController {
 @ApiTags("Security — Policies")
 @ApiBearerAuth()
 @UseGuards(AuthorizationGuard)
-@Controller("api/v1/security/policies")
+@Controller("security/policies")
 export class PoliciesController {
   constructor(private readonly policyService: SecurityPolicyService) {}
 
@@ -252,7 +252,7 @@ export class PoliciesController {
 @ApiTags("Security — Organizations")
 @ApiBearerAuth()
 @UseGuards(AuthorizationGuard)
-@Controller("api/v1/security/organizations")
+@Controller("security/organizations")
 export class OrganizationsController {
   constructor(private readonly orgService: OrganizationService) {}
 
@@ -361,7 +361,7 @@ export class OrganizationsController {
 @ApiTags("Security — Audit & Events")
 @ApiBearerAuth()
 @UseGuards(AuthorizationGuard)
-@Controller("api/v1/security/audit")
+@Controller("security/audit")
 export class SecurityAuditController {
   constructor(private readonly auditService: SecurityAuditService) {}
 

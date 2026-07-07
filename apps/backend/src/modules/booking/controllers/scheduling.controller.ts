@@ -21,7 +21,7 @@ import { JwtAccessPayload as JwtPayload } from "@yoga24x/shared-types";
 import { SchedulingService } from "../services/scheduling.service";
 import { SCHEDULE_PERMISSIONS } from "../constants/booking-permissions";
 
-@Controller("api/v1/schedule")
+@Controller("schedule")
 @UseGuards(JwtAuthGuard)
 export class SchedulingController {
   constructor(private readonly schedulingService: SchedulingService) {}

@@ -2,7 +2,12 @@
 // Yoga24X — Security Module
 // Registers all RBAC+ABAC+Tenant+FeatureFlag+Policy services and middleware
 // ==============================================================================
-import { Module, MiddlewareConsumer, RequestMethod } from "@nestjs/common";
+import {
+  Module,
+  MiddlewareConsumer,
+  RequestMethod,
+  Global,
+} from "@nestjs/common";
 import { PrismaModule } from "../prisma/prisma.module";
 import { RedisModule } from "../redis/redis.module";
 
@@ -29,6 +34,7 @@ import {
   SecurityAuditController,
 } from "./controllers/security.controllers";
 
+@Global()
 @Module({
   imports: [PrismaModule, RedisModule],
   providers: [

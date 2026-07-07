@@ -209,9 +209,15 @@ export class OtpService {
     otpCode: string,
     channel: "SMS" | "WHATSAPP" | "EMAIL",
   ): Promise<"SENT" | "FAILED" | "QUEUED"> {
-    console.log(
-      `📱 [OTP DISPATCH] Channel: ${channel} | Recipient: ${recipient} | Code: ${otpCode} (DO NOT LOG IN PROD LOGS)`,
-    );
+    if (process.env.NODE_ENV === "development") {
+      console.log(
+        `📱 [OTP DISPATCH - DEV ONLY] Channel: ${channel} | Recipient: ${recipient} | Code: ${otpCode}`,
+      );
+    } else {
+      console.log(
+        `📱 [OTP DISPATCH] Channel: ${channel} | Recipient: ${recipient} | Status: DISPATCHING`,
+      );
+    }
 
     // In production, invoke Twilio / MSG91 / Meta WhatsApp Business API / AWS SNS / SendGrid
     try {

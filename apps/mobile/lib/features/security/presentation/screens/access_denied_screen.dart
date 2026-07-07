@@ -60,8 +60,9 @@ class _AccessDeniedScreenState extends ConsumerState<AccessDeniedScreen>
           opacity: _fadeAnim,
           child: Padding(
             padding: const EdgeInsets.all(32),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 // Shield Icon with scale animation
                 ScaleTransition(
@@ -73,7 +74,7 @@ class _AccessDeniedScreenState extends ConsumerState<AccessDeniedScreen>
                       gradient: RadialGradient(
                         colors: [
                           colorScheme.errorContainer,
-                          colorScheme.error.withOpacity(0.15),
+                          colorScheme.error.withValues(alpha: 0.15),
                         ],
                       ),
                       shape: BoxShape.circle,
@@ -239,6 +240,7 @@ class _AccessDeniedScreenState extends ConsumerState<AccessDeniedScreen>
                   },
                 ),
               ],
+            ),
             ),
           ),
         ),

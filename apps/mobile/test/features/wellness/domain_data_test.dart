@@ -3,14 +3,13 @@
 // Tests DTO Serialization, Repository Cache-Aside, Use Cases & StateNotifiers
 // ==============================================================================
 
-import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:mobile/features/wellness/domain/models/wellness_models.dart';
-import 'package:mobile/features/wellness/data/models/wellness_dtos.dart';
-import 'package:mobile/features/wellness/domain/repositories/wellness_repository.dart';
-import 'package:mobile/features/wellness/domain/usecases/wellness_usecases.dart';
-import 'package:mobile/features/wellness/presentation/providers/health_profile_provider.dart';
+import 'package:yoga24x_mobile/features/wellness/domain/models/wellness_models.dart';
+import 'package:yoga24x_mobile/features/wellness/data/models/wellness_dtos.dart';
+import 'package:yoga24x_mobile/features/wellness/domain/repositories/wellness_repository.dart';
+import 'package:yoga24x_mobile/features/wellness/domain/usecases/wellness_usecases.dart';
+import 'package:yoga24x_mobile/features/wellness/presentation/providers/health_profile_provider.dart';
 
 class MockWellnessRepository extends Mock implements WellnessRepository {}
 

@@ -5,7 +5,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../domain/models/wellness_models.dart';
 import '../../providers/goals_provider.dart';
 
 class GoalManagementScreen extends ConsumerStatefulWidget {
@@ -156,11 +155,11 @@ class _GoalManagementScreenState extends ConsumerState<GoalManagementScreen>
                     valueColor: AlwaysStoppedAnimation<Color>(progressPct >= 1.0 ? Colors.green : theme.colorScheme.primary),
                   ),
                 ),
-                if (goal.milestones != null && goal.milestones!.isNotEmpty) ...[
+                if (goal.milestones.isNotEmpty) ...[
                   const SizedBox(height: 16),
                   const Text('Milestones Checklist', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
                   const SizedBox(height: 8),
-                  ...goal.milestones!.map((m) {
+                  ...goal.milestones.map((m) {
                     final isDone = m['completed'] == true;
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 6),
@@ -229,7 +228,7 @@ class _GoalManagementScreenState extends ConsumerState<GoalManagementScreen>
                   children: [
                     CircleAvatar(
                       radius: 36,
-                      backgroundColor: isUnlocked ? color.withOpacity(0.2) : Colors.grey.shade300,
+                      backgroundColor: isUnlocked ? color.withValues(alpha: 0.2) : Colors.grey.shade300,
                       child: Icon(
                         badge['icon'] as IconData,
                         size: 38,
@@ -284,7 +283,7 @@ class _GoalManagementScreenState extends ConsumerState<GoalManagementScreen>
             ),
             const SizedBox(height: 12),
             DropdownButtonFormField<String>(
-              value: category,
+              initialValue: category,
               decoration: const InputDecoration(labelText: 'Category', border: OutlineInputBorder()),
               items: const [
                 DropdownMenuItem(value: 'YOGA', child: Text('Yoga Practice')),

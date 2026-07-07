@@ -4,8 +4,7 @@ import '../providers/booking_providers.dart';
 
 class AttendanceScannerScreen extends ConsumerStatefulWidget {
   final String bookingId;
-  const AttendanceScannerScreen({Key? key, required this.bookingId})
-      : super(key: key);
+  const AttendanceScannerScreen({super.key, required this.bookingId});
   @override
   ConsumerState<AttendanceScannerScreen> createState() =>
       _AttendanceScannerScreenState();

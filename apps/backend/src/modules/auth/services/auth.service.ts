@@ -475,9 +475,15 @@ export class AuthService {
     );
 
     // 3. Generate RS256 Access Token & SHA-256 Refresh Token
-    const roles: UserRoleName[] = user.userRoles.map(
-      (ur: any) => ur.role.name as UserRoleName,
+    const roles: UserRoleName[] = (user.userRoles || []).map(
+      (ur: any) => ur.role?.name as UserRoleName,
     );
+    if (roles.length === 0 && user.roleName) {
+      roles.push(user.roleName as UserRoleName);
+    }
+    if (roles.length === 0) {
+      roles.push("STUDENT" as UserRoleName);
+    }
     const { accessToken } = await this.tokenService.generateAccessToken(
       { id: user.id, email: user.email, roles, tenantId: user.tenantId },
       sessionId,
@@ -529,6 +535,31 @@ export class AuthService {
         score: riskScore,
         level: riskLevel,
       },
+    };
+  }
+
+  async getMe(userId: string): Promise<any> {
+    const user = await this.authRepository.findUserById(userId);
+    if (!user) {
+      throw new NotFoundException("User not found");
+    }
+    const roles =
+      user.userRoles?.map((ur: any) => ur.role?.name || ur.role) || [
+        "STUDENT",
+      ];
+    return {
+      id: user.id,
+      email: user.email,
+      phoneNumber: user.phoneNumber,
+      firstName: user.firstName || "Yoga",
+      lastName: user.lastName || "Student",
+      avatarUrl: user.avatarUrl,
+      roles,
+      status: user.status || "ACTIVE",
+      isEmailVerified: user.isEmailVerified || false,
+      isPhoneVerified: user.isPhoneVerified || false,
+      twoFactorEnabled: user.twoFactorEnabled || false,
+      tenantId: user.tenantId,
     };
   }
 }

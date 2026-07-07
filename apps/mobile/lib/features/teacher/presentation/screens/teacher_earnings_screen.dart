@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/teacher_operations_providers.dart';
 
 class TeacherEarningsDashboardScreen extends ConsumerWidget {
-  const TeacherEarningsDashboardScreen({Key? key}) : super(key: key);
+  const TeacherEarningsDashboardScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

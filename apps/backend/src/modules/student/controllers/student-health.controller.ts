@@ -13,7 +13,7 @@ import { UpdateMedicalVisibilityDto } from "../dto/student.dto";
 
 @ApiTags("Student — Health & Wellness")
 @ApiBearerAuth()
-@Controller("api/v1/students/me/health")
+@Controller("students/me/health")
 export class StudentHealthController {
   constructor(private readonly healthService: StudentHealthService) {}
 

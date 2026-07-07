@@ -3700,7 +3700,7 @@ enum AiProviderStatus {
 }
 
 model AiProviderConfig {
-  id              String           @id @default(uuid()) @map("id")
+  id              String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid @map("id")
   providerType    AiProviderType   @map("provider_type")
   name            String           @map("name")
   baseUrl         String?          @map("base_url")
@@ -3718,7 +3718,7 @@ model AiProviderConfig {
 }
 
 model PromptTemplate {
-  id              String           @id @default(uuid()) @map("id")
+  id              String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid @map("id")
   name            String           @unique @map("name")
   version         String           @default("1.0") @map("version")
   content         String           @map("content")
@@ -3733,8 +3733,8 @@ model PromptTemplate {
 }
 
 model AiConversation {
-  id              String           @id @default(uuid()) @map("id")
-  userId          String           @map("user_id")
+  id              String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid @map("id")
+  userId          String           @map("user_id") @db.Uuid
   specialty       CoachSpecialty   @map("specialty")
   title           String?          @map("title")
   isActive        Boolean          @default(true) @map("is_active")
@@ -3751,8 +3751,8 @@ model AiConversation {
 }
 
 model AiMessage {
-  id              String           @id @default(uuid()) @map("id")
-  conversationId  String           @map("conversation_id")
+  id              String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid @map("id")
+  conversationId  String           @map("conversation_id") @db.Uuid
   role            String           @map("role") // "user", "assistant", "system"
   content         String           @map("content")
   providerUsed    AiProviderType?  @map("provider_used")
@@ -3768,8 +3768,8 @@ model AiMessage {
 }
 
 model AiSafetyAuditLog {
-  id              String           @id @default(uuid()) @map("id")
-  userId          String?          @map("user_id")
+  id              String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid @map("id")
+  userId          String?          @map("user_id") @db.Uuid
   eventType       String           @map("event_type") // e.g., PII_BLOCKED, MEDICAL_ADVICE_BLOCKED
   originalInput   String           @map("original_input")
   sanitizedInput  String?          @map("sanitized_input")
@@ -3783,7 +3783,7 @@ model AiSafetyAuditLog {
 }
 
 model KnowledgeDocument {
-  id              String           @id @default(uuid()) @map("id")
+  id              String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid @map("id")
   title           String           @map("title")
   sourceType      String           @map("source_type") // e.g., ARTICLE, TRANSCRIPT
   sourceId        String?          @map("source_id")
@@ -3798,8 +3798,8 @@ model KnowledgeDocument {
 }
 
 model KnowledgeChunk {
-  id              String           @id @default(uuid()) @map("id")
-  documentId      String           @map("document_id")
+  id              String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid @map("id")
+  documentId      String           @map("document_id") @db.Uuid
   chunkIndex      Int              @map("chunk_index")
   content         String           @map("content")
   // We avoid vector DB requirement by storing embeddings as JSON arrays for local fast calculation if needed.

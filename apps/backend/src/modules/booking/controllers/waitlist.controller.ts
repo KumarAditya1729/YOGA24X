@@ -21,7 +21,7 @@ import { WaitlistService } from "../services/waitlist.service";
 import { WAITLIST_PERMISSIONS } from "../constants/booking-permissions";
 import { JoinWaitlistDto } from "../dto/booking.dto";
 
-@Controller("api/v1/waitlist")
+@Controller("waitlist")
 @UseGuards(JwtAuthGuard)
 export class WaitlistController {
   constructor(private readonly waitlistService: WaitlistService) {}

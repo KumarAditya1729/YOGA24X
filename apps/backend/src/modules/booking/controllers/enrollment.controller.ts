@@ -21,7 +21,7 @@ import { EnrollmentService } from "../services/enrollment.service";
 import { ENROLLMENT_PERMISSIONS } from "../constants/booking-permissions";
 import { EnrollCourseDto, RegisterEventDto } from "../dto/booking.dto";
 
-@Controller("api/v1/enrollments")
+@Controller("enrollments")
 @UseGuards(JwtAuthGuard)
 export class EnrollmentController {
   constructor(private readonly enrollmentService: EnrollmentService) {}

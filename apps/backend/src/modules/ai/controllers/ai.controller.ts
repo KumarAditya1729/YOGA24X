@@ -14,7 +14,7 @@ import { RequirePermissions } from "../../security/decorators/authorization.deco
 import { PERMISSIONS } from "../../security/constants/permissions.registry";
 import { AuthorizationGuard } from "../../security/guards/authorization.guard";
 
-@Controller("api/v1/ai")
+@Controller("ai")
 @UseGuards(JwtAuthGuard, AuthorizationGuard)
 export class AiController {
   constructor(

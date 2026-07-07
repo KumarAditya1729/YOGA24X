@@ -7,10 +7,10 @@ class CoachChatScreen extends ConsumerStatefulWidget {
   final String specialty;
 
   const CoachChatScreen({
-    Key? key,
+    super.key,
     required this.conversationId,
     required this.specialty,
-  }) : super(key: key);
+  });
 
   @override
   ConsumerState<CoachChatScreen> createState() => _CoachChatScreenState();

@@ -5,14 +5,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../providers/timeline_provider.dart';
 
 class WellnessChartsScreen extends ConsumerWidget {
   const WellnessChartsScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(timelineNotifierProvider);
     final theme = Theme.of(context);
 
     return Scaffold(
@@ -185,16 +183,16 @@ class WellnessChartsScreen extends ConsumerWidget {
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: ListTile(
-        contentPadding: const EdgeInsets.all(16),
-        leading: const CircleAvatar(
+      child: const ListTile(
+        contentPadding: EdgeInsets.all(16),
+        leading: CircleAvatar(
           radius: 28,
           backgroundColor: Color(0xFFE3F2FD),
           child: Icon(Icons.water_drop, color: Colors.blue, size: 30),
         ),
-        title: const Text('Hydration Consistency: 92%', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-        subtitle: const Text('You have met your daily 3000ml water goal 13 out of the last 14 days. Excellent cellular hydration!'),
-        trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+        title: Text('Hydration Consistency: 92%', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+        subtitle: Text('You have met your daily 3000ml water goal 13 out of the last 14 days. Excellent cellular hydration!'),
+        trailing: Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
       ),
     );
   }

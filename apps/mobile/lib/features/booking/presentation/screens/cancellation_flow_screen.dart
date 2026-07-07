@@ -1,11 +1,11 @@
+// ignore_for_file: deprecated_member_use
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/booking_providers.dart';
 
 class CancellationFlowScreen extends ConsumerStatefulWidget {
   final String bookingId;
-  const CancellationFlowScreen({Key? key, required this.bookingId})
-      : super(key: key);
+  const CancellationFlowScreen({super.key, required this.bookingId});
   @override
   ConsumerState<CancellationFlowScreen> createState() =>
       _CancellationFlowScreenState();

@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import '../providers/teacher_operations_providers.dart';
-import '../../../../core/theme/yoga_colors.dart'; // Assume typical theme
 
 class TeacherCalendarScreen extends ConsumerWidget {
-  const TeacherCalendarScreen({Key? key}) : super(key: key);
+  const TeacherCalendarScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -36,7 +34,7 @@ class TeacherCalendarScreen extends ConsumerWidget {
                 margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: ListTile(
                   leading: CircleAvatar(
-                    backgroundColor: Colors.blueAccent.withOpacity(0.2),
+                    backgroundColor: Colors.blueAccent.withValues(alpha: 0.2),
                     child: const Icon(Icons.event, color: Colors.blueAccent),
                   ),
                   title: Text(session.title),
@@ -84,7 +82,7 @@ class TeacherCalendarScreen extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: color),
       ),

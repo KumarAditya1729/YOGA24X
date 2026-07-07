@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/teacher_providers.dart';
 
 class CertificationManagerScreen extends ConsumerWidget {
-  const CertificationManagerScreen({Key? key}) : super(key: key);
+  const CertificationManagerScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

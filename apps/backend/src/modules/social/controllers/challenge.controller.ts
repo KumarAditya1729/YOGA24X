@@ -17,7 +17,7 @@ import { CreateChallengeDto } from "../dto/social.dto";
 @ApiTags("Challenges")
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
-@Controller("api/v1/challenges")
+@Controller("challenges")
 export class ChallengeController {
   constructor(private readonly challengeService: ChallengeService) {}
 

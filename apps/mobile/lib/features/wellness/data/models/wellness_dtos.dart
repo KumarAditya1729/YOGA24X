@@ -35,6 +35,8 @@ class WellnessDtoMapper {
 
   static Map<String, dynamic> healthProfileToJson(HealthProfile profile) {
     return {
+      'id': profile.id,
+      'userId': profile.userId,
       'bloodGroup': profile.bloodGroup,
       'emergencyContactName': profile.emergencyContactName,
       'emergencyContactPhone': profile.emergencyContactPhone,
@@ -313,7 +315,7 @@ class WellnessDtoMapper {
       goalType: json['goalType']?.toString() ?? 'FLEXIBILITY',
       title: json['title']?.toString() ?? '',
       description: json['description']?.toString(),
-      targetValue: (json['targetValue'] as num?)?.toDouble(),
+      targetValue: (json['targetValue'] as num?)?.toDouble() ?? 100.0,
       currentValue: (json['currentValue'] as num?)?.toDouble() ?? 0.0,
       unit: json['unit']?.toString(),
       status: json['status']?.toString() ?? 'ACTIVE',
@@ -454,6 +456,14 @@ class WellnessDtoMapper {
   static List<PhysicalLimitationItem> _parseLimitationList(dynamic raw) {
     if (raw == null || raw is! List) return [];
     return raw.map((item) {
+      if (item is String) {
+        return PhysicalLimitationItem(
+          bodyPart: 'General',
+          issue: item,
+          severity: 'LOW',
+          restrictedMovements: const [],
+        );
+      }
       final map = item is Map ? item : {};
       return PhysicalLimitationItem(
         bodyPart: map['bodyPart']?.toString() ?? 'Body Part',
@@ -487,4 +497,22 @@ class WellnessDtoMapper {
       );
     }).toList();
   }
+}
+
+class HealthProfileDto {
+  final HealthProfile _domain;
+  const HealthProfileDto._(this._domain);
+  factory HealthProfileDto.fromJson(Map<String, dynamic> json) => HealthProfileDto._(WellnessDtoMapper.healthProfileFromJson(json));
+  factory HealthProfileDto.fromDomain(HealthProfile domain) => HealthProfileDto._(domain);
+  HealthProfile toDomain() => _domain;
+  Map<String, dynamic> toJson() => WellnessDtoMapper.healthProfileToJson(_domain);
+}
+
+class WellnessAssessmentDto {
+  final WellnessAssessment _domain;
+  const WellnessAssessmentDto._(this._domain);
+  factory WellnessAssessmentDto.fromJson(Map<String, dynamic> json) => WellnessAssessmentDto._(WellnessDtoMapper.wellnessAssessmentFromJson(json));
+  factory WellnessAssessmentDto.fromDomain(WellnessAssessment domain) => WellnessAssessmentDto._(domain);
+  WellnessAssessment toDomain() => _domain;
+  Map<String, dynamic> toJson() => WellnessDtoMapper.wellnessAssessmentToJson(_domain);
 }

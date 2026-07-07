@@ -1,3 +1,4 @@
+// ignore_for_file: deprecated_member_use
 // ==============================================================================
 // Yoga24X AI Engineering OS — AI Coaching & Personalization Profile Screen
 // Customizes Coaching Persona, Reminder Tone, Language, and Difficulty Progression
@@ -24,7 +25,6 @@ class _AiPersonalizationScreenState extends ConsumerState<AiPersonalizationScree
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final isSubmitting = ref.watch(assessmentNotifierProvider).isSubmitting;
 
     return Scaffold(
@@ -47,7 +47,7 @@ class _AiPersonalizationScreenState extends ConsumerState<AiPersonalizationScree
             _buildSectionHeader('2. Motivation & Feedback Tone', Icons.psychology),
             const SizedBox(height: 12),
             DropdownButtonFormField<String>(
-              value: _motivationStyle,
+              initialValue: _motivationStyle,
               decoration: const InputDecoration(border: OutlineInputBorder()),
               items: const [
                 DropdownMenuItem(value: 'ENCOURAGING', child: Text('Encouraging & Positive Reinforcement')),
@@ -61,7 +61,7 @@ class _AiPersonalizationScreenState extends ConsumerState<AiPersonalizationScree
             _buildSectionHeader('3. Smart Reminder & Nudge Strategy', Icons.notifications_active_outlined),
             const SizedBox(height: 12),
             DropdownButtonFormField<String>(
-              value: _reminderStyle,
+              initialValue: _reminderStyle,
               decoration: const InputDecoration(border: OutlineInputBorder()),
               items: const [
                 DropdownMenuItem(value: 'SMART_ADAPTIVE', child: Text('Smart Adaptive (Learns your habits)')),
@@ -75,7 +75,7 @@ class _AiPersonalizationScreenState extends ConsumerState<AiPersonalizationScree
             _buildSectionHeader('4. Practice Progression & Learning', Icons.trending_up),
             const SizedBox(height: 12),
             DropdownButtonFormField<String>(
-              value: _difficultyProgression,
+              initialValue: _difficultyProgression,
               decoration: const InputDecoration(labelText: 'Difficulty Progression Rate', border: OutlineInputBorder()),
               items: const [
                 DropdownMenuItem(value: 'ADAPTIVE', child: Text('AI Adaptive (Based on daily readiness score)')),
@@ -86,7 +86,7 @@ class _AiPersonalizationScreenState extends ConsumerState<AiPersonalizationScree
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
-              value: _learningStyle,
+              initialValue: _learningStyle,
               decoration: const InputDecoration(labelText: 'Primary Learning Preference', border: OutlineInputBorder()),
               items: const [
                 DropdownMenuItem(value: 'VISUAL_DEMO', child: Text('Visual 3D Demo & Video Cues')),
@@ -99,7 +99,7 @@ class _AiPersonalizationScreenState extends ConsumerState<AiPersonalizationScree
             _buildSectionHeader('5. Preferred Language', Icons.language),
             const SizedBox(height: 12),
             DropdownButtonFormField<String>(
-              value: _preferredLanguage,
+              initialValue: _preferredLanguage,
               decoration: const InputDecoration(border: OutlineInputBorder()),
               items: const [
                 DropdownMenuItem(value: 'en', child: Text('English (US / Global)')),
@@ -146,7 +146,7 @@ class _AiPersonalizationScreenState extends ConsumerState<AiPersonalizationScree
       margin: const EdgeInsets.only(bottom: 10),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: _coachingStyle == value ? BorderSide(color: const Color(0xFF6750A4), width: 2) : BorderSide.none,
+        side: _coachingStyle == value ? const BorderSide(color: Color(0xFF6750A4), width: 2) : BorderSide.none,
       ),
       child: RadioListTile<String>(
         value: value,

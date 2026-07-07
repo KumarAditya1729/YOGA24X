@@ -15,7 +15,7 @@ import { CommerceAnalyticsService } from "../services/commerce-analytics.service
 @ApiTags("Commerce Analytics")
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
-@Controller("api/v1/analytics/commerce")
+@Controller("analytics/commerce")
 export class CommerceAnalyticsController {
   constructor(private readonly analyticsService: CommerceAnalyticsService) {}
 

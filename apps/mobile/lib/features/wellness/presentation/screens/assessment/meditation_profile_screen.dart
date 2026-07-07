@@ -34,7 +34,6 @@ class _MeditationProfileScreenState extends ConsumerState<MeditationProfileScree
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final isSubmitting = ref.watch(assessmentNotifierProvider).isSubmitting;
 
     return Scaffold(
@@ -90,7 +89,7 @@ class _MeditationProfileScreenState extends ConsumerState<MeditationProfileScree
             _buildSectionHeader('3. Guided Voice Preference', Icons.record_voice_over_outlined),
             const SizedBox(height: 12),
             DropdownButtonFormField<String>(
-              value: _voicePreference,
+              initialValue: _voicePreference,
               decoration: const InputDecoration(border: OutlineInputBorder()),
               items: const [
                 DropdownMenuItem(value: 'CALM_FEMALE', child: Text('Calm & Serene Female Voice')),
@@ -105,7 +104,7 @@ class _MeditationProfileScreenState extends ConsumerState<MeditationProfileScree
             _buildSectionHeader('4. Background Soundscapes & Music', Icons.music_note_outlined),
             const SizedBox(height: 12),
             DropdownButtonFormField<String>(
-              value: _musicPreference,
+              initialValue: _musicPreference,
               decoration: const InputDecoration(border: OutlineInputBorder()),
               items: const [
                 DropdownMenuItem(value: 'TIBETAN_SINGING_BOWLS', child: Text('Tibetan Singing Bowls & Bells')),

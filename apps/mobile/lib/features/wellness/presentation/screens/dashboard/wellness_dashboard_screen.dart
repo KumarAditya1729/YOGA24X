@@ -29,7 +29,6 @@ class WellnessDashboardScreen extends ConsumerStatefulWidget {
 class _WellnessDashboardScreenState extends ConsumerState<WellnessDashboardScreen> {
   @override
   Widget build(BuildContext context) {
-    final healthState = ref.watch(healthProfileNotifierProvider);
     final assessmentState = ref.watch(assessmentNotifierProvider);
     final safetyState = ref.watch(safetyNotifierProvider);
     final theme = Theme.of(context);
@@ -150,10 +149,10 @@ class _WellnessDashboardScreenState extends ConsumerState<WellnessDashboardScree
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+            const Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Row(
+                Row(
                   children: [
                     Icon(Icons.auto_awesome, color: Colors.amber, size: 28),
                     SizedBox(width: 10),
@@ -161,7 +160,7 @@ class _WellnessDashboardScreenState extends ConsumerState<WellnessDashboardScree
                   ],
                 ),
                 Chip(
-                  label: const Text('Live Sync', style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
+                  label: Text('Live Sync', style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
                   backgroundColor: Colors.white24,
                 ),
               ],
@@ -244,7 +243,7 @@ class _WellnessDashboardScreenState extends ConsumerState<WellnessDashboardScree
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   CircleAvatar(
-                    backgroundColor: color.withOpacity(0.15),
+                    backgroundColor: color.withValues(alpha: 0.15),
                     child: Icon(item['icon'] as IconData, color: color),
                   ),
                   const SizedBox(height: 10),

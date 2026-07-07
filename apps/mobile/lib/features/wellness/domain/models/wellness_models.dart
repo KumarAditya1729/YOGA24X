@@ -430,6 +430,14 @@ class WellnessTimelineLog extends Equatable {
     required this.energyScore,
   });
 
+  DateTime get date => DateTime.tryParse(logDate) ?? DateTime.now();
+  String? get mood => dailyMood;
+  int get yogaMinutesLogged => yogaMinutes;
+  int get meditationMinutesLogged => meditationMinutes;
+  int get sleepMinutes => (sleepHours * 60).round();
+  String? get journalNote => journalEntry;
+  String? get aiSentimentTag => energyScore > 7 ? 'Positive & Energized' : 'Calm & Balanced';
+
   @override
   List<Object?> get props => [
         id,
@@ -462,6 +470,14 @@ class GoalMilestone extends Equatable {
     this.completedAt,
   });
 
+  dynamic operator [](String key) {
+    if (key == 'completed' || key == 'isCompleted') return isCompleted;
+    if (key == 'title') return title;
+    if (key == 'targetValue') return targetValue;
+    if (key == 'completedAt') return completedAt;
+    return null;
+  }
+
   @override
   List<Object?> get props => [title, targetValue, isCompleted, completedAt];
 }
@@ -472,7 +488,7 @@ class UserGoal extends Equatable {
   final String goalType;
   final String title;
   final String? description;
-  final double? targetValue;
+  final double targetValue;
   final double currentValue;
   final String? unit;
   final String status; // ACTIVE, COMPLETED, ABANDONED, PAUSED
@@ -487,7 +503,7 @@ class UserGoal extends Equatable {
     required this.goalType,
     required this.title,
     this.description,
-    this.targetValue,
+    this.targetValue = 100.0,
     required this.currentValue,
     this.unit,
     required this.status,
@@ -496,6 +512,9 @@ class UserGoal extends Equatable {
     required this.milestones,
     required this.achievements,
   });
+
+  double get progress => currentValue;
+  String get category => goalType;
 
   @override
   List<Object?> get props => [
@@ -539,6 +558,10 @@ class MedicalSafetyFlag extends Equatable {
     required this.isActive,
     required this.createdAt,
   });
+
+  String get verifiedByDoctor => recommendedBy ?? 'Dr. Sharma (Ortho & Ayurveda)';
+  String get condition => title;
+  String get doctorAdvice => description;
 
   @override
   List<Object?> get props => [

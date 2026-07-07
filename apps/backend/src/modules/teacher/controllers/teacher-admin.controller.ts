@@ -21,7 +21,7 @@ import { TeacherStatsService } from "../services/teacher-stats.service";
 
 @ApiTags("Admin — Teachers")
 @ApiBearerAuth()
-@Controller("api/v1/admin/teachers")
+@Controller("admin/teachers")
 export class TeacherAdminController {
   constructor(
     private readonly adminService: TeacherAdminService,

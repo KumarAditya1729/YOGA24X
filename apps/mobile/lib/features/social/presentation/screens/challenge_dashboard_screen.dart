@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../application/social_providers.dart';
 
 class ChallengeDashboardScreen extends ConsumerWidget {
-  const ChallengeDashboardScreen({Key? key}) : super(key: key);
+  const ChallengeDashboardScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

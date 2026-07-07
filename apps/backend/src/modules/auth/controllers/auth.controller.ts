@@ -38,7 +38,7 @@ import {
   JwtAccessPayload,
 } from "@yoga24x/shared-types";
 
-@Controller("api/v1/auth")
+@Controller("auth")
 @UseGuards(RateLimitGuard)
 @UseInterceptors(AuditLogInterceptor)
 @UseFilters(AuthExceptionFilter)
@@ -355,7 +355,8 @@ export class AuthController {
   @Get("me")
   @HttpCode(HttpStatus.OK)
   async getProfile(@CurrentUser() user: JwtAccessPayload) {
-    return { success: true, data: { user } };
+    const fullUser = await this.authService.getMe(user.sub);
+    return { success: true, data: fullUser };
   }
 
   // ============================================================================

@@ -1,3 +1,4 @@
+// ignore_for_file: unused_local_variable
 // ==============================================================================
 // Yoga24X — Role Switch Sheet & Organization Selector
 // Material 3 premium UI for role context switching and org/tenant navigation
@@ -163,7 +164,7 @@ class RoleSwitchSheet extends ConsumerWidget {
                                   width: 48,
                                   height: 48,
                                   decoration: BoxDecoration(
-                                    color: color.withOpacity(0.15),
+                                    color: color.withValues(alpha: 0.15),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Icon(icon, color: color, size: 24),

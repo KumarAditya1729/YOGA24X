@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/teacher_providers.dart';
 
 class PortfolioBuilderScreen extends ConsumerWidget {
-  const PortfolioBuilderScreen({Key? key}) : super(key: key);
+  const PortfolioBuilderScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

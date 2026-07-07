@@ -94,7 +94,7 @@ export class AuthRepository {
     provider?: string;
     providerId?: string;
     profileDataJson?: any;
-  }): Promise<User> {
+  }): Promise<any> {
     return this.prisma.$transaction(async (tx) => {
       // 1. Create User
       const user = await tx.user.create({
@@ -178,38 +178,60 @@ export class AuthRepository {
         });
       }
 
-      return user;
+      return tx.user.findUnique({
+        where: { id: user.id },
+        include: {
+          userRoles: { include: { role: true } },
+          identities: true,
+        },
+      });
     });
   }
 
-  async updateUserStatus(userId: string, status: UserStatus): Promise<User> {
+  async updateUserStatus(userId: string, status: UserStatus): Promise<any> {
     return this.prisma.user.update({
       where: { id: userId },
       data: { status },
+      include: {
+        userRoles: { include: { role: true } },
+        identities: true,
+      },
     });
   }
 
   async updatePasswordHash(
     userId: string,
     passwordHash: string,
-  ): Promise<User> {
+  ): Promise<any> {
     return this.prisma.user.update({
       where: { id: userId },
       data: { passwordHash },
+      include: {
+        userRoles: { include: { role: true } },
+        identities: true,
+      },
     });
   }
 
-  async markEmailVerified(userId: string): Promise<User> {
+  async markEmailVerified(userId: string): Promise<any> {
     return this.prisma.user.update({
       where: { id: userId },
       data: { isEmailVerified: true },
+      include: {
+        userRoles: { include: { role: true } },
+        identities: true,
+      },
     });
   }
 
-  async markPhoneVerified(userId: string): Promise<User> {
+  async markPhoneVerified(userId: string): Promise<any> {
     return this.prisma.user.update({
       where: { id: userId },
       data: { isPhoneVerified: true },
+      include: {
+        userRoles: { include: { role: true } },
+        identities: true,
+      },
     });
   }
 

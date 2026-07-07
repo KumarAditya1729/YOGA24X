@@ -19,7 +19,7 @@ import {
 @ApiTags("Chat & Messaging")
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
-@Controller("api/v1/chat")
+@Controller("chat")
 export class ChatController {
   constructor(private readonly chatService: ChatService) {}
 

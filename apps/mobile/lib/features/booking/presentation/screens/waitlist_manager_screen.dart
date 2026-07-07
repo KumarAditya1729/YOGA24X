@@ -4,7 +4,7 @@ import '../providers/booking_providers.dart';
 import '../../domain/models/booking_models.dart';
 
 class WaitlistManagerScreen extends ConsumerWidget {
-  const WaitlistManagerScreen({Key? key}) : super(key: key);
+  const WaitlistManagerScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

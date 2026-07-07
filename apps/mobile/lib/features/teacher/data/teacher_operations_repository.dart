@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import '../models/teacher_operations_models.dart';
+import '../domain/models/teacher_operations_models.dart';
 
 class TeacherOperationsRepository {
   final Dio _dio;

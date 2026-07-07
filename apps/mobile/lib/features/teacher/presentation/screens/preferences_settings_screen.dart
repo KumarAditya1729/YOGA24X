@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/teacher_providers.dart';
 
 class PreferencesSettingsScreen extends ConsumerStatefulWidget {
-  const PreferencesSettingsScreen({Key? key}) : super(key: key);
+  const PreferencesSettingsScreen({super.key});
 
   @override
   ConsumerState<PreferencesSettingsScreen> createState() => _PreferencesSettingsScreenState();

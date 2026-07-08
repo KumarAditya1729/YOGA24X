@@ -89,13 +89,13 @@ void main() {
       await tester.pumpAndSettle();
 
       // Verify Title
-      expect(find.text('Wellness & Health Hub'), findsOneWidget);
+      expect(find.text('CLINICAL TELEMETRY HUB'), findsOneWidget);
 
       // Verify Safety Alert Ticker displays active contraindication
       expect(find.textContaining('Active Contraindication: Lumbar Disc Bulge'), findsOneWidget);
 
       // Verify AI Status Card displays latest scores
-      expect(find.text('Yoga24X AI Engine Active'), findsOneWidget);
+      expect(find.text('AI Telemetry Engine'), findsOneWidget);
       expect(find.text('4/10'), findsOneWidget); // Stress Score
       expect(find.text('8/10'), findsOneWidget); // Sleep Quality
 

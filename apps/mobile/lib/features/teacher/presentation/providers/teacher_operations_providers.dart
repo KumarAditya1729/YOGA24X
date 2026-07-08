@@ -1,15 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:dio/dio.dart';
+import '../../../auth/presentation/providers/auth_providers.dart';
 import '../../data/teacher_operations_repository.dart';
 import '../../domain/models/teacher_operations_models.dart';
 
 // ── Repository Provider ──────────────────────────────────────────────────────
 
 final teacherOperationsRepositoryProvider = Provider<TeacherOperationsRepository>((ref) {
-  // In a real app, you'd get the authenticated Dio instance from a core provider
-  // final dio = ref.watch(dioClientProvider);
-  final dio = Dio(BaseOptions(baseUrl: 'http://localhost:3000')); // Placeholder
-  return TeacherOperationsRepository(dio);
+  return TeacherOperationsRepository(ref.watch(dioProvider));
 });
 
 // ── Availability Providers ───────────────────────────────────────────────────

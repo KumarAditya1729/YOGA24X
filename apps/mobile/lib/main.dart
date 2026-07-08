@@ -2,11 +2,12 @@
 // Yoga24X AI Engineering OS — Flutter Mobile Super App Main Entrypoint
 // ==============================================================================
 
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'features/auth/auth.dart';
 import 'features/wellness/presentation/screens/dashboard/wellness_dashboard_screen.dart';
-import 'features/wellness/presentation/screens/luxury_home_experience.dart';
+import 'features/wellness/presentation/screens/sattvic_sanctuary_home_screen.dart';
 import 'features/learning/presentation/screens/course_catalog_screen.dart';
 import 'features/learning/presentation/screens/course_detail_screen.dart';
 import 'features/learning/presentation/screens/lesson_player_screen.dart';
@@ -169,7 +170,7 @@ class _SuperAppMainShellState extends ConsumerState<SuperAppMainShell> {
     final isDark = theme.brightness == Brightness.dark;
 
     final pages = [
-      const LuxuryHomeExperienceScreen(),
+      const SattvicSanctuaryHomeScreen(),
       const WellnessDashboardScreen(),
       const UnifiedCalendarScreen(),
       const CourseCatalogScreen(),
@@ -177,64 +178,80 @@ class _SuperAppMainShellState extends ConsumerState<SuperAppMainShell> {
     ];
 
     return Scaffold(
+      extendBody: true,
       body: IndexedStack(
         index: _currentIndex,
         children: pages,
       ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: isDark ? AppTheme.surfaceDark : AppTheme.surfaceLight,
-          border: Border(
-            top: BorderSide(
-              color: isDark ? AppTheme.borderDark : Colors.black.withValues(alpha: 0.05),
-              width: 1.0,
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.only(left: 20, right: 20, bottom: 12),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(32),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+              child: Container(
+                height: 68,
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? const Color(0xFF141F1A).withValues(alpha: 0.82)
+                      : Colors.white.withValues(alpha: 0.88),
+                  borderRadius: BorderRadius.circular(32),
+                  border: Border.all(
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.12)
+                        : const Color(0xFF385E4D).withValues(alpha: 0.18),
+                    width: 1.2,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: isDark ? 0.45 : 0.08),
+                      blurRadius: 30,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
+                ),
+                child: BottomNavigationBar(
+                  currentIndex: _currentIndex,
+                  onTap: (index) => setState(() => _currentIndex = index),
+                  type: BottomNavigationBarType.fixed,
+                  backgroundColor: Colors.transparent,
+                  selectedItemColor: isDark ? const Color(0xFF4ADE80) : const Color(0xFF1B5E57),
+                  unselectedItemColor: isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight,
+                  selectedLabelStyle: const TextStyle(fontFamily: 'Outfit', fontWeight: FontWeight.w700, fontSize: 11),
+                  unselectedLabelStyle: const TextStyle(fontFamily: 'Outfit', fontWeight: FontWeight.w500, fontSize: 10),
+                  elevation: 0,
+                  items: const [
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.self_improvement_outlined),
+                      activeIcon: Icon(Icons.self_improvement),
+                      label: 'Sanctuary',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.favorite_border),
+                      activeIcon: Icon(Icons.favorite),
+                      label: 'Telemetry',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.calendar_today_outlined),
+                      activeIcon: Icon(Icons.calendar_today),
+                      label: 'Schedule',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.school_outlined),
+                      activeIcon: Icon(Icons.school),
+                      label: 'Academy',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.person_outline),
+                      activeIcon: Icon(Icons.person),
+                      label: 'Profile',
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.04),
-              blurRadius: 25,
-              offset: const Offset(0, -8),
-            ),
-          ],
-        ),
-        child: BottomNavigationBar(
-          currentIndex: _currentIndex,
-          onTap: (index) => setState(() => _currentIndex = index),
-          type: BottomNavigationBarType.fixed,
-          backgroundColor: Colors.transparent,
-          selectedItemColor: isDark ? AppTheme.secondary : AppTheme.primary,
-          unselectedItemColor: isDark ? AppTheme.textSecondaryDark : AppTheme.textSecondaryLight,
-          selectedLabelStyle: const TextStyle(fontFamily: 'Outfit', fontWeight: FontWeight.w700, fontSize: 12),
-          unselectedLabelStyle: const TextStyle(fontFamily: 'Outfit', fontWeight: FontWeight.w500, fontSize: 11),
-          elevation: 0,
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.self_improvement_outlined),
-              activeIcon: Icon(Icons.self_improvement),
-              label: 'Today',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.favorite_border),
-              activeIcon: Icon(Icons.favorite),
-              label: 'Wellness',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.calendar_today_outlined),
-              activeIcon: Icon(Icons.calendar_today),
-              label: 'Schedule',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.school_outlined),
-              activeIcon: Icon(Icons.school),
-              label: 'Academy',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline),
-              activeIcon: Icon(Icons.person),
-              label: 'Profile',
-            ),
-          ],
         ),
       ),
     );

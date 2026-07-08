@@ -3,14 +3,14 @@
 // ==============================================================================
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:dio/dio.dart';
+import '../../../auth/presentation/providers/auth_providers.dart';
 import '../../data/booking_repository.dart';
 import '../../domain/models/booking_models.dart';
 
 // ─── Repository Provider ──────────────────────────────────────────────────────
 final bookingRepositoryProvider = Provider<BookingRepository>((ref) {
   return BookingRepository(
-    Dio(BaseOptions(baseUrl: 'http://localhost:3000')),
+    ref.watch(dioProvider),
   );
 });
 

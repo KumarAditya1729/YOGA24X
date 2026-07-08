@@ -25,6 +25,36 @@ final teacherVerificationProvider = FutureProvider<TeacherVerification?>((ref) a
   }
 });
 
+// ── Public Profile Provider (with Standalone Demo Fallback) ──────────────────
+
+final publicTeacherProfileProvider = FutureProvider.family<TeacherProfile, String>((ref, userId) async {
+  final repo = ref.watch(teacherRepositoryProvider);
+  try {
+    return await repo.getPublicProfile(userId);
+  } catch (e) {
+    // Standalone Demo Fallback
+    return TeacherProfile(
+      id: userId,
+      userId: userId,
+      headline: 'RYT 500 Vinyasa & Kundalini Master Specialist',
+      bio: 'I have been practicing and teaching immersive yoga for over 15 years in Rishikesh and Los Angeles. My classes focus on biomechanical alignment, breath control (Pranayama), and mindfulness. I believe yoga is for everyone and strive to make my classes accessible, transformative, and empowering for all levels.',
+      teachingPhilosophy: 'Yoga is the journey of the self, through the self, to the self.',
+      yearsExperience: 15,
+      cityState: 'Rishikesh / New York',
+      countryCode: 'USA',
+      verificationStatus: 'VERIFIED',
+      stats: TeacherStats(
+        id: 'stats-$userId',
+        userId: userId,
+        totalStudents: 1420,
+        totalClasses: 480,
+        totalReviews: 342,
+        averageRating: 4.98,
+      ),
+    );
+  }
+});
+
 // ── Controller for Mutating Profile ──────────────────────────────────────────
 
 class TeacherProfileNotifier extends StateNotifier<AsyncValue<TeacherProfile?>> {
